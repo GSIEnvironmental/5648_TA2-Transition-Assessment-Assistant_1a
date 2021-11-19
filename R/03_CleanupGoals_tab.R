@@ -461,6 +461,17 @@ CleanupGoals_tabServer <- function(id) {
         updateNumericInput(session, "Retardation_LK", value = signif(Retardation_LK,3))
       }) # end updates for Retardation_LK
       
+      # Updates for Seepage Velocity
+      observeEvent({
+        input$K
+        input$i
+        input$ne
+      },{
+        vel = input$K*input$i/input$ne/100*60*60*24*365 # seepage velocity of high K zone (m/yr)
+        updateNumericInput(session, "Seep_V", value = signif(vel,3))
+      }) # end updates for Retardation_LK
+      
+      
       # Updates Values for Uncertainty Analysis ranges ---------------
       observeEvent({input$X},{
           updateNumericInput(session, "X_LL", value = input$X*0.8)
