@@ -209,9 +209,16 @@ source("./R/09_PlumeZone.R")
 
 source("./R/10_Summary.R")
 
-source("./R/Functions/MonteCarlo_LatinHyperCube_Sampling_Function.R")
-source("./R/Functions/BordenFunction.R")
-source("./R/Functions/HelpButtonFunction.R")
+## Loading Functions ------------------------------------------------
+lapply(paste0("./R/Functions/",
+              list.files(path = "./R/Functions",
+                         pattern = "[.]R$", 
+                         recursive = TRUE),
+              sep=''), 
+       source)
+#source("./R/Functions/MonteCarlo_LatinHyperCube_Sampling_Function.R")
+#source("./R/Functions/BordenFunction.R")
+#source("./R/Functions/HelpButtonFunction.R")
 
 # Shinyio ------------------------------------------
 # rsconnect::deployApp(appId = "4413726")

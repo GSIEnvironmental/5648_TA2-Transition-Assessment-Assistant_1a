@@ -16,7 +16,66 @@ AsymptoteServer <- function(id) {
     id,
     
     function(input, output, session) {
-
+      
+      ## FOLLOWING IS THE CHEAT SHEET OF CALLING EACH FUNCTION
+      ##CHEAT SHEET
+      # 
+      # library(tidyverse)
+      # library(readxl)
+      # library(plotly)
+      # library(stringr)
+      # 
+      # lapply(paste0("./R/Functions/",
+      #               list.files(path = "./R/Functions",
+      #                          pattern = "[.]R$", 
+      #                          recursive = TRUE),
+      #               sep=''), 
+      #        source)
+      # # -----read in files
+      # location <- read_excel("C:/Users/hmori/Desktop/GSI Work Files/5648_SERDP_Borden/TA2 Module 1 2 Data File v3.xlsx", 
+      #                        sheet = "Data File Template", skip = 2, 
+      #                        n_max = 2)
+      # 
+      # 
+      # df <- read_excel("C:/Users/hmori/Desktop/GSI Work Files/5648_SERDP_Borden/TA2 Module 1 2 Data File v3.xlsx", 
+      #                  sheet = "Data File Template", range = "B6:K26", 
+      #                  col_types = c("date", "numeric", "numeric", 
+      #                                "numeric", "numeric", "numeric", 
+      #                                "numeric", "numeric", "numeric","numeric"))
+      # 
+      # cname <-c('Date',colnames(location)[2:10])
+      # 
+      # colnames(df)<-cname
+      # 
+      # # ----- Step 3 monitoring well group to be averaged user input
+      # pickwell<-c('MW-1','MW-2')
+      # 
+      # 
+      # 
+      # # ----- Step 4 choose whether mean or geomean user input
+      # ave_switch = 'mean' #or 'geomean
+      # 
+      # 
+      # # ----- Step 5 concentration goal user input
+      # C_goal <-0.5
+      # 
+      # # user input
+      # date_slider1 = '2012-03-02'
+      # date_slider2 = '2013-08-31'
+      # 
+      # #################################################################
+      # #  project # 5648 TA2 - Transition Assessment 
+      # # function for Tool 1
+      # # Asymptote Analysis
+      # 
+      # 
+      # test<-df_series(df,ave_switch,pickwell,
+      #                 date_slider1,date_slider2)
+      # fit_test <- regression_fitness(test)
+      # 
+      # p <- logscale_figure(test,fit_test,date_slider1,date_slider2)
+      # 
+      # Results <- Asymptote_Analysis(C_goal,fit_test)
     }
   )
-} # end Asymptote Server     
+} # end Asymptote Server  
