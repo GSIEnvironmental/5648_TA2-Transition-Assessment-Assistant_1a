@@ -124,7 +124,8 @@ figure_list <-c("01_X.png","02_i.png","03_COC.png",
                 "16_n.png","17_BGLG.png","18_D.png",
                 "19_tortuosity.png","20_HK_FOC.png","21_LK_FOC.png",
                 "22_HK_bulkD.png","23_LK_bulkD.png","24_HK_retardation.png",
-                "25_LK_retardation.png","26_KOC.png","27_TCLevel.png")
+                "25_LK_retardation.png","26_KOC.png","27_TCLevel.png",
+                "28_MC.png","29_Seepage.png")
 # # Functions -----------------
 # #Convert lat/long
 # convert_coords <- function(x,y) {

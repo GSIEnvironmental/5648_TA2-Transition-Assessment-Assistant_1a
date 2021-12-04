@@ -55,7 +55,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                                         HTML("Constituent of Concern:")),
                                                  column(4, align = "center",
                                                         selectInput(ns("COC"),label = NULL,
-                                                                    choices = c(sort(unique(Constituents$`Constituents Name`))),
+                                                                    choices = Constituents_order,#c(sort(unique(Constituents$`Constituents Name`))),
                                                                     selected = "TCE", multiple = F, selectize = FALSE)),
                                                  column(2, align = "left", 
                                                         actionButton(ns("help3"), HTML("?"), style = button_style2))), 
@@ -140,7 +140,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                                    HTML("Transmissive Zone Soil Type:")),
                                             column(4, align = "center",
                                                    selectInput(ns("HighKPorousMedia"), label = NULL,
-                                                               choices = c(sort(unique(TZ_Soil_Type$Soil_Type))),
+                                                               choices = TZ_soil_order,#c(sort(unique(TZ_Soil_Type$Soil_Type))),
                                                                selected = "Sand", multiple = F, selectize = FALSE)),
                                             column(2, align = "left", 
                                                    actionButton(ns("help8"), HTML("?"), style = button_style2))), 
@@ -308,6 +308,14 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                         column(3, align = "center", numericInput(ns("Year_Started_LL"), NULL, value = NULL, min = 0)),
                                         column(3, align = "center", numericInput(ns("Year_Started_UL"), NULL, value = NULL, min = 0))),
                                br(),
+                               fluidRow(column(6, align = "left", uiOutput(ns("Thickness_txt"))),
+                                        column(3, align = "center", numericInput(ns("Thickness_LL"), NULL, value = NULL, min = 0)),
+                                        column(3, align = "center", numericInput(ns("Thickness_UL"), NULL, value = NULL, min = 0))),
+                               br(),
+                               fluidRow(column(6, align = "left", uiOutput(ns("Seep_V_txt"))),
+                                        column(3, align = "center", numericInput(ns("Seep_V_LL"), NULL, value = NULL, min = 0)),
+                                        column(3, align = "center", numericInput(ns("Seep_V_UL"), NULL, value = NULL, min = 0))),
+                               br(),
                                fluidRow(column(6, align = "left", uiOutput(ns("tortuosity_LK_txt"))),
                                         column(3, align = "center", numericInput(ns("tortuosity_LK_LL"), NULL, value = NULL, min = 0)),
                                         column(3, align = "center", numericInput(ns("tortuosity_LK_UL"), NULL, value = NULL, min = 0))),
@@ -319,10 +327,6 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                fluidRow(column(6, align = "left", uiOutput(ns("Retardation_LK_txt"))),
                                         column(3, align = "center", numericInput(ns("Retardation_LK_LL"), NULL, value = NULL, min = 0)),
                                         column(3, align = "center", numericInput(ns("Retardation_LK_UL"), NULL, value = NULL, min = 0))),
-                               br(),
-                               fluidRow(column(6, align = "left", uiOutput(ns("Thickness_txt"))),
-                                        column(3, align = "center", numericInput(ns("Thickness_LL"), NULL, value = NULL, min = 0)),
-                                        column(3, align = "center", numericInput(ns("Thickness_UL"), NULL, value = NULL, min = 0))),
                                br(),
                                conditionalPanel(
                                  condition = "input.HalfLifeYN==2", ns=ns,
@@ -338,9 +342,6 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                           column(3, align = "center", numericInput(ns("Percent_T_UL"), NULL, value = NULL, min = 0))),
                                  br()
                                ), # end conditional panel
-                               fluidRow(column(6, align = "left", uiOutput(ns("Seep_V_txt"))),
-                                        column(3, align = "center", numericInput(ns("Seep_V_LL"), NULL, value = NULL, min = 0)),
-                                        column(3, align = "center", numericInput(ns("Seep_V_UL"), NULL, value = NULL, min = 0))),
                                br()
                     ))), # end Input Date tabset panel
              # column(1, align = "center"),
@@ -514,8 +515,8 @@ CleanupGoals_tabServer <- function(id) {
       }) # end updates Percent_T
       
       observeEvent({input$Seep_V},{
-        updateNumericInput(session, "Seep_V_LL", value = input$Seep_V*0.8)
-        updateNumericInput(session, "Seep_V_UL", value = input$Seep_V*1.2)
+        updateNumericInput(session, "Seep_V_LL", value = input$Seep_V*0.5)
+        updateNumericInput(session, "Seep_V_UL", value = input$Seep_V*2.0)
       }) # end updates Seep_V
       
       ## Reactive Variables -------------------------------
@@ -942,7 +943,7 @@ CleanupGoals_tabServer <- function(id) {
       
       #----- help function 
       lapply(
-        X = 1:27,
+        X = 1:29,
         FUN = function(i){
           observeEvent(input[[paste0("help", i)]], {
             flname <-as.character(figure_list[i])
@@ -1018,7 +1019,7 @@ CleanupGoals_tabServer <- function(id) {
       ## Render Text ------------------------
       output$X_txt <- renderUI({
         req(input$X)
-        HTML(paste0("<h4>Distance from Source to Monitoring Well<br>(Current Value: <b>", input$X, "</b> meters)</h4>"))
+        HTML(paste0("<h4>Distance from Source to Monitoring Well<br>(Current Value: <b>", formatC(input$X, digits=3,format="fg", flag="#"), "</b> meters)</h4>"))
       })
       
       output$Year_Started_txt <- renderUI({
@@ -1028,37 +1029,37 @@ CleanupGoals_tabServer <- function(id) {
       
       output$tortuosity_LK_txt <- renderUI({
         req(input$tortuosity_LK)
-        HTML(paste0("<h4>Tortuosity of Low-k Zone <br>(Current Value: <b>", input$tortuosity_LK, "</b>)</h4>"))
+        HTML(paste0("<h4>Tortuosity of Low-k Zone <br>(Current Value: <b>", formatC(input$tortuosity_LK, digits=3,format="fg", flag="#"), "</b>)</h4>"))
       })
       
       output$Retardation_HK_txt <- renderUI({
         req(input$Retardation_HK)
-        HTML(paste0("<h4>Retardation Factor of Transmissive Zone <br>(Current Value: <b>", input$Retardation_HK, "</b>)</h4>"))
+        HTML(paste0("<h4>Retardation Factor of Transmissive Zone <br>(Current Value: <b>", formatC(input$Retardation_HK, digits=3,format="fg", flag="#"), "</b>)</h4>"))
       })
       
       output$Retardation_LK_txt <- renderUI({
         req(input$Retardation_LK)
-        HTML(paste0("<h4>Retardation Factor of Low-K Zone <br>(Current Value: <b>", input$Retardation_LK, "</b>)</h4>"))
+        HTML(paste0("<h4>Retardation Factor of Low-K Zone <br>(Current Value: <b>", formatC(input$Retardation_LK, digits=3,format="fg", flag="#"), "</b>)</h4>"))
       })
       
       output$Thickness_txt <- renderUI({
         req(input$Thickness)
-        HTML(paste0("<h4>Aquifer Thickness <br>(Current Value: <b>", input$Thickness, "</b> meters)</h4>"))
+        HTML(paste0("<h4>Aquifer Thickness <br>(Current Value: <b>", formatC(input$Thickness, digits=3,format="fg", flag="#"), "</b> meters)</h4>"))
       })
       
       output$HalfLife_txt <- renderUI({
         req(input$HalfLife)
-        HTML(paste0("<h4>Low-k Degradation Half-Life <br>(Current Value: <b>", input$HalfLife, " years</b>)</h4>"))
+        HTML(paste0("<h4>Low-k Degradation Half-Life <br>(Current Value: <b>", formatC(input$HalfLife, digits=3,format="fg", flag="#"), " years</b>)</h4>"))
       })
       
       output$Percent_T_txt <- renderUI({
         req(input$Percent_T)
-        HTML(paste0("<h4>Percent of Aquifer that is Transmissive <br>(Current Value: <b>", input$Percent_T, "</b> %)</h4>"))
+        HTML(paste0("<h4>Percent of Aquifer that is Transmissive <br>(Current Value: <b>", formatC(input$Percent_T, digits=3,format="fg", flag="#"), "</b> %)</h4>"))
       })
       
       output$Seep_V_txt <- renderUI({
         req(input$Seep_V)
-        HTML(paste0("<h4>Seepage Velocity <br>(Current Value: <b>", input$Seep_V, "</b> m/year)</h4>"))
+        HTML(paste0("<h4>Seepage Velocity <br>(Current Value: <b>", formatC(input$Seep_V, digits=3,format="fg", flag="#",drop0trailing = TRUE), "</b> m/year)</h4>"))
       })
     
     }
