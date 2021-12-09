@@ -27,20 +27,20 @@ AsymptoteServer <- function(id) {
       # 
       # lapply(paste0("./R/Functions/",
       #               list.files(path = "./R/Functions",
-      #                          pattern = "[.]R$", 
+      #                          pattern = "[.]R$",
       #                          recursive = TRUE),
-      #               sep=''), 
+      #               sep=''),
       #        source)
       # # -----read in files
-      # location <- read_excel("C:/Users/hmori/Desktop/GSI Work Files/5648_SERDP_Borden/TA2 Module 1 2 Data File v3.xlsx", 
-      #                        sheet = "Data File Template", skip = 2, 
+      # location <- read_excel("C:/Users/hmori/Desktop/GSI Work Files/5648_SERDP_Borden/TA2 Module 1 2 Data File v3.xlsx",
+      #                        sheet = "Data File Template", skip = 2,
       #                        n_max = 2)
       # 
       # 
-      # df <- read_excel("C:/Users/hmori/Desktop/GSI Work Files/5648_SERDP_Borden/TA2 Module 1 2 Data File v3.xlsx", 
-      #                  sheet = "Data File Template", range = "B6:K26", 
-      #                  col_types = c("date", "numeric", "numeric", 
-      #                                "numeric", "numeric", "numeric", 
+      # df <- read_excel("C:/Users/hmori/Desktop/GSI Work Files/5648_SERDP_Borden/TA2 Module 1 2 Data File v3.xlsx",
+      #                  sheet = "Data File Template", range = "B6:K26",
+      #                  col_types = c("date", "numeric", "numeric",
+      #                                "numeric", "numeric", "numeric",
       #                                "numeric", "numeric", "numeric","numeric"))
       # 
       # cname <-c('Date',colnames(location)[2:10])
@@ -64,7 +64,7 @@ AsymptoteServer <- function(id) {
       # date_slider2 = '2013-08-31'
       # 
       # #################################################################
-      # #  project # 5648 TA2 - Transition Assessment 
+      # #  project # 5648 TA2 - Transition Assessment
       # # function for Tool 1
       # # Asymptote Analysis
       # 
@@ -75,6 +75,8 @@ AsymptoteServer <- function(id) {
       # 
       # p <- logscale_figure(test,fit_test,date_slider1,date_slider2)
       # 
+      # To Hannah,
+      # make sliders for choosing the date_slider1 and date_slider2
       # Results <- Asymptote_Analysis(C_goal,fit_test)
     }
   )

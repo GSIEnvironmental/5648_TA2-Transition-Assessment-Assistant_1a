@@ -8,9 +8,9 @@
 regression_fitness <- function(df_series){
   
   # reassign the name of each data frame for all period, first period, and second period
-  for (var in 1:length(names(test))){
-    nam<-names(test)[var]
-    assign(nam, (test[[var]]))
+  for (var in 1:length(names(df_series))){
+    nam<-names(df_series)[var]
+    assign(nam, (df_series[[var]]))
   }
   
   # ----- fitting entire time period

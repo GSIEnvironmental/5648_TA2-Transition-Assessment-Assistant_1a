@@ -5,7 +5,7 @@
 #----- INPUT
 # data base of average concentration from df_series function
 # regression model for each averaged/geomean database from regression_fitness
-# date_slider 1 and date_slider2 is also used here
+# check the sliders
 logscale_figure <- function(df_series,regression_fitness,date_slider1,date_slider2){
   
   # reassign the name of each data frame for all period, first period, and second period
@@ -20,11 +20,11 @@ logscale_figure <- function(df_series,regression_fitness,date_slider1,date_slide
     assign(nam, (regression_fitness[[var]]))
   }
   
-  
+  print (ceiling(log10(max(df_MW$Concentration,na.rm=TRUE))))
   # create y axis as log
   tval <- sort(as.vector(sapply(seq(1,9), 
                                 function(x) 
-                                  x*10^seq(ceiling(log10(min(df_MW$Concentration,na.rm=TRUE))),
+                                  x*10^seq(floor(log10(min(df_MW$Concentration,na.rm=TRUE))),
                                            ceiling(log10(max(df_MW$Concentration,na.rm=TRUE))))))) #generates a sequence of numbers in logarithmic divisions
   
   ttxt <- rep(" ",length(tval))  # no label at most of the ticks
@@ -74,8 +74,10 @@ logscale_figure <- function(df_series,regression_fitness,date_slider1,date_slide
                    zeroline=F
       ),
       yaxis = list(title="COC Concentration at <br> Monitoring Well (ug/L)",
-                   automargin = T,
+                   #automargin = T,
                    type ='log',
+                   range = c(floor(log10(min(df_MW$Concentration,na.rm=TRUE))),
+                             ceiling(log10(max(df_MW$Concentration,na.rm=TRUE)))),
                    tickvals=tval,
                    ticktext=ttxt,
                    zeroline=F),

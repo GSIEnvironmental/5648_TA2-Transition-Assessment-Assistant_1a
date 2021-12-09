@@ -38,7 +38,7 @@ df_series<-function(df,ave_switch,pickwell,
   
   
   if (missing(date_slider2)){
-    df_2 <- df_MW
+    df_2 <- df_1
   }else{
     df_1<-df_MW%>%filter(Date<date_slider2)
     df_2<-df_MW%>%filter(Date>=date_slider2)

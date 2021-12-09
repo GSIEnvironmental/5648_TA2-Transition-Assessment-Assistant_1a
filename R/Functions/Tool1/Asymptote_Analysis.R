@@ -86,7 +86,7 @@ Asymptote_Analysis <- function(C_goal,df_series,regression_fitness){
   # check whether statistically significant
   
   # p-value First Cell
-  pvalue_fit2 <- ifelse(round(as.numeric(summary(fit2)$coefficients[2,4]),3)==0, 
+  pvalue_fit2 <- ifelse(round(as.numeric(summary(fit2)$coefficients[2,4]),3)<0.05,  #check on this!!!
                         '<0.05',
                         round(as.numeric(summary(fit2)$coefficients[2,4]),3))
   
