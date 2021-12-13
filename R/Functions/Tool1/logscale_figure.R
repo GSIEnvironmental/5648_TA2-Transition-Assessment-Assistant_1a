@@ -41,7 +41,7 @@ logscale_figure <- function(df_series,regression_fitness,date_slider1,date_slide
               name = ' ',
               type = "scatter", 
               mode = 'markers',marker = list(color='rgb(31,150,180)'),
-              hovertemplate = paste('<br>Date: %{x}', '<br>Concentration: %{y} ug/L<br>')
+              hovertemplate = paste('<br>Date: %{x}', '<br>Concentration: %{y} μg/L<br>')
     )%>%add_lines( x= ~fit1$model$Date, y = exp(fitted(fit1)),line=list(color='rgb(31,150,180)'))
   
   # generate linear regression line for the second period  
@@ -56,7 +56,7 @@ logscale_figure <- function(df_series,regression_fitness,date_slider1,date_slide
                 name = ' ',
                 type = "scatter", 
                 mode = 'markers',marker = list(color='rgb(255,0,0)'),
-                hovertemplate = paste('<br>Date: %{x}', '<br>Concentration: %{y} ug/L<br>')
+                hovertemplate = paste('<br>Date: %{x}', '<br>Concentration: %{y} μg/L<br>')
       )%>%add_lines( x= ~fit2$model$Date, y = exp(fitted(fit2)))
     
   }
@@ -73,7 +73,7 @@ logscale_figure <- function(df_series,regression_fitness,date_slider1,date_slide
                    #range = c(input$Year_now, input$Year_now+as.numeric(results_list[6])),
                    zeroline=F
       ),
-      yaxis = list(title="COC Concentration at <br> Monitoring Well (ug/L)",
+      yaxis = list(title="COC Concentration at <br> Monitoring Well (μg/L)",
                    #automargin = T,
                    type ='log',
                    range = c(floor(log10(min(df_MW$Concentration,na.rm=TRUE))),
