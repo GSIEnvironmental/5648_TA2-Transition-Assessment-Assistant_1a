@@ -86,16 +86,17 @@ Asymptote_Analysis <- function(C_goal,df_series,regression_fitness){
   # check whether statistically significant
   
   # p-value First Cell
-  pvalue_fit2 <- ifelse(round(as.numeric(summary(fit2)$coefficients[2,4]),3)<0.05,  #check on this!!!
-                        '<0.05',
-                        round(as.numeric(summary(fit2)$coefficients[2,4]),3))
+  pvalue_fit2 <- as.numeric(format(summary(fit2)$coefficients[2,4],digits = 3))
   
   # Ratio of Rate1 to Rate2 Second Cell
   Ratio_fit1_fit2 <- round(summary(fit1)$coefficients[2]/summary(fit2)$coefficients[2]*100,0)
   
+  # Confidence Interval of Slope of fit2
+  CI_fit2 <-c(confint(fit2)[2,1],confint(fit2)[2,2])
   
   # First Question of Aymptotic?
-  Asymptotic_1 <- ifelse(round(as.numeric(summary(fit2)$coefficients[2,4]),3)<0.05&Ratio_fit1_fit2>100,
+  Asymptotic_1 <- ifelse(round(as.numeric(summary(fit2)$coefficients[2,4]),3)<0.05&Ratio_fit1_fit2>100&
+                           sign(confint(fit2)[2,1])==sign(confint(fit2)[2,2]),
                          'YES',
                          'NO')
   # Second Question of Aymptotic?
@@ -129,6 +130,7 @@ Asymptote_Analysis <- function(C_goal,df_series,regression_fitness){
                  'Period1' = Period1,
                  'Period2' = Period2,
                  'pvalue_fit2' = pvalue_fit2,
+                 'CI_fit2' = CI_fit2,
                  'Ratio_fit1_fit2' = Ratio_fit1_fit2,
                  'list_Asymptotic' = list_Asymptotic,
                  'Asymptotic_result' = Asymptotic_result)
@@ -142,6 +144,7 @@ Asymptote_Analysis <- function(C_goal,df_series,regression_fitness){
 # Period1: Period1 of OoM1, Most likely year, lower bound, and upper bound
 # Period2: Period2 of OoM1, Most likely year, lower bound, and upper bound
 # pvalue_fit2: asymptote analysis: pvalue
+# CI_fit2: Confidence interval of slope at fit2 line
 # Ratio_fit1_fit2: asymptote analysis:ratio of rate 1 and rate 2
 # list_Asymptotic: line of evidence of asymptotic1, 2, 3, and 4 results, respectively
 # Asymptotic_result: final result of asymptotic results, YES or NO

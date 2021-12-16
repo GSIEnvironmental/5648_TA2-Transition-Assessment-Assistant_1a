@@ -17,7 +17,6 @@ SENS_MAROS<-function(df_MW_compiled){
     x <- df_MW_compiled %>% filter(WellID %in% .x)%>%
       filter(!is.na(Concentration))
     y <- sens.slope(x$Concentration,conf.level = 0.95)
-    y2 <- sens.slope(x$Concentration,conf.level = 0.90)
     data.frame("Well_ID" = .x,
                "S.p" = y$p.value,
                "S.Slope" = y$estimates[["Sen's slope"]],

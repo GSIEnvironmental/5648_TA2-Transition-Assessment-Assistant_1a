@@ -25,12 +25,16 @@ summary_table<-function(df,COC_flag,Con_flag){
                                "Thermal Treatment"),1,0),
            Ben_flag=ifelse(Technology%in%
                              c("Air Sparging",
-                               "Chemical Oxidation",
+                               "ISCO",
                                "LNAPL recovery",
                                "Mobilizing Surfactant",
-                               "MNA",
+                               #"MNA",
                                "Pump and Treat",
-                               "Solubilizing Surfactant"),1,0)
+                               "Solubilizing Surfactant"),1,0),
+           Conc_flag = case_when(`Parent Maximum Before, ug/L`> 200000 ~ "> 200,000 µg/L",
+                                 `Parent Maximum Before, ug/L`> 2000 & `Parent Maximum Before, ug/L`<= 200000 ~ "2,000 - 200,000 µg/L",
+                                 `Parent Maximum Before, ug/L`> 20 & `Parent Maximum Before, ug/L`<= 2000 ~ "20 - 2,000 µg/L",
+                                 `Parent Maximum Before, ug/L`<=20 ~ "< 20 µg/L")
     )
   
   # how about ISCO???  
@@ -42,7 +46,7 @@ summary_table<-function(df,COC_flag,Con_flag){
   }
   
   if (Con_flag!='all'){
-    df<-df%>%filter(between(`Parent Maximum Before, ug/L`,Con_flag[1],Con_flag[2]))
+    df<-df%>%filter(`Parent Maximum Before, ug/L`==Con_flag)
   }
   
   # split between VOC and Benzene

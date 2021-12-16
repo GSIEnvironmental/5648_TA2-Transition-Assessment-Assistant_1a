@@ -14,13 +14,13 @@ regression_fitness <- function(df_series){
   }
   
   # ----- fitting entire time period
-  fit<-lm(log(Concentration) ~ Date, data = df_MW,na.action=na.omit)
+  fit<-lm(log10(Concentration) ~ Date, data = df_MW,na.action=na.omit)
   
   #generate linear regression line for the first period
-  fit1 <- lm(log(Concentration) ~ Date, data = df_1, na.action=na.omit)
+  fit1 <- lm(log10(Concentration) ~ Date, data = df_1, na.action=na.omit)
   
   #generate linear regression line for the second period
-  fit2 <- lm(log(Concentration) ~ Date, data = df_2,na.action=na.omit)
+  fit2 <- lm(log10(Concentration) ~ Date, data = df_2,na.action=na.omit)
   
   fit_list = list('fit' = fit,
                   'fit1' = fit1,

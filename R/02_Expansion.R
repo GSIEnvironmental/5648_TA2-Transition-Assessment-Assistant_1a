@@ -59,13 +59,13 @@ ExpansionServer <- function(id) {
       # 
       # 
       # # compile the data for mean or geomean (each monitoring well, each group)
-      # df_MW_compiled <- df_series_tool2a(df,pickwelldown,ave_switch)
+      # df_MW_compiled <- df_series_tool2a(df,pickwelldown,ave_switch,C_goal)
       # 
       # # choose which trend test to analyze
       # if (Trend_switch=='MK'){
-      #   MannKendall_MAROS(df_MW_compiled)
+      #   Trend_df <- MannKendall_MAROS(df_MW_compiled)
       # }else{
-      #   SENS_MAROS(df_MW_compiled)
+      #   Trend_df <- SENS_MAROS(df_MW_compiled)
       # }
       # 
       # #visualize the results

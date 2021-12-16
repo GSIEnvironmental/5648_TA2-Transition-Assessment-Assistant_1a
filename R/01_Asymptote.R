@@ -19,7 +19,7 @@ AsymptoteServer <- function(id) {
       
       ## FOLLOWING IS THE CHEAT SHEET OF CALLING EACH FUNCTION
       ##CHEAT SHEET
-      # 
+
       # library(tidyverse)
       # library(readxl)
       # library(plotly)
@@ -69,15 +69,20 @@ AsymptoteServer <- function(id) {
       # # Asymptote Analysis
       # 
       # 
+      # #--- export the averaged monitoring well concentration for all period, period1, and period2
       # test<-df_series(df,ave_switch,pickwell,
       #                 date_slider1,date_slider2)
+      # 
+      # #--- export the fitness of the models range 1 and range 2
       # fit_test <- regression_fitness(test)
       # 
+      # #--- export figure
       # p <- logscale_figure(test,fit_test,date_slider1,date_slider2)
       # 
-      # To Hannah,
-      # make sliders for choosing the date_slider1 and date_slider2
-      # Results <- Asymptote_Analysis(C_goal,fit_test)
+      # # To Hannah,
+      # # make sliders for choosing the date_slider1 and date_slider2
+      # # --- Results return all the necessary information to fill in the cell in storyboard
+      # Results <- Asymptote_Analysis(C_goal,test,fit_test)
     }
   )
 } # end Asymptote Server  

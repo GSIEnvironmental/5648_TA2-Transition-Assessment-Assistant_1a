@@ -9,7 +9,7 @@
 # name: either Chlorinated Solvents or Benzene
 
 
-Rem_Perf_fig<-function(df,linear_df,name){
+Rem_Perf_fig<-function(df,linear_df,name,max_num){
   
   
   # count how many technology in the database
@@ -40,15 +40,15 @@ Rem_Perf_fig<-function(df,linear_df,name){
               nudge_y = 1.1, 
               size = 4)+
     scale_x_continuous(trans='log10',
-                       limits = c(0.001,1000000),
+                       limits = c(0.001,max_num),
                        labels = comma
     )+
     scale_y_continuous(trans='log10',
-                       limits = c(0.001,1000000),
+                       limits = c(0.001,max_num),
                        labels = comma
     )+
-    labs(x = "Maximum Concentration Before Treatment (mg/L)", 
-         y = 'Maximum Concentration After Treatment (mg/L)', 
+    labs(x = "Maximum Concentration Before Treatment (µg/L)", 
+         y = 'Maximum Concentration After Treatment (µg/L)', 
          title = paste0("Remediation Performance: ",name,sep=''))+
     theme(legend.title = element_blank(), 
           legend.position = c(0.2,0.8), 
