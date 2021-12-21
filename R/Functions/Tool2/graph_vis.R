@@ -36,7 +36,7 @@ graph_vis <-function(df_MW_compiled,name,log_flag){
               name = ' ',
               type = "scatter", 
               mode = 'markers',marker = list(color='rgb(31,150,180)'),
-              hovertemplate = paste('<br>Date: %{x}', '<br>Concentration: %{y} ug/L<br>')
+              hovertemplate = paste('<br>Date: %{x}', '<br>Concentration: %{y:.2f} ug/L<br>')
     )
   
   # plot laye out for x axis
@@ -54,13 +54,17 @@ graph_vis <-function(df_MW_compiled,name,log_flag){
       
   if (log_flag =='log'){
     p<-p%>%
-      layout(yaxis = list(title="COC Concentration at <br> Monitoring Well (μg/L)",
+      layout(yaxis = list(title="COC Concentration at <br> Monitoring Well (ug/L)",
                  #automargin = T,
                  type ='log',
-                 range = c(floor(log10(min(df_MW$Concentration,na.rm=TRUE))),
-                           ceiling(log10(max(df_MW$Concentration,na.rm=TRUE)))),
+                 range = c(floor(log10(min(df_all$Concentration,na.rm=TRUE))),
+                           ceiling(log10(max(df_all$Concentration,na.rm=TRUE)))),
                  tickvals=tval,
                  ticktext=ttxt,
+                 showline=T,
+                 mirror = "ticks",
+                 linecolor = toRGB("black"),
+                 linewidth = 2,
                  zeroline=F),
     showlegend = FALSE,
     
@@ -68,10 +72,14 @@ graph_vis <-function(df_MW_compiled,name,log_flag){
     )
   }else{
     p<-p%>%
-      layout(yaxis = list(title="COC Concentration at <br> Monitoring Well (μg/L)",
+      layout(yaxis = list(title="COC Concentration at <br> Monitoring Well (ug/L)",
                    #automargin = T,
-                   range = c(floor((min(df_MW$Concentration,na.rm=TRUE))),
-                             ceiling((max(df_MW$Concentration,na.rm=TRUE)))),
+                   range = c(floor((min(df_all$Concentration,na.rm=TRUE))),
+                             ceiling((max(df_all$Concentration,na.rm=TRUE)))),
+                   showline=T,
+                   mirror = "ticks",
+                   linecolor = toRGB("black"),
+                   linewidth = 2,
                    zeroline=F),
       showlegend = FALSE,
       

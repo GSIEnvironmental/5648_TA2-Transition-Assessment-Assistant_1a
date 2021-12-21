@@ -27,7 +27,7 @@ df_series_tool2a<-function(df,pickwelldown,ave_switch,C_goal){
     group_by(WellID) %>%
     slice(which.max(as.Date(Date, '%Y%M%d')))%>%
     filter(Concentration>=C_goal)%>%
-    select(WellID)
+    dplyr::select(WellID)
   
   df_above_goal <-df_MW%>%
     filter(WellID%in%abovegoal$WellID)
@@ -52,15 +52,15 @@ df_series_tool2a<-function(df,pickwelldown,ave_switch,C_goal){
   # either all, downgradient, or abovegoal
   df_MW_all <- df_MW_all%>%
     mutate(WellID = 'all')%>%
-    select(Date,WellID,Concentration)
+    dplyr::select(Date,WellID,Concentration)
   
   df_MW_downgradient <- df_MW_downgradient%>%
     mutate(WellID = 'downgradient')%>%
-    select(Date,WellID,Concentration)
+    dplyr::select(Date,WellID,Concentration)
   
   df_above_goal <- df_above_goal%>%
     mutate(WellID = 'abovegoal')%>%
-    select(Date,WellID,Concentration)
+    dplyr::select(Date,WellID,Concentration)
   
   # stack all the files by MW name, all, and downgradient
   df_MW_compiled<-rbind(df_MW, df_MW_all, df_MW_downgradient,df_above_goal)

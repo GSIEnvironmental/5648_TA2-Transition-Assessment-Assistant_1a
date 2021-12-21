@@ -148,3 +148,6 @@ Asymptote_Analysis <- function(C_goal,df_series,regression_fitness){
 # Ratio_fit1_fit2: asymptote analysis:ratio of rate 1 and rate 2
 # list_Asymptotic: line of evidence of asymptotic1, 2, 3, and 4 results, respectively
 # Asymptotic_result: final result of asymptotic results, YES or NO
+
+
+

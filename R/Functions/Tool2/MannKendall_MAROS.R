@@ -7,9 +7,7 @@
 # df_MW_compiled: input data frame from df_series_tool2a output
 
 
-MannKendall_MAROS<-function(df_MW_compiled){
-  #------all monitoring wells
-  MWs <- unique(df_MW_compiled$WellID)
+MannKendall_MAROS<-function(df_MW_compiled,MWs,WellID,Concentration){
   
   # function for ManKendall Test
   
@@ -17,23 +15,25 @@ MannKendall_MAROS<-function(df_MW_compiled){
   MKeach <- map_dfr(MWs, ~{
     x <- df_MW_compiled %>% filter(WellID %in% .x)%>%
       filter(!is.na(Concentration))
-    y <- mk.test(x$Concentration)
+    y <- mk.test(get(Concentration,x))
+    z <- sens.slope(get(Concentration,x),conf.level = 0.95) # sen's slope calculation
     data.frame("Well_ID" = .x,
                "MK.p" = y$p.value,
                "MK.S" = y$estimates[["S"]],
-               "MK.CV" = sd(x$Concentration)/mean(x$Concentration))})
+               "MK.CV" = sd(get(Concentration,x))/mean(get(Concentration,x)),
+               "S.Slope" =  z$estimates[["Sen's slope"]])})
   
   # Assigning Trend to Results
   simp <- pal_simpsons("springfield")(12)
   MKeach <- MKeach %>%
     mutate(MK.CF = (1-MK.p),
-           Trend = case_when(MK.CF > 0.95 & MK.S > 0 ~ "Increasing",
-                             MK.CF >= 0.90 & MK.CF <= 0.95 & MK.S > 0 ~ "Probably Increasing",
-                             MK.CF < 0.90 & MK.S > 0 ~ "No Trend",
-                             MK.CV >= 1 & MK.S <= 0 & MK.CF < 0.90 ~ "No Trend",
-                             MK.CV < 1 & MK.S <= 0 & MK.CF < 0.90 ~ "Stable",
-                             MK.CF >= 0.90 & MK.CF <= 0.95 & MK.S < 0 ~ "Probably Decreasing",
-                             MK.CF > 0.95 & MK.S < 0 ~ "Decreasing"),
+           Trend = case_when(MK.CF > 0.95 & MK.S > 0 & S.Slope > 0  ~ "Increasing",
+                             MK.CF >= 0.90 & MK.CF <= 0.95 & MK.S > 0 & S.Slope > 0 ~ "Probably Increasing",
+                             MK.CF < 0.90 & MK.S > 0 & S.Slope > 0 ~ "No Trend",
+                             MK.CV >= 1 & MK.S <= 0 & MK.CF < 0.90 & S.Slope <= 0  ~ "No Trend",
+                             MK.CV < 1 & MK.S <= 0 & MK.CF < 0.90 & S.Slope <= 0 ~ "Stable",
+                             MK.CF >= 0.90 & MK.CF <= 0.95 & MK.S < 0 & S.Slope < 0 ~ "Probably Decreasing",
+                             MK.CF > 0.95 & MK.S < 0 & S.Slope < 0 ~ "Decreasing"),
            Color = case_when(Trend == "No Trend" ~ simp[3],
                              Trend == "Increasing" | Trend == "Probably Increasing" ~ simp[8],
                              Trend == "Decreasing" | Trend == "Probably Decreasing" ~ simp[6],

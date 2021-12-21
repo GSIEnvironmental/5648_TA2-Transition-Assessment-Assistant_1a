@@ -11,7 +11,7 @@
 
 # --- calculate after remediation values
 
-ForcastResults<-function(df,Conc_goal,Conc_site){
+ForecastResults<-function(df,Conc_goal,Conc_site){
   
   
   # export summary table

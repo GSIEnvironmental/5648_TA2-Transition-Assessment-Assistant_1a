@@ -11,6 +11,12 @@
 
 Rem_Perf_fig<-function(df,linear_df,name,max_num){
   
+  if (max_num==1000000){
+    label_tx =c('0.001','0.01','0.1','1','10','100','1,000','10,000','100,000','1,000,000')
+  }else{
+    label_tx =c('0.001','0.01','0.1','1','10','100','1,000')
+  }
+  
   
   # count how many technology in the database
   df_count = df%>%group_by(Technology)%>%
@@ -33,29 +39,34 @@ Rem_Perf_fig<-function(df,linear_df,name,max_num){
               size = 1,
               color='grey',
               show.legend = FALSE)+
-    geom_text(data =linear_df%>%filter(After<10),
+    geom_text(data =linear_df%>%filter(After>=10),
               aes(x = Before,y = After,label = Label), 
-              angle = 42.5,
-              nudge_x = 0.85, 
-              nudge_y = 1.1, 
+              angle = 45,
+              hjust = 0,
               size = 4)+
     scale_x_continuous(trans='log10',
                        limits = c(0.001,max_num),
-                       labels = comma
+                       # tickvals=tval,
+                       # ticktext=ttxt,
+                       breaks = c(1 %o% 10^(-3:log10(max_num))),
+                       labels = label_tx
     )+
     scale_y_continuous(trans='log10',
                        limits = c(0.001,max_num),
-                       labels = comma
+                       breaks = c(1 %o% 10^(-3:log10(max_num))),
+                       labels = label_tx
     )+
-    labs(x = "Maximum Concentration Before Treatment (µg/L)", 
-         y = 'Maximum Concentration After Treatment (µg/L)', 
+    labs(x = "Maximum Concentration Before Treatment (ug/L)", 
+         y = 'Maximum Concentration After Treatment (ug/L)', 
          title = paste0("Remediation Performance: ",name,sep=''))+
     theme(legend.title = element_blank(), 
           legend.position = c(0.2,0.8), 
           legend.box = "horizontal",
           legend.text = element_text(color="black", size=10, hjust = 0.5), 
-          legend.spacing.y = unit(0, "char"))
-  
+          legend.spacing.y = unit(0, "char"),
+          plot.margin = unit(c(1, 8, 1, 1), "lines"))+
+    coord_cartesian(clip="off")
+  p
   # convert to plotly
   #p<-ggplotly(p)
 
