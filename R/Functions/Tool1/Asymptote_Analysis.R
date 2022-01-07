@@ -25,7 +25,7 @@ forecasted_clean <-function(C_goal,fit,condition){
     coeff = fit$coefficients[2] + summary(fit)$coefficients[2,2]
   }
   result = (log(C_goal) - as.numeric(intercept))/as.numeric(coeff)
-  ML = as.Date(result, '1970-01-01')
+  ML = year(as.Date(result, '1970-01-01'))
   return (ML)
 }
 

@@ -37,7 +37,13 @@ MannKendall_MAROS<-function(df_MW_compiled,MWs,WellID,Concentration){
            Color = case_when(Trend == "No Trend" ~ simp[3],
                              Trend == "Increasing" | Trend == "Probably Increasing" ~ simp[8],
                              Trend == "Decreasing" | Trend == "Probably Decreasing" ~ simp[6],
-                             Trend == "Stable" ~ simp[1]))
+                             Trend == "Stable" ~ simp[1]),
+           MapFlag = case_when(Trend == "No Trend" ~ "NT",
+                             Trend == "Increasing" ~ "I",
+                             Trend == "Probably Increasing" ~ "PI",
+                             Trend == "Decreasing" ~ "D",
+                             Trend == "Probably Decreasing" ~ "PD",
+                             Trend == "Stable" ~ "S"))
   
   return(MKeach)
 }
