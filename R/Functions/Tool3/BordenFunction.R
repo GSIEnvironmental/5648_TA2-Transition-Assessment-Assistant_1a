@@ -106,5 +106,8 @@ TimeCleanupCalculation<-function(df,Parameters,BGorLG,TM,Beta,TD,HalfLife){
   }
   
   results_list1 = data.frame(OM1,OM2,OM3,T1,T2,T3,Target_Clean_Level,Time_Cleanup)
+  print ('results_list1')
+  print (results_list1)
+  
   return(results_list1)
 }

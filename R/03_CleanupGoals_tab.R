@@ -40,7 +40,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                         fluidRow(column(6, align = "right",
                                                         HTML("Distance from Source to Monitoring Well (meters):")),
                                                  column(4, align = "center",
-                                                        numericInput(ns("X"), NULL, value=28.8, min = 0, step = 0.01)),
+                                                        numericInput(ns("X"), NULL, value=50, min = 0, step = 0.01)),#28.8 before
                                                  column(2, align = "left",
                                                         actionButton(ns("help1"), HTML("?"), style = button_style2))), 
                                         br(), 
@@ -67,7 +67,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                         fluidRow(column(6, align = "right", 
                                                         HTML("Year Source Started:")),
                                                  column(4, align = "center",
-                                                        numericInput(ns("Year_Started"), NULL, value = 1978, min = 1500)),
+                                                        numericInput(ns("Year_Started"), NULL, value = 1970, min = 1500)), #1978 before
                                                  column(2, align = "left",
                                                         actionButton(ns("help4"), HTML("?"), style = button_style2))),
                                         br(),
@@ -81,7 +81,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                         fluidRow(column(6, align = "right", 
                                                         HTML("Concentration of COC Befoure Source Removed (ug/L):")),
                                                  column(4, align = "center",
-                                                        numericInput(ns("Concentration"), NULL, value = 1000, min = 0, step = 0.01)),
+                                                        numericInput(ns("Concentration"), NULL, value = 10000, min = 0, step = 0.01)), #before 1,000
                                                  column(2, align = "left",
                                                         actionButton(ns("help6"), HTML("?"), style = button_style2))), 
                                         br(),
@@ -109,7 +109,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                                             choices = list("Setting 1: Aquifer with aquitard (either below, above, or both)" = 1,
                                                                            "Setting 2: Aquifer with no aquitard but layers/lenses" = 2,
                                                                            "Setting 3: Aquifer with both aquitard and layers/lenses" = 3 ),
-                                                            selected = 1, inline = FALSE)),
+                                                            selected = 2, inline = FALSE)),
                                         
                                         column(6, align = "center",
                                                fluidRow(HTML("<i>Setting 1</i>")),
@@ -141,7 +141,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                             column(4, align = "center",
                                                    selectInput(ns("HighKPorousMedia"), label = NULL,
                                                                choices = TZ_soil_order,#c(sort(unique(TZ_Soil_Type$Soil_Type))),
-                                                               selected = "Sand", multiple = F, selectize = FALSE)),
+                                                               selected = "Medium Sand", multiple = F, selectize = FALSE)),
                                             column(2, align = "left", 
                                                    actionButton(ns("help8"), HTML("?"), style = button_style2))), 
                                    br(), 
@@ -178,7 +178,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                    fluidRow(column(6, align = "right", 
                                                    HTML("Percent of B that is Transmissive (%):")),
                                             column(4, align = "center",
-                                                   numericInput(ns("Percent_T"), NULL, value = 87.5, min = 0)),
+                                                   numericInput(ns("Percent_T"), NULL, value = 100, min = 0)), #87.5 before
                                             column(2, align = "left",
                                                    actionButton(ns("help12"), HTML("?"), style = button_style2))), 
                                    br(),
@@ -815,15 +815,15 @@ CleanupGoals_tabServer <- function(id) {
       output$selected_TT <- renderText({ 
         validate(need(!is.na(input$X) & !is.na(input$i) & !is.na(input$K), ""))
         
-        if (round(input$X/input$i/(input$K*60*60*24/100)/365,0)<0.1|round(input$X/input$i/(input$K*60*60*24/100)/365,0)>30){
-          paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/input$i/(input$K*60*60*24/100)/365,0),"</b></font>"," years",
+        if (round(input$X/input$Seep_V,0)<0.1|round(input$X/input$Seep_V,0)>30){
+          paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/input$Seep_V,0),"</b></font>"," years",
                 "<BR>","Travel time is excessively [long/short] and outside acceptable range of model.","</H3>")
-        }else if (round(input$X/input$i/(input$K*60*60*24/100)/365,0)>21&round(input$X/input$i/(input$K*60*60*24/100)/365,0)<30){
-          paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/input$i/(input$K*60*60*24/100)/365,0),"</b></font>"," years",
+        }else if (round(input$X/input$Seep_V,0)>21&round(input$X/input$Seep_V,0)<30){
+          paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/input$Seep_V,0),"</b></font>"," years",
                 "<BR>","Travel time to monitoring well is unusually long and outside model range.",
                 "<BR>","Results may be inaccurate.","</H3>")
         }else{
-          paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/input$i/(input$K*60*60*24/100)/365,0),"</b></font>"," years","</H3>")
+          paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/input$Seep_V,0),"</b></font>"," years","</H3>")
         }
         
       })
