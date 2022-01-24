@@ -15,7 +15,7 @@
 ## Notes:  
 
 options(stringsAsFactors = FALSE)
-
+#options(shiny.error=browser)
 # Load Packages ----------------
 
 require(tidyverse)

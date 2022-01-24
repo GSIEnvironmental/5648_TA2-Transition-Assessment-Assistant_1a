@@ -79,7 +79,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                                         actionButton(ns("help5"), HTML("?"), style = button_style2))),
                                         br(),
                                         fluidRow(column(6, align = "right", 
-                                                        HTML("Concentration of COC Befoure Source Removed (ug/L):")),
+                                                        HTML("Concentration of COC Before Source Removed (ug/L):")),
                                                  column(4, align = "center",
                                                         numericInput(ns("Concentration"), NULL, value = 10000, min = 0, step = 0.01)), #before 1,000
                                                  column(2, align = "left",
@@ -132,7 +132,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                    fluidRow(column(6, align = "right", 
                                                    HTML("Aquifer Thickness (meters):")),
                                             column(4, align = "center",
-                                                   numericInput(ns("Thickness"), NULL, value = 5, min = 0)),
+                                                   numericInput(ns("Thickness"), NULL, value = 1, min = 0)),
                                             column(2, align = "left",
                                                    actionButton(ns("help7"), HTML("?"), style = button_style2))), 
                                    br(),
@@ -178,14 +178,14 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                    fluidRow(column(6, align = "right", 
                                                    HTML("Percent of B that is Transmissive (%):")),
                                             column(4, align = "center",
-                                                   numericInput(ns("Percent_T"), NULL, value = 100, min = 0)), #87.5 before
+                                                   numericInput(ns("Percent_T"), NULL, value = 90, min = 0)), #87.5 before
                                             column(2, align = "left",
                                                    actionButton(ns("help12"), HTML("?"), style = button_style2))), 
                                    br(),
                                    fluidRow(column(6, align = "right", 
                                                    HTML("Number of Low-k Layers (-):")),
                                             column(4, align = "center",
-                                                   numericInput(ns("N"), NULL, value = 2, min = 0)),
+                                                   numericInput(ns("N"), NULL, value = 1, min = 0)),
                                             column(2, align = "left",
                                                    actionButton(ns("help13"), HTML("?"), style = button_style2))), 
                                    br()
@@ -221,7 +221,9 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                         fluidRow(column(6, align = "right", 
                                                         HTML("Seepage Velocity (m/year):")),
                                                  column(4, align = "center",
-                                                        numericInput(ns("Seep_V"), NULL, value = 39.8615, min = 0)),
+                                                        uiOutput(ns("Seep_V_txt"))
+                                                        #numericInput(ns("Seep_V"), NULL, value = 39.8615, min = 0)
+                                                        ),
                                                  column(2, align = "left",
                                                         actionButton(ns("help29"), HTML("?"), style = button_style2))),
                                         br(),
@@ -304,6 +306,18 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                         column(3, align = "center", numericInput(ns("X_LL"), NULL, value = NULL, min = 0)),
                                         column(3, align = "center", numericInput(ns("X_UL"), NULL, value = NULL, min = 0))),
                                br(),
+                               fluidRow(column(6, align = "left", uiOutput(ns("K_txt"))),
+                                        column(3, align = "center", numericInput(ns("K_LL"), NULL, value = NULL, min = 0)),
+                                        column(3, align = "center", numericInput(ns("K_UL"), NULL, value = NULL, min = 0))),
+                               br(),
+                               fluidRow(column(6, align = "left", uiOutput(ns("i_txt"))),
+                                        column(3, align = "center", numericInput(ns("i_LL"), NULL, value = NULL, min = 0)),
+                                        column(3, align = "center", numericInput(ns("i_UL"), NULL, value = NULL, min = 0))),
+                               br(),
+                               fluidRow(column(6, align = "left", uiOutput(ns("ne_txt"))),
+                                        column(3, align = "center", numericInput(ns("ne_LL"), NULL, value = NULL, min = 0)),
+                                        column(3, align = "center", numericInput(ns("ne_UL"), NULL, value = NULL, min = 0))),
+                               br(),
                                fluidRow(column(6, align = "left", uiOutput(ns("Year_Started_txt"))),
                                         column(3, align = "center", numericInput(ns("Year_Started_LL"), NULL, value = NULL, min = 0)),
                                         column(3, align = "center", numericInput(ns("Year_Started_UL"), NULL, value = NULL, min = 0))),
@@ -312,10 +326,10 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                         column(3, align = "center", numericInput(ns("Thickness_LL"), NULL, value = NULL, min = 0)),
                                         column(3, align = "center", numericInput(ns("Thickness_UL"), NULL, value = NULL, min = 0))),
                                br(),
-                               fluidRow(column(6, align = "left", uiOutput(ns("Seep_V_txt"))),
-                                        column(3, align = "center", numericInput(ns("Seep_V_LL"), NULL, value = NULL, min = 0)),
-                                        column(3, align = "center", numericInput(ns("Seep_V_UL"), NULL, value = NULL, min = 0))),
-                               br(),
+                               # fluidRow(column(6, align = "left", uiOutput(ns("Seep_V_txt"))),
+                               #          column(3, align = "center", numericInput(ns("Seep_V_LL"), NULL, value = NULL, min = 0)),
+                               #          column(3, align = "center", numericInput(ns("Seep_V_UL"), NULL, value = NULL, min = 0))),
+                               # br(),
                                fluidRow(column(6, align = "left", uiOutput(ns("tortuosity_LK_txt"))),
                                         column(3, align = "center", numericInput(ns("tortuosity_LK_LL"), NULL, value = NULL, min = 0)),
                                         column(3, align = "center", numericInput(ns("tortuosity_LK_UL"), NULL, value = NULL, min = 0))),
@@ -355,7 +369,9 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                              fluidRow(align = "center",
                                       gt_output(ns("calc_output")),
                                       br(),
-                                      htmlOutput(ns("selected_TT"))),
+                                      htmlOutput(ns("selected_TT")),
+                                      br(),
+                                      htmlOutput(ns("selected_TT3"))),
                              br(), br(),
                              # Plot of Results
                              HTML("<h3 style = 'color: #4a746c;'><b><i>2. See Approximate Timeframe to a Reach Clean-up Goal (optional) </i></b></h4>"),
@@ -479,6 +495,21 @@ CleanupGoals_tabServer <- function(id) {
           updateNumericInput(session, "X_UL", value = input$X*1.2)
       }) # end updates thickness
       
+      observeEvent({input$K},{
+        updateNumericInput(session, "K_LL", value = input$K*0.5)
+        updateNumericInput(session, "K_UL", value = input$K*2.0)
+      }) # end updates thickness
+      
+      observeEvent({input$i},{
+        updateNumericInput(session, "i_LL", value = input$i*0.8)
+        updateNumericInput(session, "i_UL", value = input$i*1.2)
+      }) # end updates thickness
+      
+      observeEvent({input$ne},{
+        updateNumericInput(session, "ne_LL", value = input$ne*0.8)
+        updateNumericInput(session, "ne_UL", value = input$ne*1.2)
+      }) # end updates thickness
+      
       observeEvent({input$Year_Started},{
         updateNumericInput(session, "Year_Started_LL", value = input$Year_Started-10)
         updateNumericInput(session, "Year_Started_UL", value = input$Year_Started+10)
@@ -510,14 +541,20 @@ CleanupGoals_tabServer <- function(id) {
       }) # end updates HalfLife
       
       observeEvent({input$Percent_T},{
-        updateNumericInput(session, "Percent_T_LL", value = input$Percent_T*0.8)
-        updateNumericInput(session, "Percent_T_UL", value = input$Percent_T*1.2)
+        Percent_TA <-ifelse(input$Percent_T*0.8<100,input$Percent_T*0.8,100)
+        Percent_TB <-ifelse(input$Percent_T*1.2<100,input$Percent_T*1.2,100)
+        updateNumericInput(session, "Percent_T_LL", value = Percent_TA)
+        updateNumericInput(session, "Percent_T_UL", value = Percent_TB)
+        # updateNumericInput(session, "Percent_T_LL", value = ifelse(input$Percent_T*0.8<100,input$Percent_T*0.8,100))
+        # updateNumericInput(session, "Percent_T_UL", value = ifelse(input$Percent_T*1.2<100,input$Percent_T*1.2,100))
       }) # end updates Percent_T
       
-      observeEvent({input$Seep_V},{
-        updateNumericInput(session, "Seep_V_LL", value = input$Seep_V*0.5)
-        updateNumericInput(session, "Seep_V_UL", value = input$Seep_V*2.0)
-      }) # end updates Seep_V
+      # observeEvent({input$Seep_V},{
+      #   updateNumericInput(session, "Seep_V_LL", value = input$Seep_V*0.5)
+      #   updateNumericInput(session, "Seep_V_UL", value = input$Seep_V*1.0)
+      #   # updateNumericInput(session, "Seep_V_LL", value = ifelse(input$Seep_V*0.5>7,input$Seep_V*0.5,7))
+      #   # updateNumericInput(session, "Seep_V_UL", value = ifelse(input$Seep_V*2>7,input$Seep_V*2.0,7))
+      # }) # end updates Seep_V
       
       ## Reactive Variables -------------------------------
       results <- reactiveVal()
@@ -533,7 +570,10 @@ CleanupGoals_tabServer <- function(id) {
             input$Thickness_LL < input$Thickness & input$Thickness_UL > input$Thickness,
             input$HalfLife_LL < input$HalfLife & input$HalfLife_UL > input$HalfLife,
             input$Percent_T_LL < input$Percent_T & input$Percent_T_UL > input$Percent_T,
-            input$Seep_V_LL < input$Seep_V & input$Seep_V_UL > input$Seep_V,
+            input$K_LL < input$K & input$K_UL > input$K,
+            input$ne_LL < input$ne & input$ne_UL > input$ne,
+            input$i_LL < input$i & input$i_UL > input$i,
+            #input$Seep_V_LL < input$Seep_V & input$Seep_V_UL > input$Seep_V,
             input$i,
             input$COC,
             input$Year_Removed,
@@ -561,7 +601,9 @@ CleanupGoals_tabServer <- function(id) {
         }else{
           results_list = pmax(LG_BordenFunction(df),BG_BordenFunction(df))
         }
-        results(results_list)
+        
+        #print (results_list)
+        results(results_list[c(df$remain_index),])
         error("")
       })
       
@@ -621,24 +663,37 @@ CleanupGoals_tabServer <- function(id) {
 
       ## Figure ----------------------------------------------
       plotlyfigureoutput <- reactive({
+        validate(need(nrow(results()) >= 700, "Seepage Velocity Outside the Range of Borden Model"))
         results_list_all = results()
-        
         results_list<-apply(results_list_all,2,mean)
+        print ('results_list')
+        print (results_list)
         P10_list <-apply(results_list_all,2,function(x) quantile(x, probs = .1))
         P90_list <-apply(results_list_all,2,function(x) quantile(x, probs = .9))
         
         min_list <-apply(results_list_all,2,min)
         max_list <-apply(results_list_all,2,max)
         
-        cd_1 <- data.frame(time = c(0,round(sort(results_list[c(4:6,8)]),1)),
+        cd_1 <- data.frame(time = c(0,round((results_list[c(4:6,8)]),1)),
                            Concentration=c(input$Concentration,
-                                           sort(results_list[c(1:3,7)],decreasing=TRUE)))
-        cd_1_p10 <- data.frame(time = c(0,round(sort(P10_list[c(4:6,8)]),1)),
+                                           (results_list[c(1:3,7)])))
+        cd_1_p10 <- data.frame(time = c(0,round((P10_list[c(4:6,8)]),1)),
                                Concentration=c(input$Concentration,
-                                               sort(P10_list[c(1:3,7)],decreasing=TRUE)))
-        cd_1_p90 <- data.frame(time = c(0,round(sort(P90_list[c(4:6,8)]),1)),
+                                               (P10_list[c(1:3,7)])))
+        cd_1_p90 <- data.frame(time = c(0,round((P90_list[c(4:6,8)]),1)),
                                Concentration=c(input$Concentration,
-                                               sort(P90_list[c(1:3,7)],decreasing=TRUE)))
+                                               (P90_list[c(1:3,7)])))
+        print ('cd_1')
+        print (cd_1)
+        # cd_1 <- data.frame(time = c(0,round(sort(results_list[c(4:6,8)]),1)),
+        #                    Concentration=c(input$Concentration,
+        #                                    sort(results_list[c(1:3,7)],decreasing=TRUE)))
+        # cd_1_p10 <- data.frame(time = c(0,round(sort(P10_list[c(4:6,8)]),1)),
+        #                        Concentration=c(input$Concentration,
+        #                                        sort(P10_list[c(1:3,7)],decreasing=TRUE)))
+        # cd_1_p90 <- data.frame(time = c(0,round(sort(P90_list[c(4:6,8)]),1)),
+        #                        Concentration=c(input$Concentration,
+        #                                        sort(P90_list[c(1:3,7)],decreasing=TRUE)))
         cd_1$p10range <-cd_1_p10$time
         cd_1$p90range <-cd_1_p90$time 
         
@@ -656,6 +711,7 @@ CleanupGoals_tabServer <- function(id) {
           ttxt = append(ttxt,as.character(results_list[7]),after=ind_cl-1)
         }
         
+        
         p <-plot_ly()%>%
           add_trace(data = cd_1, x= ~time+input$Year_Removed,
                     y = ~Concentration ,
@@ -663,24 +719,28 @@ CleanupGoals_tabServer <- function(id) {
                     type = "scatter", line = list(shape = "spline",color='rgb(31,150,180)'),
                     mode = 'lines+markers',
                     hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration: %{y} ug/L<br>')
-          )%>%
-          add_trace(data = cd_1, x= ~p90range+input$Year_Removed,#90%
+          )
+        if (nrow(results())>=700){
+          p<-p%>%
+            add_trace(data = cd_1, x= ~p90range+input$Year_Removed,#90%
                     y = ~Concentration , 
                     name = ' ',
                     type = "scatter", line = list(shape = "spline",color='rgba(0,100,80,1)'),
                     mode = 'lines',
                     hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration 90th %: %{y} ug/L<br>')
           )%>%
-          add_trace(data = cd_1, x= ~p10range+input$Year_Removed,#10%
-                    y = ~Concentration , 
-                    name = ' ',
-                    type = "scatter", #line = list(shape = "spline",color='rgb(31,119,180)'),
-                    mode = 'lines',
-                    fill='tonexty',
-                    fillcolor = 'rgba(0,100,80,0.2)',
-                    line = list(shape = "spline",color='rgba(0,100,80,1)'),
-                    hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration 10th %: %{y} ug/L<br>')
-          )%>%
+            add_trace(data = cd_1, x= ~p10range+input$Year_Removed,#10%
+                      y = ~Concentration , 
+                      name = ' ',
+                      type = "scatter", #line = list(shape = "spline",color='rgb(31,119,180)'),
+                      mode = 'lines',
+                      fill='tonexty',
+                      fillcolor = 'rgba(0,100,80,0.2)',
+                      line = list(shape = "spline",color='rgba(0,100,80,1)'),
+                      hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration 10th %: %{y} ug/L<br>')
+            )
+        }
+          p<-p%>%
           # add_segments(x = input$Year_Removed,
           #              xend = round(as.numeric(results_list[6])+input$Year_Removed,0),
           #              y = as.numeric(results_list[7]), yend = as.numeric(results_list[7]),
@@ -736,6 +796,7 @@ CleanupGoals_tabServer <- function(id) {
       ## Results Table -------------------------
       output$calc_output <- render_gt(align = "center", {
         # Get Values
+        validate(need(nrow(results()) >= 700, "Seepage Velocity Outside the Range of Borden Model"))
         validate(need(error() != "Check Inputs", "Please Check Input Values"))
         cd <- results()
         results_list<-apply(cd,2,mean)
@@ -787,43 +848,61 @@ CleanupGoals_tabServer <- function(id) {
         cd$E<- ifelse(cd$E<1,'<1',as.character(round(cd$E)))
         
         # Create Table
-        cd %>%gt()%>%
-          tab_options(column_labels.hidden = FALSE)%>%
-          cols_label(
-            A = "Concentration Reduction",
-            B = "Concentration (ug/L)",
-            C = "Year Achieved",
-            D = glue(" Years From Now (",format(Sys.Date(),'%Y'),")"),
-            E = "Deviation of Years"
-          )%>%
-          #tab_header("RESULTS") %>%
-          fmt_number(columns = c(2,3), rows = everything(), decimals = 0, use_seps=FALSE) %>%
-          #fmt_markdown(columns = vars("Concentration Reduction", "Concentration (ug/L)","Year")) %>%
-          #tab_style(style = list(cell_text(style = "italic")),
-          #          locations = cells_column_labels(columns = everything())) %>%
-          tab_style(style = list(cell_text(align='center')),
-                    locations = list(cells_title(group = "title"),
-                                     cells_body(rows = everything(), columns = c(1,2,5)))) %>%
-          tab_style(style = list(cell_text(weight = "bold",color='red',align='center')),
-                    locations = list(cells_title(group = "title"),
-                                     cells_body(rows = everything(), columns = c(3,4)))) %>%
-          opt_table_outline()
+
+          cd<-cd %>%gt()%>%
+            tab_options(column_labels.hidden = FALSE)%>%
+            cols_label(
+              A = "Concentration Reduction",
+              B = "Concentration (ug/L)",
+              C = "Year Achieved",
+              D = glue(" Years From Now (",format(Sys.Date(),'%Y'),")"),
+              E = "Deviation of Years"
+            )%>%
+            #tab_header("RESULTS") %>%
+            fmt_number(columns = c(2,3), rows = everything(), decimals = 0, use_seps=FALSE) %>%
+            #fmt_markdown(columns = vars("Concentration Reduction", "Concentration (ug/L)","Year")) %>%
+            #tab_style(style = list(cell_text(style = "italic")),
+            #          locations = cells_column_labels(columns = everything())) %>%
+            tab_style(style = list(cell_text(align='center')),
+                      locations = list(cells_title(group = "title"),
+                                       cells_body(rows = everything(), columns = c(1,2,5)))) %>%
+            tab_style(style = list(cell_text(weight = "bold",color='red',align='center')),
+                      locations = list(cells_title(group = "title"),
+                                       cells_body(rows = everything(), columns = c(3,4))))
+
+          opt_table_outline(cd)
       }) # end calc_output table
 
       
       ## Export travel time results ---------------------
       output$selected_TT <- renderText({ 
-        validate(need(!is.na(input$X) & !is.na(input$i) & !is.na(input$K), ""))
-        
-        if (round(input$X/input$Seep_V,0)<0.1|round(input$X/input$Seep_V,0)>30){
-          paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/input$Seep_V,0),"</b></font>"," years",
+        validate(need(!is.na(input$X) & !is.na(input$i) & !is.na(input$K) & !is.na(input$ne), ""))
+        Seep_V <-input$K*input$i/input$ne/100*60*60*24*365
+        if (round(input$X/Seep_V,0)<0.1|round(input$X/Seep_V,0)>30){
+          paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/Seep_V,0),"</b></font>"," years",
                 "<BR>","Travel time is excessively [long/short] and outside acceptable range of model.","</H3>")
-        }else if (round(input$X/input$Seep_V,0)>21&round(input$X/input$Seep_V,0)<30){
-          paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/input$Seep_V,0),"</b></font>"," years",
+        }else if (round(input$X/Seep_V,0)>21&round(input$X/Seep_V,0)<30){
+          paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/Seep_V,0),"</b></font>"," years",
                 "<BR>","Travel time to monitoring well is unusually long and outside model range.",
                 "<BR>","Results may be inaccurate.","</H3>")
         }else{
-          paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/input$Seep_V,0),"</b></font>"," years","</H3>")
+          paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/Seep_V,0),"</b></font>"," years","</H3>")
+        }
+        
+      })
+      
+      ## Export MC number---------------------
+      output$selected_TT3 <- renderText({ 
+        validate(need(error() != "Check Inputs", "Please Check Input Values"))
+        print ('i')
+        print (input$i)
+        df<-MC_function_LHC(input)
+        len_MC <- length(df$remain_index)
+        if (len_MC<700){
+          paste("<H3>","MC Number of Realizations:", "<b>", round(len_MC,0),"</b></font>"," out of 1,000",
+                "<BR>","MC Results will be Biased. No Results.","</H3>")
+        }else{
+          paste("<H3>","MC Number of Realizations:", "<b>", round(len_MC,0),"</b></font>"," out of 1,000","</H3>")
         }
         
       })
@@ -938,6 +1017,7 @@ CleanupGoals_tabServer <- function(id) {
           writeData(wb, sheet = "Parameters", x = x, startCol = 1, startRow = 1, colNames = F)
 
           saveWorkbook(wb, con)
+          #saveRDS( reactiveValuesToList(input) , file = 'inputs.RDS')
         }
       )# end model_results
       
@@ -953,15 +1033,20 @@ CleanupGoals_tabServer <- function(id) {
       )
       
       # warning message-----------
+      ids <- character(0)
       observeEvent(input$Thickness, {
         if (input$BGLG==1 &(input$Thickness<0.5|input$Thickness>5)){
-          showNotification("WARNING!!! Aquifer thickness outside model range",
+          showNotification("WARNING!!! Aquifer thickness outside model range (0.5-5)",
                            type="warning",
-                           duration=NULL)
+                           duration=NULL,
+                           id = 'A')
         }else if((input$BGLG!=1 &(input$Thickness<0.5|input$Thickness>2))){
-          showNotification("WARNING!!! Aquifer thickness outside model range for Layered Geometry. Please use Boundary Geometry.",
+          showNotification("WARNING!!! Aquifer thickness outside model range (0.5-2) for Layered Geometry. Please use Boundary Geometry.",
                            type="warning",
-                           duration=NULL)
+                           duration=NULL,
+                           id = 'A')
+        }else{
+          removeNotification(id = 'A')
         }
       })
       
@@ -970,17 +1055,22 @@ CleanupGoals_tabServer <- function(id) {
         input$Year_Removed
       }, {
         if ((input$Year_Removed-input$Year_Started)<10|(input$Year_Removed-input$Year_Started)>100){
-          showNotification("WARNING!!! Time between Source Started year and Source Removed year outside model range.",
+          showNotification("WARNING!!! Time between Source Started year and Source Removed year outside model range (10-100).",
                            type="warning",
-                           duration=NULL)
+                           duration=NULL,
+                           id = 'B')
+        }else{
+          removeNotification(id = 'B')
         }
       })
       
       observeEvent(input$tortuosity_LK, {
         if (input$tortuosity_LK<0.07|input$tortuosity_LK>0.7){
-          showNotification("WARNING!!! Tortuosity outside model range.",
+          showNotification("WARNING!!! Tortuosity outside model range (0.07-0.7).",
                            type="warning",
-                           duration=NULL)
+                           duration=NULL,id = 'C')
+        }else{
+          removeNotification(id = 'C')
         }
       })
       
@@ -989,28 +1079,76 @@ CleanupGoals_tabServer <- function(id) {
         input$Retardation_LK
       }, {
         if (input$Retardation_HK<1|input$Retardation_LK<1|input$Retardation_HK>10|input$Retardation_LK>10){
-          showNotification("WARNING!!! [Low K/High K] retardation factor outside model range.",
+          showNotification("WARNING!!! [Low K/High K] retardation factor outside model range (1-10).",
                            type="warning",
-                           duration=NULL)
+                           duration=NULL,id = 'D')
+        }else{
+          removeNotification(id = 'D')
         }
       })
       
+      observeEvent({
+        input$Concentration
+        input$Target_Clean_Leve
+        }, {
+        if (round(log10(Concentration/Target_Clean_Level),3)>3|round(log10(Concentration/Target_Clean_Level),3)<1){
+          showNotification("WARNING!!! OoM outside of range (1-3) model range. Cannot calculate time for cleanup",
+                           type="warning",
+                           duration=NULL,id = 'E')
+        }else{
+          removeNotification(id = 'E')
+        }
+          })
+      
       observeEvent(input$n, {
         if (input$n<0.15|input$n>0.5){
-          showNotification("WARNING!!! Low K porosity outside model range.",
+          showNotification("WARNING!!! Low K porosity outside model range (0.15-0.5).",
                            type="warning",
-                           duration=NULL)
-          }
-        })
+                           duration=NULL,id = 'F')
+        }else{
+          removeNotification(id = 'F')
+        }
+      })
+      
+      observeEvent({
+        input$K
+        input$ne
+        input$i
+      }, {
+        Seep_V <-input$K*input$i/input$ne*60*60*24*365/100
+        if (Seep_V<7|Seep_V>210){
+          showNotification("WARNING!!! Seepage velocity outside model range (7-210 m/year).",
+                           type="warning",
+                           duration=NULL,
+                           id = 'G')
+        }else{
+          removeNotification(id = 'G')
+        }
+      })
+
+      observeEvent(input$Percent_T, {
+        if (input$Percent_T<10|input$Percent_T>90){
+          showNotification("WARNING!!! Percentage of Transmissive Zone is outside model range (10-90%).",
+                           type="warning",
+                           duration=NULL,
+                           id = 'H')
+        }else{
+          removeNotification(id = 'H')
+        }
+      })
+      
       HalfLife <-reactiveVal()
       observeEvent({
         input$HalfLife
         input$HalfLifeYN}, {
         if (input$HalfLife<0.7|input$HalfLifeYN>7000){
-          showNotification("WARNING!!! Half-life outside model range.",
+          showNotification("WARNING!!! Half-life outside model range (0.7-7,000).",
                            type="warning",
-                           duration=NULL)
+                           duration=NULL,id = 'I')
+        }else{
+          removeNotification(id = 'I')
         }
+          
         if (input$HalfLifeYN==1){
           HalfLife(0)
         }
@@ -1020,6 +1158,21 @@ CleanupGoals_tabServer <- function(id) {
       output$X_txt <- renderUI({
         req(input$X)
         HTML(paste0("<h4>Distance from Source to Monitoring Well<br>(Current Value: <b>", formatC(input$X, digits=3,format="fg", flag="#"), "</b> meters)</h4>"))
+      })
+      
+      output$K_txt <- renderUI({
+        req(input$X)
+        HTML(paste0("<h4>Hydraulic Conductivity of High K Zone<br>(Current Value: <b>", formatC(input$K, digits=3,format="fg", flag="#"), "</b> cm/s)</h4>"))
+      })
+      
+      output$i_txt <- renderUI({
+        req(input$X)
+        HTML(paste0("<h4>Hydraulic Gradient<br>(Current Value: <b>", formatC(input$i, digits=3,format="fg", flag="#"), "</b>)</h4>"))
+      })
+      
+      output$ne_txt <- renderUI({
+        req(input$X)
+        HTML(paste0("<h4>Effective Porosity<br>(Current Value: <b>", formatC(input$ne, digits=3,format="fg", flag="#"), "</b>)</h4>"))
       })
       
       output$Year_Started_txt <- renderUI({
@@ -1058,8 +1211,15 @@ CleanupGoals_tabServer <- function(id) {
       })
       
       output$Seep_V_txt <- renderUI({
-        req(input$Seep_V)
-        HTML(paste0("<h4>Seepage Velocity <br>(Current Value: <b>", formatC(input$Seep_V, digits=3,format="fg", flag="#",drop0trailing = TRUE), "</b> m/year)</h4>"))
+        req(input$K,
+            input$i,
+            input$ne)
+        Seep_V <- input$K*input$i/input$ne/100*60*60*24*365
+        if (Seep_V<10){
+          HTML(paste0("<h4><b>", formatC(Seep_V, digits=2,format="fg", flag="#",drop0trailing = FALSE), "</b></h4>"))
+        }else{
+          HTML(paste0("<h4><b>", formatC(Seep_V, digits=2,format="fg", flag="#",drop0trailing = TRUE), "</b></h4>"))
+        }
       })
     
     }
