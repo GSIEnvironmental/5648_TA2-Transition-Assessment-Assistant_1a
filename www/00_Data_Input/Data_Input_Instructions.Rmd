@@ -1,0 +1,20 @@
+<h3><b>Data Input Instructions:</b></h3>
+
+* Use Year-Month-Date format for dates (ex. 2020-01-01).
+* You need at least four independent sampling events to get trends.
+* Do not enter any Flags or < or > signs, must be numerical data.
+* The tool can only process up to 30 wells.
+* Most of the samples should have detected values.
+* For non-detects, use either 1/2 the detection limit (DL) or the DL. Don't use zero.
+* Don't enter duplicate values, either use the average or the first of the two duplicates.
+* Add Latitude and Longitude information for the Monitoring Wells to the table under the tab 'Monitoring Well Information'. Adding this information will allow results from Tools 1 and 2 to be mapped.
+* Click checkboxes, in the 'Monitoring Well Information' table, to denote downgradient wells.
+* You can save these data by clicking on the 'Save Data' button above the table to the right. You can re-load previously saved data by clicking on the 'Upload Saved Data' button and choosing a previously saved data file.
+
+<h3><b>How to Edit Data:</b></h3>
+
+* Data can be copied and pasted directly into table by selecting cell(s) and using the keyboard shortcut to paste (Windows: Ctrl + V).
+* Double click cells to edit text.
+* Additional rows and columns can be added or removed by right clicking on cell(s).
+* Clicking the bottom left corner of selected cell(s) allows the user to drag that information to additional cell(s).
+* Cells highlighted red indicate the value within that cell is not in the correct format (ex. characters are present in column that can only include numerical data). 

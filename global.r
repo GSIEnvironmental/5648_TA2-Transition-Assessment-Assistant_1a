@@ -15,7 +15,7 @@
 ## Notes:  
 
 options(stringsAsFactors = FALSE)
-
+#options(shiny.error=browser)
 # Load Packages ----------------
 
 require(tidyverse)
@@ -40,7 +40,7 @@ library(shinycssloaders)
  require(plotly)
  library(rsconnect)
  
- library(reticulate)
+ # library(reticulate)
 
 library(rhandsontable)
 library(shinyscreenshot)
@@ -95,7 +95,17 @@ hline <- function(y = 0, color = "black") {
   )
 }
 
-# BordenToolKit-----------------
+# Data Input ---------------------
+
+temp_data <- read.xlsx("./data/data_template.xlsx", sheet = "Concentration_Time_Data", startRow = 2,
+                       check.names = F) %>%
+  mutate(Event = as.integer(Event),
+         Date = as.Date(Date, origin="1899-12-30"))
+
+temp_mw_info <- read.xlsx("./data/data_template.xlsx", sheet = "Monitoring_Well_Information", startRow = 1,
+                       check.names = F, sep.names = " ")
+
+# Borden Tool Kit ----------------
 
 Constituents <- read_excel("./data/BordenTool_Data_Template.xlsx", 
                            sheet = "Constituents")
@@ -188,38 +198,38 @@ button_style_big <- "white-space: normal;
 
 
 ## Loading Modules ------------------------------------
-
+source("./R/00_Data_Input.R")
 source("./R/01_Asymptote.R")
-
-source("./R/02_Expansion.R")
+# 
+# source("./R/02_Expansion.R")
 
 #source("./R/BordenTool.R")
 #ource("./R/03_CleanupGoals.R")
 #source("./R/03_CleanupGoals_linear.R")
 source("./R/03_CleanupGoals_tab.R")
 
-# source("./R/03_CleanupGoals_MCtab.R")
-
-source("./R/04_Performance.R")
-
-source("./R/05_MatrixDiffusion.R")
-
-source("./R/07_Heterogeneity.R")
-
-source("./R/09_PlumeZone.R")
-
-source("./R/10_Summary.R")
+# # source("./R/03_CleanupGoals_MCtab.R")
+# 
+# source("./R/04_Performance.R")
+# 
+# source("./R/05_MatrixDiffusion.R")
+# 
+# source("./R/07_Heterogeneity.R")
+# 
+# source("./R/09_PlumeZone.R")
+# 
+# source("./R/10_Summary.R")
 
 ## Loading Functions ------------------------------------------------
 lapply(paste0("./R/Functions/",
               list.files(path = "./R/Functions",
-                         pattern = "[.]R$", 
+                         pattern = "[.]R$",
                          recursive = TRUE),
-              sep=''), 
+              sep=''),
        source)
-#source("./R/Functions/MonteCarlo_LatinHyperCube_Sampling_Function.R")
-#source("./R/Functions/BordenFunction.R")
-#source("./R/Functions/HelpButtonFunction.R")
+# source("./R/Functions/MonteCarlo_LatinHyperCube_Sampling_Function.R")
+# source("./R/Functions/BordenFunction.R")
+# source("./R/Functions/HelpButtonFunction.R")
 
 # Shinyio ------------------------------------------
 # rsconnect::deployApp(appId = "4413726")

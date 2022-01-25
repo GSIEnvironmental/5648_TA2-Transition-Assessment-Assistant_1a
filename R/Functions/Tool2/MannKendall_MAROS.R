@@ -1,27 +1,30 @@
 #################################################################
-
+library(trend)
+library(ggsci)
 #%% ----- Function for calculating ManKendall Test
 
 ##------ INPUT
-# one are required here 
-# df_MW_compiled: input data frame from df_series_tool2a output
+# d: input data frame from with Group, Date, and Concentration columns
 
-
-MannKendall_MAROS<-function(df_MW_compiled,MWs,WellID,Concentration){
+MannKendall_MAROS<-function(d){
   
   # function for ManKendall Test
   
   # Calculate MK for each well
-  MKeach <- map_dfr(MWs, ~{
-    x <- df_MW_compiled %>% filter(WellID %in% .x)%>%
-      filter(!is.na(Concentration))
-    y <- mk.test(get(Concentration,x))
-    z <- sens.slope(get(Concentration,x),conf.level = 0.95) # sen's slope calculation
-    data.frame("Well_ID" = .x,
+  MKeach <- map_dfr(unique(d$Group), ~{
+    x <- d %>% filter(Group == .x)%>%
+      filter(!is.na(Concentration)) %>%
+      arrange(Date)
+    
+    y <- mk.test(x %>% pull(Concentration))
+    z <- sens.slope(x %>% pull(Concentration), conf.level = 0.95) # sen's slope calculation
+    
+    data.frame("Group" = .x,
                "MK.p" = y$p.value,
                "MK.S" = y$estimates[["S"]],
-               "MK.CV" = sd(get(Concentration,x))/mean(get(Concentration,x)),
-               "S.Slope" =  z$estimates[["Sen's slope"]])})
+               "MK.CV" = sd(x %>% pull(Concentration))/mean(x %>% pull(Concentration)),
+               "S.Slope" =  z$estimates[["Sen's slope"]])
+    })
   
   # Assigning Trend to Results
   simp <- pal_simpsons("springfield")(12)

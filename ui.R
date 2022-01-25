@@ -44,9 +44,13 @@ shinyUI <- navbarPage(theme="styles.css",
                             )# end Fluid Row
                    ), #end About tab
                    
+                   Data_Input_UI("Data_Input"),
+                   
                    AsymptoteUI("01_Asymptote"),
+                   
+                   TrendUI("02_Trend"),
 
-                   ExpansionUI("02_Expansion"),
+                   # ExpansionUI("02_Expansion"),
 
                    #BordenToolUI("Borden_Tool"),
                    
@@ -56,9 +60,9 @@ shinyUI <- navbarPage(theme="styles.css",
                    # CleanupGoals_MCtabUI("03_CleanupGoals_MCtab"),
                    #CleanupGoals_linearUI("03_CleanupGoals_linear"),
 
-                   PerformanceUI("04_Performance"),
+                   # PerformanceUI("04_Performance"),
 
-                   MatrixDiffusionUI("05_MatrixDiffusion"),
+                   # MatrixDiffusionUI("05_MatrixDiffusion"),
                    
                    tabPanel("6. MNA",
                             fluidRow(
@@ -69,7 +73,7 @@ shinyUI <- navbarPage(theme="styles.css",
                    
                    
                    
-                   HeterogeneityUI("07_Heterogeneity"), 
+                   # HeterogeneityUI("07_Heterogeneity"), 
                    
                    tabPanel("8. GW Models",
                             fluidRow(
@@ -78,9 +82,9 @@ shinyUI <- navbarPage(theme="styles.css",
                             )# end Fluid Row
                    ), #end GW_Models tab
                    
-                   PlumeZoneUI("09_PlumeZone"), 
+                   # PlumeZoneUI("09_PlumeZone"), 
                    
-                   SummaryUI("10_Summary"), 
+                   # SummaryUI("10_Summary"), 
                    
                    footer = HTML('<a href="https://www.gsi-net.com/en/" target="_blank">
                    <div style="background-color: #112447; padding: 10px; margin-right: 0;  margin-left: 0;">
