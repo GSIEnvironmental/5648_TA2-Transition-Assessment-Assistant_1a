@@ -1,17 +1,18 @@
 # function for calling Monte Carlo
 MC_function_LHC <-function(input){
   set.seed(1111)
-  A <- randomLHS(1000,9) 
+  A <- randomLHS(1000,11) 
   
   X <-qtri(A[,1], input$X_LL,input$X_UL,input$X)#distance from source (m)
-  i <-input$i#Hydraulic Gradient (-)
+  i <-qtri(A[,10], input$i_LL,input$i_UL,input$i)#Hydraulic Gradient (-)
+  
   chem = input$COC #constituents
   Year_Started = qtri(A[,2],input$Year_Started_LL,input$Year_Started_UL,input$Year_Started) 
   Year_Removed = input$Year_Removed 
   
-  K = input$K # cm/s
+  K = qtri(A[,3], input$K_LL,input$K_UL,input$K) # cm/s perturb
   
-  ne <-input$ne #<-noperturb
+  ne <-qtri(A[,11], input$ne_LL,input$ne_UL,input$ne) 
   n <-input$n #<-noperturb
   D <-input$D #<-noperturb
   
@@ -76,18 +77,21 @@ MC_function_LHC <-function(input){
   OM2 = Concentration*0.01 # A 99% Reduction in Concentration (2 Order of Magnitude)
   OM3 = Concentration*0.001 # A 99.9% Reduction in Concentration (3 Order of Magnitude)
   
-  Seep_V<-qtri(A[,3], input$Seep_V_LL, input$Seep_V_UL, input$Seep_V) # seepage velocity of high K zone (m/yr)
   
+  Seep_V<-K/100*60*60*24*365*i/ne # seepage velocity of high K zone (m/yr)
   
+  remain_index <-which(Seep_V>=7&Seep_V<=210)
   df<-list(X,i,chem, Year_Started,Year_Removed,K,ne,n,D,Seep_V,tortuosity_LK,
            Retardation_HK,Retardation_LK,Concentration,Target_Clean_Level,BGLG,B,
            HalfLife,TG,LG,Percent_T,N,type,LK,FOC_HK,FOC_LK,Bulk_Density_HK,Bulk_Density_LK,
-           KOC, OM1, OM2, OM3)
+           KOC, OM1, OM2, OM3,remain_index)
   
   names(df)<-c('X','i','chem','Year_Started','Year_Removed','K','ne','n','D','Seep_V','tortuosity_LK',
                'Retardation_HK','Retardation_LK','Concentration','Target_Clean_Level','BGLG','B',
                'HalfLife','TG','LG','Percent_T','N','type','LK','FOC_HK','FOC_LK','Bulk_Density_HK',
-               'Bulk_Density_LK','KOC','OM1','OM2','OM3')
+               'Bulk_Density_LK','KOC','OM1','OM2','OM3','remain_index') 
+  
+
   
   return(df)
 }

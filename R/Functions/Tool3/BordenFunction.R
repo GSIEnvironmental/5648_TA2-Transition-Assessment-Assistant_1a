@@ -55,11 +55,12 @@ LG_BordenFunction<-function(df){
 
 TimeCleanupCalculation<-function(df,Parameters,BGorLG,TM,Beta,TD,HalfLife){
   
+
+  
   for (var in 1:length(names(df))){
     nam<-names(df)[var]
     assign(nam, unname(unlist(df[var])))
   }
-  
   #coefficient filter by either BG or LG
   coeff <-Parameters%>%filter(Style==BGorLG)
   lnT1 = exp(coeff$lnT1[1]+coeff$lnT1[2]*log(TM)+coeff$lnT1[3]*log(Beta))
@@ -83,7 +84,7 @@ TimeCleanupCalculation<-function(df,Parameters,BGorLG,TM,Beta,TD,HalfLife){
   
   # calculate results
   OoM = round(log10(Concentration/Target_Clean_Level),3)
-  if (OoM>=1&OoM<=3){
+#  if (OoM>=1&OoM<=3){
     A = log(T1)
     B = log(T2)
     C = log(T3)
@@ -100,14 +101,14 @@ TimeCleanupCalculation<-function(df,Parameters,BGorLG,TM,Beta,TD,HalfLife){
       C3 = coef$coefficients[3]
       Time_Cleanup_1 = exp(C1 + C2*OoM + C3*OoM^2)
       Time_Cleanup = append(Time_Cleanup,Time_Cleanup_1)
-    }
-  }else{
-    Time_Cleanup=NA
-  }
-  
+   }
+ # }else{
+ #   Time_Cleanup=NA
+ # }
+ #  
   results_list1 = data.frame(OM1,OM2,OM3,T1,T2,T3,Target_Clean_Level,Time_Cleanup)
-  print ('results_list1')
-  print (results_list1)
+  #print ('results_list1')
+  #print (results_list1)
   
   return(results_list1)
 }
