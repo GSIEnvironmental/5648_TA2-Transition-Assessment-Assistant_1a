@@ -141,7 +141,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                             column(4, align = "center",
                                                    selectInput(ns("HighKPorousMedia"), label = NULL,
                                                                choices = TZ_soil_order,#c(sort(unique(TZ_Soil_Type$Soil_Type))),
-                                                               selected = "Medium Sand", multiple = F, selectize = FALSE)),
+                                                               selected = "Coarse Sand", multiple = F, selectize = FALSE)),
                                             column(2, align = "left", 
                                                    actionButton(ns("help8"), HTML("?"), style = button_style2))), 
                                    br(), 
@@ -894,10 +894,8 @@ CleanupGoals_tabServer <- function(id) {
       ## Export MC number---------------------
       output$selected_TT3 <- renderText({ 
         validate(need(error() != "Check Inputs", "Please Check Input Values"))
-        print ('i')
-        print (input$i)
-        df<-MC_function_LHC(input)
-        len_MC <- length(df$remain_index)
+        df<-results()
+        len_MC <- nrow(df)
         if (len_MC<700){
           paste("<H3>","MC Number of Realizations:", "<b>", round(len_MC,0),"</b></font>"," out of 1,000",
                 "<BR>","MC Results will be Biased. No Results.","</H3>")
@@ -913,11 +911,18 @@ CleanupGoals_tabServer <- function(id) {
         validate(need(error() != "Check Inputs", "Please Check Input Values"))
         results_list <- results()
         
-        glue("<H3>","The monitoring well will achieve the clean-up goal of ",unique(results_list$Target_Clean_Level), " ug/L in ",
-              "<font color=\"#52077F\"><b>",
-              round(as.numeric(mean(results_list$Time_Cleanup))+as.numeric(input$Year_Removed),0),
-              "</b></font>",".","</H3>"
-              )
+        len_MC <-nrow(results_list)
+        if(len_MC>=700){
+          glue("<H3>","The monitoring well will achieve the clean-up goal of ",unique(results_list$Target_Clean_Level), " ug/L in ",
+               "<font color=\"#52077F\"><b>",
+               round(as.numeric(mean(results_list$Time_Cleanup))+as.numeric(input$Year_Removed),0),
+               "</b></font>",".","</H3>"
+          )
+        }else{
+          glue("<H3>"," ","</H3>"
+          )
+        }
+        
       })
       
       # Export Model Results and Input Values  ---------------------------
@@ -1017,7 +1022,7 @@ CleanupGoals_tabServer <- function(id) {
           writeData(wb, sheet = "Parameters", x = x, startCol = 1, startRow = 1, colNames = F)
 
           saveWorkbook(wb, con)
-          #saveRDS( reactiveValuesToList(input) , file = 'inputs.RDS')
+          saveRDS( reactiveValuesToList(input) , file = 'inputs.RDS')
         }
       )# end model_results
       

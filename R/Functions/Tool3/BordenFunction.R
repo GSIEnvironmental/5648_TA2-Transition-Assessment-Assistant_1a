@@ -72,6 +72,7 @@ TimeCleanupCalculation<-function(df,Parameters,BGorLG,TM,Beta,TD,HalfLife){
   T2 = lnT2
   T3 = lnT3
   
+  
   # half life implementation
   if (HalfLife>0){
     CTR1 =  exp(coeff$lnT1[4]+coeff$lnT1[5]*log(0.693/HalfLife*TD))
@@ -92,20 +93,33 @@ TimeCleanupCalculation<-function(df,Parameters,BGorLG,TM,Beta,TD,HalfLife){
     X2 = c(1,4,9)
     
     Y = data.frame(A,B,C)
+    Yrem = Y[complete.cases(Y),]
     Time_Cleanup = c()
-    for (k in c(1:nrow(Y))){
-      Y_1 <- as.list(as.data.frame(t(Y[k,])))[[1]]
+
+    for (k in c(1:nrow(Yrem))){
+      Y_1 <- as.list(as.data.frame(t(Yrem[k,])))[[1]]
       coef = summary(lm(Y_1~X1+X2))
       C1 = coef$coefficients[1]
       C2 = coef$coefficients[2]
       C3 = coef$coefficients[3]
       Time_Cleanup_1 = exp(C1 + C2*OoM + C3*OoM^2)
       Time_Cleanup = append(Time_Cleanup,Time_Cleanup_1)
-   }
+    }
+    
+    # remove nan from T1, T2, T3
+    if (length(which(is.na(Y)))>0){
+      test <-which(is.na(Y), arr.ind=TRUE)
+      remind<-unique(test[,1])
+      T1 = T1[-remind]
+      T2 = T2[-remind]
+      T3 = T3[-remind]
+    }
+    
  # }else{
  #   Time_Cleanup=NA
  # }
  #  
+
   results_list1 = data.frame(OM1,OM2,OM3,T1,T2,T3,Target_Clean_Level,Time_Cleanup)
   #print ('results_list1')
   #print (results_list1)
