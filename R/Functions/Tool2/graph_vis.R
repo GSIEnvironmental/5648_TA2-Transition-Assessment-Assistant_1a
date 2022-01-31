@@ -43,7 +43,9 @@ graph_vis <-function(df_all, log_flag, vis_flag){
   # plot layer out for x axis
   p<-p%>%
     layout(
-      xaxis = list(title="Date",
+      title = ifelse(vis_flag =='Concentration', "Concentration of COC Over Time",
+                     "Mass of COC Over Time"),
+      xaxis = list(title="",
                    automargin = T,
                    showline=T,
                    mirror = "ticks",

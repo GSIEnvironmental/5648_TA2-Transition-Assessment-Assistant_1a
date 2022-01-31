@@ -104,6 +104,17 @@ temp_data <- read.xlsx("./data/data_template.xlsx", sheet = "Concentration_Time_
 
 temp_mw_info <- read.xlsx("./data/data_template.xlsx", sheet = "Monitoring_Well_Information", startRow = 1,
                        check.names = F, sep.names = " ")
+# Map -----------------------------
+site_map <- leaflet() %>%
+  addTiles(urlTemplate = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
+           attribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+           group='Grey Base', options = providerTileOptions(maxNativeZoom=19,maxZoom=100)) %>%
+  addProviderTiles(providers$Esri.WorldImagery, group="Satellite (ESRI)", 
+                   options = providerTileOptions(maxNativeZoom=19,maxZoom=100)) %>%
+  addTiles(urlTemplate = "https://mts1.google.com/vt/lyrs=s&hl=en&src=app&x={x}&y={y}&z={z}&s=G", group="Satellite (Google)",
+           options = providerTileOptions(maxNativeZoom=19,maxZoom=100)) %>%
+  addMapPane("markers", zIndex = 420) %>%
+  addMapPane("markers_selected", zIndex = 430) 
 
 # Borden Tool Kit ----------------
 
@@ -183,6 +194,16 @@ button_style2 <- "white-space: normal;
                         font-size: 14px;
                         padding: 0px 0;
                         margin:0px;"
+
+button_style3 <- "white-space: normal;
+                        background-color:#eee;
+                        text-align:center;
+                        height:34px;
+                        width:34px;
+                        font-size: 14px;
+                        padding: 0px 0;
+                        margin:0px;"
+
 
 button_style_big <- "white-space: normal;
                         text-align:center;
