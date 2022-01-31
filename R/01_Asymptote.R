@@ -1,5 +1,5 @@
 # Asymptote Modules -----------------------------
-
+# For slope: https://www.usgs.gov/software/ktrline-kendall-theil-robust-line-software-page#:~:text=The%20Kendall-Theil%20robust%20line%20was%20selected%20because%20this,median%20of%20all%20possible%20pairwise%20slopes%20between%20points.
 ## UI -----------------------------------------
 AsymptoteUI <- function(id, label = "01_Asymptote"){
   ns <- NS(id)
@@ -68,10 +68,10 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                          <ol>
                          <li> The source attenuation trends can be represented by a first order decay relationship.</li>
                          <li> The range of the source attenuation rate is bounded by a 90% confidence level</li>
-                         <li> Four simple rules of thumb (heuristics) can provide evidence that for all practical purposes an asymptote in the concentration vs. time data has been reached.</li></ol>"),
-                    HTML("<hr class='featurette-divider'>"),
-                    HTML("<h4><b>Authors</b></h4>
-                         Charles Newell and Tom McHugh, GSI Environmental. Contact: temchugh@gsi-net.com")
+                         <li> Four simple rules of thumb (heuristics) can provide evidence that for all practical purposes an asymptote in the concentration vs. time data has been reached.</li></ol>")#,
+                    # HTML("<hr class='featurette-divider'>"),
+                    # HTML("<h4><b>Authors</b></h4>
+                    #      Charles Newell and Tom McHugh, GSI Environmental. Contact: temchugh@gsi-net.com")
              ), #end instruction column
              column(9,
              tabsetPanel(
