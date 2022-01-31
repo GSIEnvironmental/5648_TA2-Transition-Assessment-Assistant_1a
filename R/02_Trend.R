@@ -349,7 +349,11 @@ TrendServer <- function(id, data_input, nav) {
       
       # Select Updates: Well Grouping --------------
       observe({
+<<<<<<< HEAD
         req(nav() == "2. Expansion",
+=======
+        req(nav() == "2a. Concentration Analysis",
+>>>>>>> 16479d809b2459fdb08393f644ce2e5a20e26053
             input$type)
         
         if(input$type == "Concentration"){
@@ -370,7 +374,11 @@ TrendServer <- function(id, data_input, nav) {
       
       # Select Updates: Map Grouping --------------
       observe({
+<<<<<<< HEAD
         req(nav() == "2. Expansion")
+=======
+        req(nav() == "2a. Concentration Analysis")
+>>>>>>> 16479d809b2459fdb08393f644ce2e5a20e26053
         req(d_loc())
         
         choices <- c("All Monitoring Wells", "Recent Sample Above Concentration Goal", sort(unique(d_loc()$`Well Grouping`)))
@@ -618,7 +626,11 @@ TrendServer <- function(id, data_input, nav) {
         proxy <- leafletProxy("map") %>%
           clearGroup(group="markers")
 
+<<<<<<< HEAD
         req(nav() == "2. Expansion",
+=======
+        req(nav() == "2a. Concentration Analysis",
+>>>>>>> 16479d809b2459fdb08393f644ce2e5a20e26053
             input$type == "Concentration",
             input$Trend_Result_Tabs == "Trend Map",
             input$select_map,
@@ -656,7 +668,11 @@ TrendServer <- function(id, data_input, nav) {
                            radius = 8, stroke = TRUE, fillOpacity = 0.8, weight = 1, opacity = 1,
                            popup = ~paste0("<b>",Group, "</b>:<br>",
                                            "Trend: ", Trend, "<br>",
+<<<<<<< HEAD
                                            "p-Value: ", round(MK.p, 3), "<br>",
+=======
+                                           "p-Value: ", round(MK.p, 3), "%<br>",
+>>>>>>> 16479d809b2459fdb08393f644ce2e5a20e26053
                                            "S Statistic: ", round(MK.S, 0), "<br>",
                                            "Sen's Slope: ", round(S.Slope, 3), "<br>"),
                            layerId = ~Group, options = pathOptions(pane="markers")) %>%
