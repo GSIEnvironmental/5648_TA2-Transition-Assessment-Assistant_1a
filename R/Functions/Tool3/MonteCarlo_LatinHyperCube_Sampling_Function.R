@@ -3,31 +3,35 @@ MC_function_LHC <-function(input){
   set.seed(1111)
   A <- randomLHS(1000,11) 
   
-  X <-qtri(A[,1], input$X_LL,input$X_UL,input$X)#distance from source (m)
-  i <-qtri(A[,10], input$i_LL,input$i_UL,input$i)#Hydraulic Gradient (-)
+  X <-c(input$X,qtri(A[,1], input$X_LL,input$X_UL,input$X))#distance from source (m)
+  i <-c(input$i,qtri(A[,10], input$i_LL,input$i_UL,input$i))#Hydraulic Gradient (-)
   
   chem = input$COC #constituents
-  Year_Started = qtri(A[,2],input$Year_Started_LL,input$Year_Started_UL,input$Year_Started) 
+  Year_Started = c(input$Year_Started,
+                   qtri(A[,2],input$Year_Started_LL,input$Year_Started_UL,input$Year_Started)) 
   Year_Removed = input$Year_Removed 
   
-  K = qtri(A[,3], input$K_LL,input$K_UL,input$K) # cm/s perturb
+  K = c(input$K,qtri(A[,3], input$K_LL,input$K_UL,input$K)) # cm/s perturb
   
-  ne <-qtri(A[,11], input$ne_LL,input$ne_UL,input$ne) 
+  ne <-c(input$ne,qtri(A[,11], input$ne_LL,input$ne_UL,input$ne)) 
   n <-input$n #<-noperturb
   D <-input$D #<-noperturb
   
   
-  tortuosity_LK<-qtri(A[,4], input$tortuosity_LK_LL,
+  tortuosity_LK<-c(input$tortuosity_LK,
+                   qtri(A[,4], input$tortuosity_LK_LL,
                       input$tortuosity_LK_UL,
-                      input$tortuosity_LK)
+                      input$tortuosity_LK))
   
-  Retardation_HK<-qtri(A[,5], input$Retardation_HK_LL,
+  Retardation_HK<-c(input$Retardation_HK,
+                    qtri(A[,5], input$Retardation_HK_LL,
                        input$Retardation_HK_UL,
-                       input$Retardation_HK)
+                       input$Retardation_HK))
   
-  Retardation_LK<-qtri(A[,6], input$Retardation_LK_LL,
+  Retardation_LK<-c(input$Retardation_LK,
+                    qtri(A[,6], input$Retardation_LK_LL,
                        input$Retardation_LK_UL,
-                       input$Retardation_LK)
+                       input$Retardation_LK))
   
   Concentration = input$Concentration
   Target_Clean_Level = input$Target_Clean_Level
@@ -35,26 +39,28 @@ MC_function_LHC <-function(input){
   
   BGLG = input$BGLG 
   
-  B<-qtri(A[,7], input$Thickness_LL,
+  B<-c(input$Thickness, qtri(A[,7], input$Thickness_LL,
           input$Thickness_UL,
-          input$Thickness)
-  
+          input$Thickness))
+
   
   if (input$HalfLifeYN==1){
     HalfLife=0
   }else{
-    HalfLife =qtri(A[,9], input$HalfLife_LL,
+    HalfLife <-c(input$HalfLife,
+                 qtri(A[,9], input$HalfLife_LL,
                    input$HalfLife_UL,
-                   input$HalfLife)           
+                   input$HalfLife))           
   }
   TG = input$HighKPorousMedia #HighKPorousMedia  transmissive geology
   LG = input$LowKPorousMedia  #LowKPorousMedia low K geology
   
   #---- Step2: Pick Either Boundary Geometry or Layered Geometry
   if (input$BGLG>1){
-    Percent_T =qtri(A[,8], input$Percent_T_LL,
+    Percent_T <-c(input$Percent_T,
+                  qtri(A[,8], input$Percent_T_LL,
                     input$Percent_T_UL,
-                    input$Percent_T)
+                    input$Percent_T))
     N = input$N
   }else{
     Percent_T=0
@@ -80,7 +86,9 @@ MC_function_LHC <-function(input){
   
   Seep_V<-K/100*60*60*24*365*i/ne # seepage velocity of high K zone (m/yr)
   
-  remain_index <-which(Seep_V>=7&Seep_V<=210)
+  Tt = X/Seep_V
+  
+  remain_index <-which(Tt>=0.4&Tt<=11.94)
   df<-list(X,i,chem, Year_Started,Year_Removed,K,ne,n,D,Seep_V,tortuosity_LK,
            Retardation_HK,Retardation_LK,Concentration,Target_Clean_Level,BGLG,B,
            HalfLife,TG,LG,Percent_T,N,type,LK,FOC_HK,FOC_LK,Bulk_Density_HK,Bulk_Density_LK,
@@ -92,6 +100,5 @@ MC_function_LHC <-function(input){
                'Bulk_Density_LK','KOC','OM1','OM2','OM3','remain_index') 
   
 
-  
   return(df)
 }

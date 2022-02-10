@@ -3,7 +3,9 @@
 ## UI -----------------------------------------
 CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
   ns <- NS(id)
-  
+
+
+
   tabPanel("3. Clean-up Goals",
            # Page Title ------
            fluidRow(style='border-bottom: 5px solid black',
@@ -363,6 +365,10 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
              column(6, 
                     # Table of Results
                     fluidRow(align="left", style='padding-left:50px;',
+                             tags$style(HTML(".shiny-output-error-validation {
+                             color: #ff0000;
+                             font-weight: bold;
+                             font-size: 18pt;}")),
                              HTML("<h2><b>View Results*</b></h2>"),
                              HTML("<h3 style = 'color: #4a746c;'><b><i>1. See Timeframe to Reduce Plume Concentrations by 90%, 99%, and 99.9%</i></b></h4>"),
                              br(),
@@ -506,8 +512,10 @@ CleanupGoals_tabServer <- function(id) {
       }) # end updates thickness
       
       observeEvent({input$ne},{
-        updateNumericInput(session, "ne_LL", value = input$ne*0.8)
-        updateNumericInput(session, "ne_UL", value = input$ne*1.2)
+        neA <-ifelse(input$ne*0.8>0.15,input$ne*0.8,0.15)
+        neB <-ifelse(input$ne*1.2<0.45,input$ne*1.2,0.45)
+        updateNumericInput(session, "ne_LL", value = neA)
+        updateNumericInput(session, "ne_UL", value = neB)
       }) # end updates thickness
       
       observeEvent({input$Year_Started},{
@@ -516,33 +524,44 @@ CleanupGoals_tabServer <- function(id) {
       }) # end updates year started
       
       observeEvent({input$tortuosity_LK},{
-        updateNumericInput(session, "tortuosity_LK_LL", value = input$tortuosity_LK*0.9)
-        updateNumericInput(session, "tortuosity_LK_UL", value = input$tortuosity_LK*1.1)
+        tortuosity_LKA <-ifelse(input$tortuosity_LK*0.9>0.07,input$tortuosity_LK*0.9,0.07)
+        tortuosity_LKB <-ifelse(input$tortuosity_LK*1.1<0.7,input$tortuosity_LK*1.1,0.7)
+        updateNumericInput(session, "tortuosity_LK_LL", value = tortuosity_LKA)
+        updateNumericInput(session, "tortuosity_LK_UL", value = tortuosity_LKB)
       }) # end updates tortuosity_LK
       
       observeEvent({input$Retardation_HK},{
-        updateNumericInput(session, "Retardation_HK_LL", value = input$Retardation_HK*0.8)
-        updateNumericInput(session, "Retardation_HK_UL", value = input$Retardation_HK*1.2)
+        Retardation_HKA <-ifelse(input$Retardation_HK*0.8>1,input$Retardation_HK*0.8,1)
+        Retardation_HKB <-ifelse(input$Retardation_HK*1.2<10,input$Retardation_HK*1.2,10)
+        updateNumericInput(session, "Retardation_HK_LL", value = Retardation_HKA)
+        updateNumericInput(session, "Retardation_HK_UL", value = Retardation_HKB)
       }) # end updates Retardation_HK
       
       observeEvent({input$Retardation_LK},{
-        updateNumericInput(session, "Retardation_LK_LL", value = input$Retardation_LK*0.8)
-        updateNumericInput(session, "Retardation_LK_UL", value = input$Retardation_LK*1.2)
+        Retardation_LKA <-ifelse(input$Retardation_LK*0.8>1,input$Retardation_LK*0.8,1)
+        Retardation_LKB <-ifelse(input$Retardation_LK*1.2<10,input$Retardation_LK*1.2,10)
+        updateNumericInput(session, "Retardation_LK_LL", value = Retardation_LKA)
+        updateNumericInput(session, "Retardation_LK_UL", value = Retardation_LKB)
       }) # end updates Retardation_LK
       
+
       observeEvent({input$Thickness},{
-        updateNumericInput(session, "Thickness_LL", value = input$Thickness*0.8)
-        updateNumericInput(session, "Thickness_UL", value = input$Thickness*1.2)
+        ThicknessA <-ifelse(input$Thickness*0.8>0.5,input$Thickness*0.8,0.5)
+        ThicknessB <-ifelse(input$Thickness*1.2<3,input$Thickness*1.2,3)
+        updateNumericInput(session, "Thickness_LL", value = ThicknessA)
+        updateNumericInput(session, "Thickness_UL", value = ThicknessB)
       }) # end updates Thickness
       
       observeEvent({input$HalfLife},{
-        updateNumericInput(session, "HalfLife_LL", value = input$HalfLife*0.5)
-        updateNumericInput(session, "HalfLife_UL", value = input$HalfLife*2)
+        HalfLifeA <-ifelse(input$HalfLife*0.5>1,input$HalfLife*0.5,1)
+        HalfLifeB <-ifelse(input$HalfLife*2<1000,input$HalfLife*2,1000)
+        updateNumericInput(session, "HalfLife_LL", value = HalfLifeA)
+        updateNumericInput(session, "HalfLife_UL", value = HalfLifeB)
       }) # end updates HalfLife
       
       observeEvent({input$Percent_T},{
-        Percent_TA <-ifelse(input$Percent_T*0.8<100,input$Percent_T*0.8,100)
-        Percent_TB <-ifelse(input$Percent_T*1.2<100,input$Percent_T*1.2,100)
+        Percent_TA <-ifelse(input$Percent_T*0.8>10,input$Percent_T*0.8,10)
+        Percent_TB <-ifelse(input$Percent_T*1.2<90,input$Percent_T*1.2,90)
         updateNumericInput(session, "Percent_T_LL", value = Percent_TA)
         updateNumericInput(session, "Percent_T_UL", value = Percent_TB)
         # updateNumericInput(session, "Percent_T_LL", value = ifelse(input$Percent_T*0.8<100,input$Percent_T*0.8,100))
@@ -591,6 +610,7 @@ CleanupGoals_tabServer <- function(id) {
             input$foc_LK,
             input$Rho_HK,
             input$Rho_LK)
+        
 
         df<-MC_function_LHC(input)
 
@@ -601,8 +621,9 @@ CleanupGoals_tabServer <- function(id) {
         }else{
           results_list = pmax(LG_BordenFunction(df),BG_BordenFunction(df))
         }
-        
         #print (results_list)
+
+        validate(need(1%in%df$remain_index, 'Initial assignment of parameters failed to be within the travel time between 0.4 - 11.94 yr'))
         results(results_list[c(df$remain_index),])
         error("")
       })
@@ -663,20 +684,25 @@ CleanupGoals_tabServer <- function(id) {
 
       ## Figure ----------------------------------------------
       plotlyfigureoutput <- reactive({
-        validate(need(nrow(results()) >= 700, "Seepage Velocity Outside the Range of Borden Model"))
+        ValidateRangeFunctionSilent(error(),results(),input)
+        #validate(need(nrow(results()) >= 700, "Seepage Velocity Outside the Range of Borden Model"))
         results_list_all = results()
-        results_list<-apply(results_list_all,2,mean)
+        
+        lineNum = nrow(results_list_all)
+        results_init <-apply(results_list_all[1,],2,mean) # initial parameter conditions
+        
+        results_list<-apply(results_list_all[2:lineNum,],2,mean)
         print ('results_list')
         print (results_list)
-        P10_list <-apply(results_list_all,2,function(x) quantile(x, probs = .1))
-        P90_list <-apply(results_list_all,2,function(x) quantile(x, probs = .9))
+        P10_list <-apply(results_list_all[2:lineNum,],2,function(x) quantile(x, probs = .1))
+        P90_list <-apply(results_list_all[2:lineNum,],2,function(x) quantile(x, probs = .9))
         
-        min_list <-apply(results_list_all,2,min)
-        max_list <-apply(results_list_all,2,max)
+        #min_list <-apply(results_list_all,2,min)
+        #max_list <-apply(results_list_all,2,max)
         
-        cd_1 <- data.frame(time = c(0,round((results_list[c(4:6,8)]),1)),
+        cd_1 <- data.frame(time = c(0,round((results_init[c(4:6,8)]),1)),
                            Concentration=c(input$Concentration,
-                                           (results_list[c(1:3,7)])))
+                                           (results_init[c(1:3,7)])))
         cd_1_p10 <- data.frame(time = c(0,round((P10_list[c(4:6,8)]),1)),
                                Concentration=c(input$Concentration,
                                                (P10_list[c(1:3,7)])))
@@ -715,7 +741,7 @@ CleanupGoals_tabServer <- function(id) {
         p <-plot_ly()%>%
           add_trace(data = cd_1, x= ~time+input$Year_Removed,
                     y = ~Concentration ,
-                    name = ' ',
+                    name = 'Initial Parameter Condition',
                     type = "scatter", line = list(shape = "spline",color='rgb(31,150,180)'),
                     mode = 'lines+markers',
                     hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration: %{y} ug/L<br>')
@@ -724,14 +750,14 @@ CleanupGoals_tabServer <- function(id) {
           p<-p%>%
             add_trace(data = cd_1, x= ~p90range+input$Year_Removed,#90%
                     y = ~Concentration , 
-                    name = ' ',
+                    name = 'CI 90%',
                     type = "scatter", line = list(shape = "spline",color='rgba(0,100,80,1)'),
                     mode = 'lines',
                     hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration 90th %: %{y} ug/L<br>')
           )%>%
             add_trace(data = cd_1, x= ~p10range+input$Year_Removed,#10%
                       y = ~Concentration , 
-                      name = ' ',
+                      name = 'CI 10%',
                       type = "scatter", #line = list(shape = "spline",color='rgb(31,119,180)'),
                       mode = 'lines',
                       fill='tonexty',
@@ -779,13 +805,14 @@ CleanupGoals_tabServer <- function(id) {
                          linewidth = 2,
                          #range = c(0, 1000),
                          zeroline=F),
-            showlegend = F
+            showlegend = T
           )
         
       })
       
       output$dygraph_plot1 <- renderPlotly({
-        validate(need(error() != "Check Inputs", ""))
+        #ValidateRangeFunctionSilent(error(),results(),input)
+        #validate(need(error() != "Check Inputs", ""))
         plotlyfigureoutput()
       }) #plotly output
       
@@ -796,15 +823,22 @@ CleanupGoals_tabServer <- function(id) {
       ## Results Table -------------------------
       output$calc_output <- render_gt(align = "center", {
         # Get Values
-        validate(need(nrow(results()) >= 700, "Seepage Velocity Outside the Range of Borden Model"))
-        validate(need(error() != "Check Inputs", "Please Check Input Values"))
+        ValidateRangeFunction(error(),results(),input)
+        #validate(need(nrow(results()) >= 700, "Seepage Velocity Outside the Range of Borden Model"))
+        #validate(need(error() != "Check Inputs", "Please Check Input Values"))
         cd <- results()
-        results_list<-apply(cd,2,mean)
+        results_list<-apply(cd[1,],2,mean) # calculate just the initial condition
+        #results_list<-apply(cd,2,mean)
         #min_list <-apply(cd,2,min)
-        max_list <-apply(cd,2,function(x) quantile(x, probs = .9))
+        listnum = nrow(cd)
+        max_list <-apply(cd[2:listnum,],2,function(x) quantile(x, probs = .9))
+        min_list <-apply(cd[2:listnum,],2,function(x) quantile(x, probs = .1))
         
+
         
         if (HalfLife()==0){
+          maxdev<-round(max_list[c(4:6)]-results_list[c(4:6)],0)
+          mindev<-round(results_list[c(4:6)]-min_list[c(4:6)],0)
           cd <- data.frame(A = c('90% (1 OoM)','99% (2 OoMs)','99.9% (3 OoMs)'),
                            B = c(results_list[c(1:3)]),
                            C = c(results_list[c(4:6)]+input$Year_Removed),
@@ -815,11 +849,13 @@ CleanupGoals_tabServer <- function(id) {
                                  ifelse(results_list[c(6)]+input$Year_Removed>as.numeric(format(Sys.Date(),'%Y')),
                                         as.character(round(results_list[c(6)]+input$Year_Removed-as.numeric(format(Sys.Date(),'%Y')),0)),'-')
                            ),
-                           E = c(max_list[c(4:6)]-results_list[c(4:6)])
+                           E = c(paste(ifelse(mindev<1,'<1',mindev),'-',maxdev))
           )
           
           
         }else if (HalfLife()>0&input$BGLG!=1){
+          maxdev<-round(max_list[c(5:6)]-results_list[c(5:6)],0)
+          mindev<-round(results_list[c(5:6)]-min_list[c(5:6)],0)
           cd <- data.frame(A = c('99% (2 OoMs)','99.9% (3 OoMs)'),
                            B = c(results_list[c(2:3)]),
                            C = c(results_list[c(5:6)])+input$Year_Removed,
@@ -828,16 +864,18 @@ CleanupGoals_tabServer <- function(id) {
                                  ifelse(results_list[c(6)]+input$Year_Removed>as.numeric(format(Sys.Date(),'%Y')),
                                         as.character(round(results_list[c(6)]+input$Year_Removed-as.numeric(format(Sys.Date(),'%Y')),0)),'-')
                            ),
-                           E = c(max_list[c(5:6)]-results_list[c(5:6)]))
+                           E = c(paste(ifelse(mindev<1,'<1',mindev),'-',maxdev)))
           
         }else{
+          maxdev<-round(max_list[c(6)]-results_list[c(6)],0)
+          mindev<-round(results_list[c(6)]-min_list[c(6)],0)
           cd <- data.frame(A = c('99.9% (3 OoMs)'),
                            B = c(results_list[c(3)]),
                            C = c(results_list[c(6)])+input$Year_Removed,
                            D = c(ifelse(results_list[c(6)]+input$Year_Removed>as.numeric(format(Sys.Date(),'%Y')),
                                         as.character(round(results_list[c(6)]+input$Year_Removed-as.numeric(format(Sys.Date(),'%Y')),0)),'-')
                            ),
-                           E = c(max_list[c(6)]-results_list[c(6)]))
+                           E = c(paste(ifelse(mindev<1,'<1',mindev),'-',maxdev)))
           # cd <- data.frame(Parameters = c('A 99.9% Reduction in Concentration to …'),
           #                  ConValues = c(cd[3]),
           #                  text1 = c(' (ug/L) will occur about...'),
@@ -845,18 +883,19 @@ CleanupGoals_tabServer <- function(id) {
         }
         
         
-        cd$E<- ifelse(cd$E<1,'<1',as.character(round(cd$E)))
+        #cd$E<- ifelse(cd$E<1,'<1',as.character(round(cd$E)))
         
         # Create Table
 
           cd<-cd %>%gt()%>%
             tab_options(column_labels.hidden = FALSE)%>%
+            cols_align(align=c('center'))%>%
             cols_label(
               A = "Concentration Reduction",
               B = "Concentration (ug/L)",
               C = "Year Achieved",
               D = glue(" Years From Now (",format(Sys.Date(),'%Y'),")"),
-              E = "Deviation of Years"
+              E = "Deviation of Years from Initial Conditions (10%,90%)"
             )%>%
             #tab_header("RESULTS") %>%
             fmt_number(columns = c(2,3), rows = everything(), decimals = 0, use_seps=FALSE) %>%
@@ -876,39 +915,41 @@ CleanupGoals_tabServer <- function(id) {
       
       ## Export travel time results ---------------------
       output$selected_TT <- renderText({ 
+        ValidateRangeFunctionSilent(error(),results(),input)
         validate(need(!is.na(input$X) & !is.na(input$i) & !is.na(input$K) & !is.na(input$ne), ""))
         Seep_V <-input$K*input$i/input$ne/100*60*60*24*365
-        if (round(input$X/Seep_V,0)<0.1|round(input$X/Seep_V,0)>30){
-          paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/Seep_V,0),"</b></font>"," years",
-                "<BR>","Travel time is excessively [long/short] and outside acceptable range of model.","</H3>")
-        }else if (round(input$X/Seep_V,0)>21&round(input$X/Seep_V,0)<30){
-          paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/Seep_V,0),"</b></font>"," years",
-                "<BR>","Travel time to monitoring well is unusually long and outside model range.",
-                "<BR>","Results may be inaccurate.","</H3>")
-        }else{
+        # if (round(input$X/Seep_V,0)<=0.4|round(input$X/Seep_V,0)>30){
+        #   paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/Seep_V,0),"</b></font>"," years",
+        #         "<BR>","Travel time is excessively [long/short] and outside acceptable range of model.","</H3>")
+        # }else if (round(input$X/Seep_V,0)>21&round(input$X/Seep_V,0)<30){
+        #   paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/Seep_V,0),"</b></font>"," years",
+        #         "<BR>","Travel time to monitoring well is unusually long and outside model range.",
+        #         "<BR>","Results may be inaccurate.","</H3>")
+        # }else{
           paste("<H3>","Travel Time from Source to Well:", "<b>", round(input$X/Seep_V,0),"</b></font>"," years","</H3>")
-        }
+        # }
         
       })
       
       ## Export MC number---------------------
       output$selected_TT3 <- renderText({ 
-        validate(need(error() != "Check Inputs", "Please Check Input Values"))
+        ValidateRangeFunctionSilent(error(),results(),input)
+        #validate(need(error() != "Check Inputs", "Please Check Input Values"))
         df<-results()
-        len_MC <- nrow(df)
-        if (len_MC<700){
-          paste("<H3>","MC Number of Realizations:", "<b>", round(len_MC,0),"</b></font>"," out of 1,000",
-                "<BR>","MC Results will be Biased. No Results.","</H3>")
-        }else{
+        len_MC <- nrow(df)-1
+        # if (len_MC<700){
+        #   paste("<H3>","MC Number of Realizations:", "<b>", round(len_MC,0),"</b></font>"," out of 1,000",
+        #         "<BR>","MC Results will be Biased. No Results.","</H3>")
+        # }else{
           paste("<H3>","MC Number of Realizations:", "<b>", round(len_MC,0),"</b></font>"," out of 1,000","</H3>")
-        }
+        # }
         
       })
       
       ## Export title of plotly ---------------------
       output$selected_TT2 <- renderText({ 
-        
-        validate(need(error() != "Check Inputs", "Please Check Input Values"))
+        ValidateRangeFunctionSilent(error(),results(),input)
+        #validate(need(error() != "Check Inputs", "Please Check Input Values"))
         results_list <- results()
         
         len_MC <-nrow(results_list)
@@ -1039,120 +1080,120 @@ CleanupGoals_tabServer <- function(id) {
       
       # warning message-----------
       ids <- character(0)
-      observeEvent(input$Thickness, {
-        if (input$BGLG==1 &(input$Thickness<0.5|input$Thickness>5)){
-          showNotification("WARNING!!! Aquifer thickness outside model range (0.5-5)",
-                           type="warning",
-                           duration=NULL,
-                           id = 'A')
-        }else if((input$BGLG!=1 &(input$Thickness<0.5|input$Thickness>2))){
-          showNotification("WARNING!!! Aquifer thickness outside model range (0.5-2) for Layered Geometry. Please use Boundary Geometry.",
-                           type="warning",
-                           duration=NULL,
-                           id = 'A')
-        }else{
-          removeNotification(id = 'A')
-        }
-      })
-      
-      observeEvent({
-        input$Year_Started
-        input$Year_Removed
-      }, {
-        if ((input$Year_Removed-input$Year_Started)<10|(input$Year_Removed-input$Year_Started)>100){
-          showNotification("WARNING!!! Time between Source Started year and Source Removed year outside model range (10-100).",
-                           type="warning",
-                           duration=NULL,
-                           id = 'B')
-        }else{
-          removeNotification(id = 'B')
-        }
-      })
-      
-      observeEvent(input$tortuosity_LK, {
-        if (input$tortuosity_LK<0.07|input$tortuosity_LK>0.7){
-          showNotification("WARNING!!! Tortuosity outside model range (0.07-0.7).",
-                           type="warning",
-                           duration=NULL,id = 'C')
-        }else{
-          removeNotification(id = 'C')
-        }
-      })
-      
-      observeEvent({
-        input$Retardation_HK
-        input$Retardation_LK
-      }, {
-        if (input$Retardation_HK<1|input$Retardation_LK<1|input$Retardation_HK>10|input$Retardation_LK>10){
-          showNotification("WARNING!!! [Low K/High K] retardation factor outside model range (1-10).",
-                           type="warning",
-                           duration=NULL,id = 'D')
-        }else{
-          removeNotification(id = 'D')
-        }
-      })
-      
-      observeEvent({
-        input$Concentration
-        input$Target_Clean_Leve
-        }, {
-        if (round(log10(Concentration/Target_Clean_Level),3)>3|round(log10(Concentration/Target_Clean_Level),3)<1){
-          showNotification("WARNING!!! OoM outside of range (1-3) model range. Cannot calculate time for cleanup",
-                           type="warning",
-                           duration=NULL,id = 'E')
-        }else{
-          removeNotification(id = 'E')
-        }
-          })
-      
-      observeEvent(input$n, {
-        if (input$n<0.15|input$n>0.5){
-          showNotification("WARNING!!! Low K porosity outside model range (0.15-0.5).",
-                           type="warning",
-                           duration=NULL,id = 'F')
-        }else{
-          removeNotification(id = 'F')
-        }
-      })
-      
-      observeEvent({
-        input$K
-        input$ne
-        input$i
-      }, {
-        Seep_V <-input$K*input$i/input$ne*60*60*24*365/100
-        if (Seep_V<7|Seep_V>210){
-          showNotification("WARNING!!! Seepage velocity outside model range (7-210 m/year).",
-                           type="warning",
-                           duration=NULL,
-                           id = 'G')
-        }else{
-          removeNotification(id = 'G')
-        }
-      })
-
-      observeEvent(input$Percent_T, {
-        if (input$Percent_T<10|input$Percent_T>90){
-          showNotification("WARNING!!! Percentage of Transmissive Zone is outside model range (10-90%).",
-                           type="warning",
-                           duration=NULL,
-                           id = 'H')
-        }else{
-          removeNotification(id = 'H')
-        }
-      })
+      # observeEvent(input$Thickness, {
+      #   if (input$BGLG==1 &(input$Thickness<0.5|input$Thickness>5)){
+      #     showNotification("WARNING!!! Aquifer thickness outside model range (0.5-5)",
+      #                      type="warning",
+      #                      duration=NULL,
+      #                      id = 'A')
+      #   }else if((input$BGLG!=1 &(input$Thickness<0.5|input$Thickness>2))){
+      #     showNotification("WARNING!!! Aquifer thickness outside model range (0.5-2) for Layered Geometry. Please use Boundary Geometry.",
+      #                      type="warning",
+      #                      duration=NULL,
+      #                      id = 'A')
+      #   }else{
+      #     removeNotification(id = 'A')
+      #   }
+      # })
+      # 
+      # observeEvent({
+      #   input$Year_Started
+      #   input$Year_Removed
+      # }, {
+      #   if ((input$Year_Removed-input$Year_Started)<10|(input$Year_Removed-input$Year_Started)>100){
+      #     showNotification("WARNING!!! Time between Source Started year and Source Removed year outside model range (10-100).",
+      #                      type="warning",
+      #                      duration=NULL,
+      #                      id = 'B')
+      #   }else{
+      #     removeNotification(id = 'B')
+      #   }
+      # })
+      # 
+      # observeEvent(input$tortuosity_LK, {
+      #   if (input$tortuosity_LK<0.07|input$tortuosity_LK>0.7){
+      #     showNotification("WARNING!!! Tortuosity outside model range (0.07-0.7).",
+      #                      type="warning",
+      #                      duration=NULL,id = 'C')
+      #   }else{
+      #     removeNotification(id = 'C')
+      #   }
+      # })
+      # 
+      # observeEvent({
+      #   input$Retardation_HK
+      #   input$Retardation_LK
+      # }, {
+      #   if (input$Retardation_HK<1|input$Retardation_LK<1|input$Retardation_HK>10|input$Retardation_LK>10){
+      #     showNotification("WARNING!!! [Low K/High K] retardation factor outside model range (1-10).",
+      #                      type="warning",
+      #                      duration=NULL,id = 'D')
+      #   }else{
+      #     removeNotification(id = 'D')
+      #   }
+      # })
+      # 
+      # observeEvent({
+      #   input$Concentration
+      #   input$Target_Clean_Leve
+      #   }, {
+      #   if (round(log10(Concentration/Target_Clean_Level),3)>3|round(log10(Concentration/Target_Clean_Level),3)<1){
+      #     showNotification("WARNING!!! OoM outside of range (1-3) model range. Cannot calculate time for cleanup",
+      #                      type="warning",
+      #                      duration=NULL,id = 'E')
+      #   }else{
+      #     removeNotification(id = 'E')
+      #   }
+      #     })
+      # 
+      # observeEvent(input$n, {
+      #   if (input$n<0.15|input$n>0.5){
+      #     showNotification("WARNING!!! Low K porosity outside model range (0.15-0.5).",
+      #                      type="warning",
+      #                      duration=NULL,id = 'F')
+      #   }else{
+      #     removeNotification(id = 'F')
+      #   }
+      # })
+      # 
+      # observeEvent({
+      #   input$K
+      #   input$ne
+      #   input$i
+      # }, {
+      #   Seep_V <-input$K*input$i/input$ne*60*60*24*365/100
+      #   if (Seep_V<7|Seep_V>210){
+      #     showNotification("WARNING!!! Seepage velocity outside model range (7-210 m/year).",
+      #                      type="warning",
+      #                      duration=NULL,
+      #                      id = 'G')
+      #   }else{
+      #     removeNotification(id = 'G')
+      #   }
+      # })
+      # 
+      # observeEvent(input$Percent_T, {
+      #   if (input$Percent_T<10|input$Percent_T>90){
+      #     showNotification("WARNING!!! Percentage of Transmissive Zone is outside model range (10-90%).",
+      #                      type="warning",
+      #                      duration=NULL,
+      #                      id = 'H')
+      #   }else{
+      #     removeNotification(id = 'H')
+      #   }
+      # })
       
       HalfLife <-reactiveVal()
       observeEvent({
         input$HalfLife
         input$HalfLifeYN}, {
-        if (input$HalfLife<0.7|input$HalfLifeYN>7000){
-          showNotification("WARNING!!! Half-life outside model range (0.7-7,000).",
-                           type="warning",
-                           duration=NULL,id = 'I')
-        }else{
-          removeNotification(id = 'I')
-        }
+        # if (input$HalfLife<0.7|input$HalfLifeYN>7000){
+        #   showNotification("WARNING!!! Half-life outside model range (0.7-7,000).",
+        #                    type="warning",
+        #                    duration=NULL,id = 'I')
+        # }else{
+        #   removeNotification(id = 'I')
+        # }
           
         if (input$HalfLifeYN==1){
           HalfLife(0)

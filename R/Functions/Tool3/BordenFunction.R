@@ -44,7 +44,7 @@ LG_BordenFunction<-function(df){
   TM =Tt*Retardation_HK+X_m*Retardation_LK*n*(1-Percent_T/100)/(K_m*Percent_T/100*i) # mass retention time (yr)
   # This function has been reduced from the form in Borden and Cha (2021)
   # to allow for seepage velocity to be included as its own variable.
-  
+
   LD = B*(1-Percent_T/100)/(2*N)
   TD = (Retardation_LK*LD^2)/(4*D_new) # diffusion time
   
