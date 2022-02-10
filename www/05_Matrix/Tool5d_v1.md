@@ -28,9 +28,7 @@
                 </div>
                 
  <div class="col-md-4" style = "text-align: justify;">
-                  <a href="https://serdp-estcp.org/Tools-and-Training/Environmental-Restoration/Groundwater-Plume-Treatment/Matrix-Diffusion-Tool-Kit">
                     <figure>
                     <img src="05_Matrix/FIG/Tool5d_fig3.png" width= 468 height=303 class="center">
                       </figure>
-                      </a>
  </div>
