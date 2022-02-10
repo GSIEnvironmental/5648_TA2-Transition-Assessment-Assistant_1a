@@ -29,14 +29,14 @@ figcaption {
 }
 </style>
 
-<div class="col-md-4">
+<div class="col-md-4" style = "text-align: center;">
 <figure>
   <img src="05_Matrix/FIG/Tool5c_fig1.png" width= 468 height=459 class="center">
   <figcaption>Model 1</figcaption>
 </figure>
 </div>
 
-<div class="col-md-4" style = "text-align: justify;">
+<div class="col-md-4" style = "text-align: center;">
 <a href="https://serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-201426/(language)/eng-US">
 <figure>
   <img src="05_Matrix/FIG/Tool5c_fig2.png" width= 468 height=291 class="center">
@@ -45,7 +45,7 @@ figcaption {
 </a>
 </div>
 
-<div class="col-md-4" style = "text-align: justify;">
+<div class="col-md-4" style = "text-align: center;">
 <a href="https://serdp-estcp.org/Tools-and-Training/Environmental-Restoration/Groundwater-Plume-Treatment/Matrix-Diffusion-Tool-Kit">
 <figure>
   <img src="05_Matrix/FIG/Tool5c_fig3.png" width= 468 height=421 class="center">

@@ -7,7 +7,12 @@ MatrixDiffusionUI <- function(id, label = "05_MatrixDiffusion"){
   tabPanel("5. Matrix Diffusion",
            #tags$h1(tags$b("Tool 5. Model a groundwater plume and account for matrix diffusion.")),
            tabsetPanel(
-
+             
+             tabPanel(HTML("5a History of TA"),
+                      HTML("<H2>Tool 5a.  History of Transition Assessments (TA)</H2>"),
+                      br(),
+                      fluidRow(includeMarkdown('./www/05_Matrix/Tool5a_v1.md'))
+                      ), 
              tabPanel(HTML("5c Models for TA"),
                       HTML("<H2>Tool 5c.  Potential computer models for Transition Assessments (TA)</H2>"),
                       br(),
