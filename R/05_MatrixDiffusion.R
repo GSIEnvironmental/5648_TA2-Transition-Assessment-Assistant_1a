@@ -13,6 +13,11 @@ MatrixDiffusionUI <- function(id, label = "05_MatrixDiffusion"){
                       br(),
                       fluidRow(includeMarkdown('./www/05_Matrix/Tool5a_v1.md'))
                       ), 
+             tabPanel(HTML("5b MD Case Study"),
+                      HTML("<H2>Tool 5b.  Matrix Diffusion Case Study: Pump and Treat Site</H2>"),
+                      br(),
+                      fluidRow(includeMarkdown('./www/05_Matrix/Tool5b_v1.md'))
+             ), 
              tabPanel(HTML("5c Models for TA"),
                       HTML("<H2>Tool 5c.  Potential computer models for Transition Assessments (TA)</H2>"),
                       br(),
@@ -43,9 +48,6 @@ MatrixDiffusionUI <- function(id, label = "05_MatrixDiffusion"){
                                                style = "info"),
                                bsCollapsePanel("HOW TO CALIBRATE REMChlor-MD",
                                                includeMarkdown('./www/05_Matrix/Tool5d_v4.md'),
-                                               style = "info"),
-                               bsCollapsePanel("HOW TO DO MODEL IMPACT OF REMEDIATION PROJECTS",
-                                               includeMarkdown('./www/05_Matrix/Tool5d_v5.md'),
                                                style = "info"),
                                bsCollapsePanel("REMCHLOR-MD ASSUMPTIONS AND LIMITATIONS",
                                                includeMarkdown('./www/05_Matrix/Tool5d_v6.md'),
