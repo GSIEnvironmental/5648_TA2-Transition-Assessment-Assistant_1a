@@ -62,7 +62,9 @@ shinyUI <- navbarPage(theme="styles.css",
 
                    # PerformanceUI("04_Performance"),
 
-                    MatrixDiffusionUI("05_MatrixDiffusion"),
+                   MatrixDiffusionUI("05_MatrixDiffusion"),
+                   
+                   EnhanceMNAUI("06_EnhanceMNA"),
                    
                    # tabPanel("6. Enhanced MNA",
                    #          fluidRow(
