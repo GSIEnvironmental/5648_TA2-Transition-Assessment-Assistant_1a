@@ -1,17 +1,30 @@
 Helpboxfunction<-function(X){
-  filename = paste0('<p align="center">',
-                    '<img src=',
-                    '"./03_CleanupGoals/',
-                    X,
-                    '" ',
-                    'width="845" height="1125">',
-                    '</p>',
-                    sep='')
+  
+  if (X=='10_Halflifev2.png'){
+    filename = paste0('<p align="center">',
+                      '<img src=',
+                      '"./03_CleanupGoals/',
+                      X,
+                      '" ',
+                      'width="845" height="1317">',
+                      '</p>',
+                      sep='')
+  }else{
+    filename = paste0('<p align="center">',
+                      '<img src=',
+                      '"./03_CleanupGoals/',
+                      X,
+                      '" ',
+                      'width="845" height="1125">',
+                      '</p>',
+                      sep='')
+
+  }
   showModal(modalDialog(
-  title = "Help Box",
-  size = 'l',
-  HTML(filename),
-  easyClose = TRUE,
-  footer = NULL
+    title = "Help Box",
+    size = 'l',
+    HTML(filename),
+    easyClose = TRUE,
+    footer = NULL
   ))
 }

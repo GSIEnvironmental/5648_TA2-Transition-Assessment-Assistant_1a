@@ -140,7 +140,7 @@ TZ_soil_order <- c("Gravel","Coarse Sand", "Medium Sand", "Fine Sand")
 figure_list <-c("01_X.png","02_i.png","03_COC.png",
                 "04_Year_Started.png","05_Year_Removed.png","06_Concentration.png",                
                 "07_Thickness.png","08_HK_soil.png","09_LK_soil.png",
-                "10_Halflife.png","11_Halflife - Copy.png","12_PercentB.png",
+                "10_Halflifev2.png","12_PercentB.png",
                 "13_LK_numbers.png","14_HK.png","15_ne.png",
                 "16_n.png","17_BGLG.png","18_D.png",
                 "19_tortuosity.png","20_HK_FOC.png","21_LK_FOC.png",

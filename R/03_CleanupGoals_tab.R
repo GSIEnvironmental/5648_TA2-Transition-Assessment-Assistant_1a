@@ -711,6 +711,9 @@ CleanupGoals_tabServer <- function(id) {
                                                (P90_list[c(1:3,7)])))
         print ('cd_1')
         print (cd_1)
+        cd_1<-cd_1%>%arrange(Concentration)
+        cd_1_p10<-cd_1_p10%>%arrange(Concentration)
+        cd_1_p90<-cd_1_p90%>%arrange(Concentration)
         # cd_1 <- data.frame(time = c(0,round(sort(results_list[c(4:6,8)]),1)),
         #                    Concentration=c(input$Concentration,
         #                                    sort(results_list[c(1:3,7)],decreasing=TRUE)))
@@ -953,10 +956,11 @@ CleanupGoals_tabServer <- function(id) {
         results_list <- results()
         
         len_MC <-nrow(results_list)
+
         if(len_MC>=700){
           glue("<H3>","The monitoring well will achieve the clean-up goal of ",unique(results_list$Target_Clean_Level), " ug/L in ",
                "<font color=\"#52077F\"><b>",
-               round(as.numeric(mean(results_list$Time_Cleanup))+as.numeric(input$Year_Removed),0),
+               round(as.numeric((results_list$Time_Cleanup[1]))+as.numeric(input$Year_Removed),0),
                "</b></font>",".","</H3>"
           )
         }else{
