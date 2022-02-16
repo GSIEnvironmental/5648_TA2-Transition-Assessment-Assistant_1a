@@ -18,7 +18,7 @@
 </div>
 
 <div class="col-md-9" style = "text-align: left;"> 
-<img src="06_MNA/FIG/Tool6b_Fig.png"  class="center">
+<img src="06_MNA/FIG/Tool6b_Fig.png"  class="center" width= 600 height=455>
 <br>
 </br>
 </div>
