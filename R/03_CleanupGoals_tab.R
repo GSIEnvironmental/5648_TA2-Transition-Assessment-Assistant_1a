@@ -700,9 +700,9 @@ CleanupGoals_tabServer <- function(id) {
         #min_list <-apply(results_list_all,2,min)
         #max_list <-apply(results_list_all,2,max)
         
-        cd_1 <- data.frame(time = c(0,round((results_init[c(4:6,8)]),1)),
+        cd_1 <- data.frame(time = c(0,round((results_list[c(4:6,8)]),1)),
                            Concentration=c(input$Concentration,
-                                           (results_init[c(1:3,7)])))
+                                           (results_list[c(1:3,7)])))
         cd_1_p10 <- data.frame(time = c(0,round((P10_list[c(4:6,8)]),1)),
                                Concentration=c(input$Concentration,
                                                (P10_list[c(1:3,7)])))
@@ -744,7 +744,7 @@ CleanupGoals_tabServer <- function(id) {
         p <-plot_ly()%>%
           add_trace(data = cd_1, x= ~time+input$Year_Removed,
                     y = ~Concentration ,
-                    name = 'Initial Parameter Condition',
+                    name = 'Mean',
                     type = "scatter", line = list(shape = "spline",color='rgb(31,150,180)'),
                     mode = 'lines+markers',
                     hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration: %{y} ug/L<br>')
@@ -830,10 +830,10 @@ CleanupGoals_tabServer <- function(id) {
         #validate(need(nrow(results()) >= 700, "Seepage Velocity Outside the Range of Borden Model"))
         #validate(need(error() != "Check Inputs", "Please Check Input Values"))
         cd <- results()
-        results_list<-apply(cd[1,],2,mean) # calculate just the initial condition
+        listnum = nrow(cd)
+        results_list<-apply(cd[2:listnum,],2,mean) # calculate mean
         #results_list<-apply(cd,2,mean)
         #min_list <-apply(cd,2,min)
-        listnum = nrow(cd)
         max_list <-apply(cd[2:listnum,],2,function(x) quantile(x, probs = .9))
         min_list <-apply(cd[2:listnum,],2,function(x) quantile(x, probs = .1))
         
@@ -898,7 +898,7 @@ CleanupGoals_tabServer <- function(id) {
               B = "Concentration (ug/L)",
               C = "Year Achieved",
               D = glue(" Years From Now (",format(Sys.Date(),'%Y'),")"),
-              E = "Deviation of Years from Initial Conditions (10%,90%)"
+              E = "Deviation of Years from Mean"
             )%>%
             #tab_header("RESULTS") %>%
             fmt_number(columns = c(2,3), rows = everything(), decimals = 0, use_seps=FALSE) %>%

@@ -13,14 +13,16 @@ ValidateRangeFunction<-function(error,results,input){
     need(input$n>=0.15&input$n<=0.45,
          "Low K porosity outside model range (0.15-0.45)."),
     need((input$X/(input$K*input$i/input$ne*60*60*24*365/100)>=0.40)&(input$X/(input$K*input$i/input$ne*60*60*24*365/100)<=11.94),
-         paste(toString(round(input$X/(input$K*input$i/input$ne*60*60*24*365/100)),2),"Travel time outside model range (0.40-11.94 years).",sep='')),
+         paste("Travel time is ",toString(round(input$X/(input$K*input$i/input$ne*60*60*24*365/100)),2)," years which is outside model range (0.40-11.94 years).",sep='')),
     need(input$Percent_T>=10&input$Percent_T<=90,
          "Percentage of Transmissive Zone is outside model range (10-90%)."),
     need(input$HalfLife>=1&input$HalfLife<=1000,
          "Half-life outside model range (1-1,000 years)."),
     need(error != "Check Inputs", "Please Check Input Values."),
     need(nrow(results) >= 700, 
-         "Too many realizations being outside of the Borden's Tool range \n or choose parameters at the boundary, cannot generate rectagular distribution.")
+         "Too many realizations being outside of the Borden's Tool range \n or choose parameters at the boundary, cannot generate rectagular distribution."),
+    need(input$N>=1&input$N<=4,
+         "Number of Low-K Layers outside model range (1-4 layers)")
   )
   
   if (input$BGLG=="1"){
@@ -52,6 +54,8 @@ ValidateRangeFunctionSilent<-function(error,results,input){
            need(input$Percent_T>=10&input$Percent_T<=90,
                 FALSE),
            need(input$HalfLife>=1&input$HalfLife<=1000,
+                FALSE),
+           need(input$N>=1&input$N<=4,
                 FALSE)
   )
   if (input$BGLG=="1"){
