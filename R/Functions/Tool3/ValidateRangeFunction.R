@@ -4,6 +4,8 @@ ValidateRangeFunction<-function(error,results,input){
          "Time between Source Started year and Source Removed year outside model range (10-100 years)"),
     need(input$tortuosity_LK>=0.07&input$tortuosity_LK<=0.7,
          "Tortuosity outside model range (0.07-0.7)."),
+    need(input$K>=0.01&input$tortuosity_LK<=0.4,
+         "Hydrulic Conductivity outside model range (0.01 - 0.1 cm/s)."),
     need((input$Retardation_HK>=1&input$Retardation_LK>=1)&(input$Retardation_HK<=10&input$Retardation_LK<=10),
          "Low K or/and High K retardation factor outside model range (1-10)."),
     # need(round(log10(input$Concentration/input$Target_Clean_Level),3)<=3|round(log10(input$Concentration/input$Target_Clean_Level),3)>=1,

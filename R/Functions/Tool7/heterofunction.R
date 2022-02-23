@@ -25,7 +25,8 @@ heterofunction<-function(df,TOP,Bottom,aquitard){
   
   
   
-  Thickness = Bottom - Top
+  Thickness = Bottom - TOP
+
   ave = mean(rowSums(df[,c(2:5)],na.rm=TRUE))
   
   

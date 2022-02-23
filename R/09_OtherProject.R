@@ -1,17 +1,18 @@
 # Asymptote Modules -----------------------------
 
 ## UI -----------------------------------------
-PlumeZoneUI <- function(id, label = "09_PlumeZone"){
+SERDPUI <- function(id, label = "09_SERDP"){
   ns <- NS(id)
   
-  tabPanel("9. Plume Zone",
-           tags$h1(tags$b("Tool 9. Plume Assimilative Capacity Zone Calculator."))
+  tabPanel("9. Other Projects",
+           tags$h1(tags$b("Tool 9. Learn from other SERDP Transittion Assessment Projects.")),
+           HTML("<h3><p style='color:red;'>This tool is currently under development.</h3></p>")
   )
 } # end Asymptote UI         
 
 
 ## Server Module -----------------------------------------
-PlumeZoneServer <- function(id) {
+SERDPServer <- function(id) {
   moduleServer(
     id,
     
