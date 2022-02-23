@@ -180,14 +180,14 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                    fluidRow(column(6, align = "right", 
                                                    HTML("Percent of B that is Transmissive (%):")),
                                             column(4, align = "center",
-                                                   numericInput(ns("Percent_T"), NULL, value = 90, min = 0)), #87.5 before
+                                                   numericInput(ns("Percent_T"), NULL, value = 50, min = 0)), #87.5 before
                                             column(2, align = "left",
                                                    actionButton(ns("help12"), HTML("?"), style = button_style2))), 
                                    br(),
                                    fluidRow(column(6, align = "right", 
                                                    HTML("Number of Low-k Layers (-):")),
                                             column(4, align = "center",
-                                                   numericInput(ns("N"), NULL, value = 1, min = 0)),
+                                                   numericInput(ns("N"), NULL, value = 4, min = 0)),
                                             column(2, align = "left",
                                                    actionButton(ns("help13"), HTML("?"), style = button_style2))), 
                                    br()
@@ -684,10 +684,11 @@ CleanupGoals_tabServer <- function(id) {
 
       ## Figure ----------------------------------------------
       plotlyfigureoutput <- reactive({
+
         ValidateRangeFunctionSilent(error(),results(),input)
         #validate(need(nrow(results()) >= 700, "Seepage Velocity Outside the Range of Borden Model"))
         results_list_all = results()
-        
+
         lineNum = nrow(results_list_all)
         results_init <-apply(results_list_all[1,],2,mean) # initial parameter conditions
         
@@ -826,6 +827,7 @@ CleanupGoals_tabServer <- function(id) {
       ## Results Table -------------------------
       output$calc_output <- render_gt(align = "center", {
         # Get Values
+
         ValidateRangeFunction(error(),results(),input)
         #validate(need(nrow(results()) >= 700, "Seepage Velocity Outside the Range of Borden Model"))
         #validate(need(error() != "Check Inputs", "Please Check Input Values"))
@@ -918,6 +920,7 @@ CleanupGoals_tabServer <- function(id) {
       
       ## Export travel time results ---------------------
       output$selected_TT <- renderText({ 
+
         ValidateRangeFunctionSilent(error(),results(),input)
         validate(need(!is.na(input$X) & !is.na(input$i) & !is.na(input$K) & !is.na(input$ne), ""))
         Seep_V <-input$K*input$i/input$ne/100*60*60*24*365
@@ -936,6 +939,7 @@ CleanupGoals_tabServer <- function(id) {
       
       ## Export MC number---------------------
       output$selected_TT3 <- renderText({ 
+    
         ValidateRangeFunctionSilent(error(),results(),input)
         #validate(need(error() != "Check Inputs", "Please Check Input Values"))
         df<-results()
@@ -951,6 +955,7 @@ CleanupGoals_tabServer <- function(id) {
       
       ## Export title of plotly ---------------------
       output$selected_TT2 <- renderText({ 
+
         ValidateRangeFunctionSilent(error(),results(),input)
         #validate(need(error() != "Check Inputs", "Please Check Input Values"))
         results_list <- results()
