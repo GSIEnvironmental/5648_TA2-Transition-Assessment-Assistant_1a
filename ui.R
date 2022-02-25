@@ -49,44 +49,26 @@ shinyUI <- navbarPage(theme="styles.css",
                    AsymptoteUI("01_Asymptote"),
                    
                    TrendUI("02_Trend"),
-
-                   # ExpansionUI("02_Expansion"),
-
-                   #BordenToolUI("Borden_Tool"),
                    
-                   #CleanupGoalsUI("03_CleanupGoals"),
                    CleanupGoals_tabUI("03_CleanupGoals_tab"),
-                   
-                   # CleanupGoals_MCtabUI("03_CleanupGoals_MCtab"),
-                   #CleanupGoals_linearUI("03_CleanupGoals_linear"),
 
-                   # PerformanceUI("04_Performance"),
+                   PerformanceUI("04_Performance"),
 
                    MatrixDiffusionUI("05_MatrixDiffusion"),
                    
                    EnhanceMNAUI("06_EnhanceMNA"),
                    
-                   # tabPanel("6. Enhanced MNA",
-                   #          fluidRow(
-                   #            column(9,
-                   #                   includeMarkdown("./www/06_MNA/app_info.md"))
-                   #          )# end Fluid Row
-                   # ), #end MNA tab
-                   # 
+                   HeterogeneityUI("07_Heterogeneity"),
+
+                   PlumeZoneUI("09_PlumeZone"),
                    
-                   
-                   # HeterogeneityUI("07_Heterogeneity"), 
-                   
-                   # tabPanel("8. GW Models",
-                   #          fluidRow(
-                   #            column(9,
-                   #                   includeMarkdown("./www/08_GWModels/app_info.md"))
-                   #          )# end Fluid Row
-                   # ), #end GW_Models tab
-                   
-                   # PlumeZoneUI("09_PlumeZone"), 
-                   
-                   # SummaryUI("10_Summary"), 
+                   tabPanel("9. GW Models",
+                            fluidRow(
+                              HTML("<h1 style='color:red;'><i>Under Construction</i></h1>"), br()
+                            )# end Fluid Row
+                   ), #end GW_Models tab
+
+                   SummaryUI("10_Summary"),
                    
                    footer = HTML('<a href="https://www.gsi-net.com/en/" target="_blank">
                    <div style="background-color: #112447; padding: 10px; margin-right: 0;  margin-left: 0;">

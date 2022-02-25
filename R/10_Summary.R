@@ -5,7 +5,9 @@ SummaryUI <- function(id, label = "010_Summary"){
   ns <- NS(id)
   
   tabPanel("10. Summary",
-           tags$h1(tags$b("Tool 10. Summary and Plume Persistence Index."))
+           HTML("<h1 style='color:red;'><i>Under Construction</i></h1>"), br(),
+           tags$h1(tags$b("Tool 10. Summary and Plume Persistence Index.")), 
+           br(), br()
   )
 } # end Summary UI         
 

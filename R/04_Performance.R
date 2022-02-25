@@ -5,7 +5,9 @@ PerformanceUI <- function(id, label = "04_Performance"){
   ns <- NS(id)
   
   tabPanel("4. Performance",
-           tags$h1(tags$b("Tool 4. What level of performance can I expect from an in-situ source remediation projects?"))
+           HTML("<h1 style='color:red;'><i>Under Construction</i></h1>"), br(),
+           tags$h1(tags$b("Tool 4. What level of performance can I expect from an in-situ source remediation projects?")), 
+           br(), br()
   )
 } # end Performance UI         
 

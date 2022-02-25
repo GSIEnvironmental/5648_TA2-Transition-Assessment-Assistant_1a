@@ -8,8 +8,10 @@ library(sf)
 #thicknessHK and LK: thickness of aquifer in feet of high K and low K zone
 
 sp_interpolation<-function(df_MW_compiled,
-                           porosityHK,porosityLK,
-                           thicknessHK,thicknessLK){
+                           porosityHK = 0.2,
+                           porosityLK = 0.1,
+                           thicknessHK = 8,
+                           thicknessLK = 2){
   
   inter_list <- list()
   
@@ -21,15 +23,15 @@ sp_interpolation<-function(df_MW_compiled,
       group_by(Group, Date) %>%
       summarise(MW_count =n()) %>% ungroup()
     
-    
     HKmass = c()
     LKmass = c() 
     
     # loop to calculate mass for each day
     for (i in as.character(unique(overall_tbl$Date))){
-      
       # filter data with date
       df <- df_MW_compiled %>% filter(as.character(Date) == i)
+      
+      if(dim(df)[1] > 3){
       
       # generate Dalaunay triangulation for each MW
       dsp <- SpatialPoints(df[,c("Longitude", "Latitude")], proj4string=CRS("+proj=longlat +datum=NAD83"))
@@ -37,23 +39,29 @@ sp_interpolation<-function(df_MW_compiled,
       
       v <- voronoi(dsp)
       
-      # calculate area
-      df$area = st_area(st_as_sf(v,'SpatialPolygonsDataFrame'))  #unit is in meters
-      
-      # convert mass to be kg, separate calculation for high and low K
-      df$massHK = as.numeric(df$area)*(df$Concentration/0.001)*porosityHK*(thicknessHK *0.3048)*10^(-9)
-      df$massLK = as.numeric(df$area)*(df$Concentration/0.001)*porosityLK*(thicknessLK *0.3048)*10^(-9)
-      df$total_mass = df$massLK + df$massLK
+      v@data <- v@data %>% 
+        # calculate area
+        mutate(area = st_area(st_as_sf(v,'SpatialPolygonsDataFrame')), #unit is in meters
+               # convert mass to be kg, separate calculation for high and low K
+               massHK = as.numeric(area)*(Concentration/0.001)*porosityHK*(thicknessHK *0.3048)*10^(-9),
+               massLK = as.numeric(area)*(Concentration/0.001)*porosityLK*(thicknessLK *0.3048)*10^(-9),
+               total_mass = massLK + massHK)
+
       # concentration is ug/L
       # porosity of transmissive zone (-)
       # thickness of transmissive zone (ft)
       
-      inter_list[[j]][[as.character(i)]][["df"]] <- df
+      inter_list[[j]][[as.character(i)]][["df"]] <- v@data
       inter_list[[j]][[as.character(i)]][["shape"]] <- v
       
       # append for high K zone and low K zone
-      HKmass<-append(HKmass,as.numeric(sum(df$massHK)))
-      LKmass<-append(LKmass,as.numeric(sum(df$massLK)))
+      HKmass<-append(HKmass,as.numeric(sum(v@data$massHK)))
+      LKmass<-append(LKmass,as.numeric(sum(v@data$massLK)))
+      }else{
+        HKmass<-append(HKmass, NA)
+        LKmass<-append(LKmass, NA)
+      }
+      
     }
     
     # tabulate database by date, MW counts, lowK mass, highKmass, and totalmass
