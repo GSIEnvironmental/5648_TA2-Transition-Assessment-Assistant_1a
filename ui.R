@@ -60,19 +60,16 @@ shinyUI <- navbarPage(theme="styles.css",
                    
                    HeterogeneityUI("07_Heterogeneity"),
 
-                   PlumeZoneUI("09_PlumeZone"),
+                   PlumeZoneUI("08_PlumeZone"),
                    
-                   tabPanel("9. GW Models",
-                            fluidRow(
-                              HTML("<h1 style='color:red;'><i>Under Construction</i></h1>"), br()
-                            )# end Fluid Row
-                   ), #end GW_Models tab
+                   SERDPUI("09_SERDP"),
+                   
 
                    SummaryUI("10_Summary"),
                    
                    footer = HTML('<a href="https://www.gsi-net.com/en/" target="_blank">
                    <div style="background-color: #112447; padding: 10px; margin-right: 0;  margin-left: 0;">
-                                   <h3 class="featurette-heading" style="color:white;" ><i>Powered by <b>GSI Environmental</b> (2021)</i></h3>
+                                   <h3 class="featurette-heading" style="color:white;" ><i>Powered by <b>GSI Environmental</b> (2022)</i></h3>
                                    </div></a>')
                    
 

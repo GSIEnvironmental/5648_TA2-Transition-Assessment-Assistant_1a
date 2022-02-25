@@ -105,6 +105,9 @@ temp_data <- read.xlsx("./data/data_template.xlsx", sheet = "Concentration_Time_
 
 temp_mw_info <- read.xlsx("./data/data_template.xlsx", sheet = "Monitoring_Well_Information", startRow = 1,
                        check.names = F, sep.names = " ")
+
+temp_boring <- read.xlsx("./data/5648_Dummy_Borling.xlsx")
+
 # Map -----------------------------
 site_map <- leaflet() %>%
   addTiles(urlTemplate = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
@@ -142,7 +145,7 @@ TZ_soil_order <- c("Gravel","Coarse Sand", "Medium Sand", "Fine Sand")
 figure_list <-c("01_X.png","02_i.png","03_COC.png",
                 "04_Year_Started.png","05_Year_Removed.png","06_Concentration.png",                
                 "07_Thickness.png","08_HK_soil.png","09_LK_soil.png",
-                "10_Halflifev2.png","12_PercentB.png",
+                "10_Halflifev2.png","11_Halflifev2.png","12_PercentB.png",
                 "13_LK_numbers.png","14_HK.png","15_ne.png",
                 "16_n.png","17_BGLG.png","18_D.png",
                 "19_tortuosity.png","20_HK_FOC.png","21_LK_FOC.png",
@@ -237,7 +240,7 @@ source("./R/03_CleanupGoals_tab.R")
 # 
 # source("./R/05_MatrixDiffusion.R")
 # 
-# source("./R/07_Heterogeneity.R")
+ source("./R/07_Heterogeneity.R")
 # 
 # source("./R/09_PlumeZone.R")
 # 

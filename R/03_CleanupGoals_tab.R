@@ -11,9 +11,12 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
            fluidRow(style='border-bottom: 5px solid black',
              HTML("<h1><b>Tool 3. How long will it take to reach cleanup goals after source remediation at my site?</h1></b>"),
              column(8,
-                    HTML("<h3>This is a simple Tool to estimate the number of years it will take to reduce source concentrations by 90%, 99%, 
-                    or 99.9%.  The Tool was developed by Dr. Bob Borden (Borden and Cha, 2021) and is based on the REMChlor-MD model.  
-                    </h3><br>"))
+                    HTML("<h3>This is a simple tool to estimate the number of years it will take to reduce the 
+                    concentration in a plume monitoring well by 90%, 99%, or 99.9% after complete source removal. 
+                    The Tool was developed by Dr. Bob Borden (Borden and Cha, 2021) and is based on the REMChlor-MD model.  
+                    </h3><br>"),
+                    HTML("<h3><p style='color:red;'>This tool is currently under development and restricted K value to be between 0.01 - 0.1 cm/s. 
+                         We are work in progress to exapand this range.</h3></p>"))
            ), # end Page Title
            
            ## Input Data ----------
@@ -42,7 +45,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                         fluidRow(column(6, align = "right",
                                                         HTML("Distance from Source to Monitoring Well (meters):")),
                                                  column(4, align = "center",
-                                                        numericInput(ns("X"), NULL, value=50, min = 0, step = 0.01)),#28.8 before
+                                                        numericInput(ns("X"), NULL, value=500, min = 0, step = 0.01)),#28.8 before
                                                  column(2, align = "left",
                                                         actionButton(ns("help1"), HTML("?"), style = button_style2))), 
                                         br(), 
@@ -111,7 +114,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                                             choices = list("Setting 1: Aquifer with aquitard (either below, above, or both)" = 1,
                                                                            "Setting 2: Aquifer with no aquitard but layers/lenses" = 2,
                                                                            "Setting 3: Aquifer with both aquitard and layers/lenses" = 3 ),
-                                                            selected = 2, inline = FALSE)),
+                                                            selected = 1, inline = FALSE)),
                                         
                                         column(6, align = "center",
                                                fluidRow(HTML("<i>Setting 1</i>")),
@@ -143,7 +146,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                             column(4, align = "center",
                                                    selectInput(ns("HighKPorousMedia"), label = NULL,
                                                                choices = TZ_soil_order,#c(sort(unique(TZ_Soil_Type$Soil_Type))),
-                                                               selected = "Coarse Sand", multiple = F, selectize = FALSE)),
+                                                               selected = "Gravel", multiple = F, selectize = FALSE)),
                                             column(2, align = "left", 
                                                    actionButton(ns("help8"), HTML("?"), style = button_style2))), 
                                    br(), 
@@ -180,14 +183,14 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                    fluidRow(column(6, align = "right", 
                                                    HTML("Percent of B that is Transmissive (%):")),
                                             column(4, align = "center",
-                                                   numericInput(ns("Percent_T"), NULL, value = 90, min = 0)), #87.5 before
+                                                   numericInput(ns("Percent_T"), NULL, value = 50, min = 0)), #87.5 before
                                             column(2, align = "left",
                                                    actionButton(ns("help12"), HTML("?"), style = button_style2))), 
                                    br(),
                                    fluidRow(column(6, align = "right", 
                                                    HTML("Number of Low-k Layers (-):")),
                                             column(4, align = "center",
-                                                   numericInput(ns("N"), NULL, value = 1, min = 0)),
+                                                   numericInput(ns("N"), NULL, value = 4, min = 0)),
                                             column(2, align = "left",
                                                    actionButton(ns("help13"), HTML("?"), style = button_style2))), 
                                    br()
@@ -684,10 +687,11 @@ CleanupGoals_tabServer <- function(id) {
 
       ## Figure ----------------------------------------------
       plotlyfigureoutput <- reactive({
+
         ValidateRangeFunctionSilent(error(),results(),input)
         #validate(need(nrow(results()) >= 700, "Seepage Velocity Outside the Range of Borden Model"))
         results_list_all = results()
-        
+
         lineNum = nrow(results_list_all)
         results_init <-apply(results_list_all[1,],2,mean) # initial parameter conditions
         
@@ -700,9 +704,9 @@ CleanupGoals_tabServer <- function(id) {
         #min_list <-apply(results_list_all,2,min)
         #max_list <-apply(results_list_all,2,max)
         
-        cd_1 <- data.frame(time = c(0,round((results_init[c(4:6,8)]),1)),
+        cd_1 <- data.frame(time = c(0,round((results_list[c(4:6,8)]),1)),
                            Concentration=c(input$Concentration,
-                                           (results_init[c(1:3,7)])))
+                                           (results_list[c(1:3,7)])))
         cd_1_p10 <- data.frame(time = c(0,round((P10_list[c(4:6,8)]),1)),
                                Concentration=c(input$Concentration,
                                                (P10_list[c(1:3,7)])))
@@ -744,7 +748,7 @@ CleanupGoals_tabServer <- function(id) {
         p <-plot_ly()%>%
           add_trace(data = cd_1, x= ~time+input$Year_Removed,
                     y = ~Concentration ,
-                    name = 'Initial Parameter Condition',
+                    name = 'Mean',
                     type = "scatter", line = list(shape = "spline",color='rgb(31,150,180)'),
                     mode = 'lines+markers',
                     hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration: %{y} ug/L<br>')
@@ -826,14 +830,15 @@ CleanupGoals_tabServer <- function(id) {
       ## Results Table -------------------------
       output$calc_output <- render_gt(align = "center", {
         # Get Values
+
         ValidateRangeFunction(error(),results(),input)
         #validate(need(nrow(results()) >= 700, "Seepage Velocity Outside the Range of Borden Model"))
         #validate(need(error() != "Check Inputs", "Please Check Input Values"))
         cd <- results()
-        results_list<-apply(cd[1,],2,mean) # calculate just the initial condition
+        listnum = nrow(cd)
+        results_list<-apply(cd[2:listnum,],2,mean) # calculate mean
         #results_list<-apply(cd,2,mean)
         #min_list <-apply(cd,2,min)
-        listnum = nrow(cd)
         max_list <-apply(cd[2:listnum,],2,function(x) quantile(x, probs = .9))
         min_list <-apply(cd[2:listnum,],2,function(x) quantile(x, probs = .1))
         
@@ -898,7 +903,7 @@ CleanupGoals_tabServer <- function(id) {
               B = "Concentration (ug/L)",
               C = "Year Achieved",
               D = glue(" Years From Now (",format(Sys.Date(),'%Y'),")"),
-              E = "Deviation of Years from Initial Conditions (10%,90%)"
+              E = "Deviation of Years from Mean"
             )%>%
             #tab_header("RESULTS") %>%
             fmt_number(columns = c(2,3), rows = everything(), decimals = 0, use_seps=FALSE) %>%
@@ -918,6 +923,7 @@ CleanupGoals_tabServer <- function(id) {
       
       ## Export travel time results ---------------------
       output$selected_TT <- renderText({ 
+
         ValidateRangeFunctionSilent(error(),results(),input)
         validate(need(!is.na(input$X) & !is.na(input$i) & !is.na(input$K) & !is.na(input$ne), ""))
         Seep_V <-input$K*input$i/input$ne/100*60*60*24*365
@@ -936,6 +942,7 @@ CleanupGoals_tabServer <- function(id) {
       
       ## Export MC number---------------------
       output$selected_TT3 <- renderText({ 
+    
         ValidateRangeFunctionSilent(error(),results(),input)
         #validate(need(error() != "Check Inputs", "Please Check Input Values"))
         df<-results()
@@ -951,6 +958,7 @@ CleanupGoals_tabServer <- function(id) {
       
       ## Export title of plotly ---------------------
       output$selected_TT2 <- renderText({ 
+
         ValidateRangeFunctionSilent(error(),results(),input)
         #validate(need(error() != "Check Inputs", "Please Check Input Values"))
         results_list <- results()

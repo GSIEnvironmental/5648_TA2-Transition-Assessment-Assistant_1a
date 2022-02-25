@@ -4,7 +4,7 @@
 EnhanceMNAUI <- function(id, label = "06_EnhanceMNA"){
   ns <- NS(id)
   
-  tabPanel("6. MNA",
+  tabPanel("6. EA",
            #tags$h1(tags$b("Tool 5. Model a groundwater plume and account for matrix diffusion.")),
            tabsetPanel(
              

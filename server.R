@@ -26,7 +26,7 @@ shinyServer(function(input, output, session) {
   
   # MatrixDiffusionServer("05_MatrixDiffusion")
   
-  # HeterogeneityServer("07_Heterogeneity")
+   HeterogeneityServer("07_Heterogeneity")
   
   # PlumeZoneServer("09_PlumeZone")
   
