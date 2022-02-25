@@ -41,7 +41,7 @@ LG_BordenFunction<-function(df){
   
   TL = Year_Removed - Year_Started #loading period 
   Tt = X_m/Seep_V # High K travel time (yr)
-  TM =Tt*Retardation_HK+X_m*Retardation_LK*n*(1-Percent_T/100)/(K_m*Percent_T/100*i) # mass retention time (yr)
+  TM =Tt*Retardation_HK+X_m*Retardation_LK*n*(1-Percent_T/100)/(K_m*i) # mass retention time (yr)
   # This function has been reduced from the form in Borden and Cha (2021)
   # to allow for seepage velocity to be included as its own variable.
 
