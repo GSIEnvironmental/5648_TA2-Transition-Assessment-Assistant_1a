@@ -53,14 +53,14 @@ Data_Input_Server <- function(id) {
       
       # Reactive Variables -------------------
       # Concentration/Time Dataframe
-      d_conc <- reactiveVal()
+      d_conc <- reactiveVal(temp_data)
       
       observeEvent(input$conc_time_data,{
         d_conc(hot_to_r(input$conc_time_data))
       })
       
       # Monitoring Well Information ----------
-      d_loc <- reactiveVal()
+      d_loc <- reactiveVal(temp_mw_info)
       
       observeEvent(input$mw_data,{
         d_loc(hot_to_r(input$mw_data))
@@ -80,9 +80,13 @@ Data_Input_Server <- function(id) {
       
       # Return Dataframes ------------------
       
-      return(list(d_conc = reactive(d_conc()),
-                  d_loc = reactive(d_loc())))
-  
+      return(list(
+        d_conc = reactive({
+          req(d_conc())
+          data_long(d_conc())}),
+        d_loc = reactive({
+          req(d_loc())
+          data_mw_clean(d_loc())})))
     }
   )
 } # end Data Input Server 

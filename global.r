@@ -19,6 +19,7 @@ options(stringsAsFactors = FALSE)
 # Load Packages ----------------
 
 require(tidyverse)
+require(lubridate)
 require(readxl)
 require(leaflet)
 require(leaflet.extras)
@@ -52,7 +53,7 @@ library(Rcpp)
 # Plot Parameters -------------
 # Colors
 # The palette with grey:
-plot_col <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+col <- c(dark_blue = "#112447", green = "#11691d", light_purple = "#b990db", blue = "204b9b", purple = "#330349")
 
 # GGPLOT Theme Object
 theme <- theme(
@@ -117,7 +118,8 @@ site_map <- leaflet() %>%
   addTiles(urlTemplate = "https://mts1.google.com/vt/lyrs=s&hl=en&src=app&x={x}&y={y}&z={z}&s=G", group="Satellite (Google)",
            options = providerTileOptions(maxNativeZoom=19,maxZoom=100)) %>%
   addMapPane("markers", zIndex = 420) %>%
-  addMapPane("markers_selected", zIndex = 430) 
+  addMapPane("markers_selected", zIndex = 430) %>%
+  addScaleBar("bottomleft")
 
 # Borden Tool Kit ----------------
 

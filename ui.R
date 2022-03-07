@@ -49,16 +49,8 @@ shinyUI <- navbarPage(theme="styles.css",
                    AsymptoteUI("01_Asymptote"),
                    
                    TrendUI("02_Trend"),
-
-                   # ExpansionUI("02_Expansion"),
-
-                   #BordenToolUI("Borden_Tool"),
                    
-                   #CleanupGoalsUI("03_CleanupGoals"),
                    CleanupGoals_tabUI("03_CleanupGoals_tab"),
-                   
-                   # CleanupGoals_MCtabUI("03_CleanupGoals_MCtab"),
-                   #CleanupGoals_linearUI("03_CleanupGoals_linear"),
 
                    PerformanceUI("04_Performance"),
 
@@ -66,29 +58,14 @@ shinyUI <- navbarPage(theme="styles.css",
                    
                    EnhanceMNAUI("06_EnhanceMNA"),
                    
-                   # tabPanel("6. Enhanced MNA",
-                   #          fluidRow(
-                   #            column(9,
-                   #                   includeMarkdown("./www/06_MNA/app_info.md"))
-                   #          )# end Fluid Row
-                   # ), #end MNA tab
-                   # 
+                   HeterogeneityUI("07_Heterogeneity"),
+
+                   PlumeZoneUI("08_PlumeZone"),
                    
+                   SERDPUI("09_SERDP"),
                    
-                   HeterogeneityUI("07_Heterogeneity"), 
-                   
-                   # tabPanel("8. GW Models",
-                   #          fluidRow(
-                   #            column(9,
-                   #                   includeMarkdown("./www/08_GWModels/app_info.md"))
-                   #          )# end Fluid Row
-                   # ), #end GW_Models tab
-                   
-                   PlumeZoneUI("08_PlumeZone"), 
-                   
-                   SERDPUI("09_OtherProject"), 
-                   
-                   SummaryUI("10_Summary"), 
+
+                   SummaryUI("10_Summary"),
                    
                    footer = HTML('<a href="https://www.gsi-net.com/en/" target="_blank">
                    <div style="background-color: #112447; padding: 10px; margin-right: 0;  margin-left: 0;">

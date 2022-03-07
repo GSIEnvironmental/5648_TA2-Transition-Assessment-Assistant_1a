@@ -47,7 +47,8 @@ LG_BordenFunction<-function(df){
 
   LD = B*(1-Percent_T/100)/(2*N)
   TD = (Retardation_LK*LD^2)/(4*D_new) # diffusion time
-  
+  print (summary(TM/TD))
+
   TimeCleanupCalculation(df,Parameters,'LG',TM,TD,TD,HalfLife)
 }
 

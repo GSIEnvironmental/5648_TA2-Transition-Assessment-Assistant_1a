@@ -7,7 +7,7 @@ TrendUI <- function(id, label = "01_Trend"){
   tabPanel("2. Expansion",
            # Page Title ------
            fluidRow(style='border-bottom: 5px solid black',
-                    HTML("<h1><b>Tool 2a. Is my plume still expanding?</h1></b>"),
+                    HTML("<h1><b>Tool 2. Is my plume still expanding?</h1></b>"),
                     column(5,
                            HTML("<h3><b>What Does this Tool Do?</b></h3>
                            <h4>This tool uses concentration vs. time monitoring well data entered by the user to calculate trends in 
@@ -85,7 +85,7 @@ TrendUI <- function(id, label = "01_Trend"){
                                                     pickerInput(ns("select_mw_group"), label = NULL,
                                                                 choices = c("All Monitoring Wells", "Recent Sample Above Concentration Goal"),
                                                                 selected = "All Monitoring Wells",
-                                                                multiple = T,
+                                                                multiple = F,
                                                                 options = list(`live-search`=TRUE,
                                                                                `none-selected-text` = "Select Well Groups")))),
                                     column(2, align = "left", style = "padding:10px;",
@@ -162,7 +162,7 @@ TrendUI <- function(id, label = "01_Trend"){
                                                            choices = c("All Monitoring Wells"),
                                                            multiple = F,
                                                            options = list(`live-search`=TRUE,
-                                                                          `none-selected-text` = "Select Well/Group"))),
+                                                                          `none-selected-text` = "Select Group"))),
                                         column(6, align = "center", 
                                                actionButton(ns("save_map"),
                                                             HTML("Save Map"), style = button_style))), br(),
@@ -192,125 +192,117 @@ TrendServer <- function(id, data_input, nav) {
     id,
     
     function(input, output, session) {
-      # RV: Pivot Conc data long -----------------
-      d_conc_long <- reactiveVal()
+      # RV: Concentration and Time Data -----------
+      d_conc <- reactiveVal(data_long(temp_data))
       
       observeEvent(data_input$d_conc(),{
-        
-        d_conc_long(data_input$d_conc() %>% 
-                      select(where(~!all(is.na(.x)))) %>% # removing columns with no data
-                      filter(!if_all(starts_with("MW-"), ~is.na(.))) %>% #removing events with all NAs
-                      pivot_longer(cols = c(-"Event", -"Date", -"COC", -"Units"), 
-                                   names_to = "WellID", values_to = "Concentration") %>% 
-                      filter(!is.na(Concentration)))
-      }) # end d_conc_long()
+        d_conc(data_input$d_conc())
+      }) # end d_conc()
       
-      # RV: Location Data ----------------
-      d_loc <- reactiveVal()
+      # RV: Location Data -----------------------
+      d_loc <- reactiveVal(data_mw_clean(temp_mw_info))
       
       observeEvent(data_input$d_loc(),{
-        
-        d_loc(data_input$d_loc() %>% filter(!is.na(`Monitoring Wells`)))
-        
+        d_loc(data_input$d_loc())
       }) # end d_loc()
       
       # RV: Series Data (Avg By Date) -------------------
       df <- reactiveVal()
-      
+
       observe({
-        req(d_conc_long(),
+        req(d_conc(),
             input$group_method)
-        
+
         if (input$group_method == 'Mean'){
-          df_MW <- d_conc_long() %>% group_by(WellID, Date) %>%
+          df_MW <- d_conc() %>% group_by(WellID, Date) %>%
             summarise(Concentration = mean(Concentration, na.rm=TRUE)) %>% ungroup()}
-        
+
         if (input$group_method == 'Geomean'){
-          df_MW <- d_conc_long() %>% group_by(WellID, Date) %>%
+          df_MW <- d_conc() %>% group_by(WellID, Date) %>%
             summarise(Concentration = exp(mean(log(Concentration), na.rm=TRUE))) %>% ungroup()}
-        
+
         df_MW <- df_MW %>% select(Date, Concentration, WellID)
-        
+
         df(df_MW)
       }) # end df()
-      
-      
+
+
       # RV: Series Data (Avg By Group) ----------------------
       df_group <- reactiveVal()
-      
+
       observe({
         req(df(),
             input$select_mw_group)
-  
+
         cd <- c()
-        
+
         # All
         if (sum("All Monitoring Wells" %in% input$select_mw_group) > 0){
           cd <- bind_rows(cd, df() %>% mutate(Group = "All Monitoring Wells"))
-        } 
-        
+        }
+
         # Recent Sample Above Concentration Goal
         if (sum("Recent Sample Above Concentration Goal" %in% input$select_mw_group) > 0){
           req(input$conc_goal)
-          
+
           x <- df() %>% group_by(WellID) %>%
             mutate(Group = ifelse(Concentration[which.max(Date)] > input$conc_goal,
                                   "Wells with Recent Samples Above Concentration Goal",
                                   "Wells with Recent Samples Below Concentration Goal")) %>% ungroup()
-          
+
           cd <- bind_rows(cd, x)
         }
-        
+
         # Manually Assigned Groups
         if (sum(unique(d_loc()$`Well Grouping`) %in% input$select_mw_group) > 0){
           req(d_loc(),
               length(unique(d_loc()$`Well Grouping`)) > 0)
-          
-          x <- left_join(df(), d_loc(), by = c("WellID" = "Monitoring Wells")) %>%
+
+          x <- data_merge(df(), d_loc()) %>%
             filter(`Well Grouping` %in% input$select_mw_group) %>%
             select(WellID, Date, Concentration, Group = `Well Grouping`)
-          
+
           cd <- bind_rows(cd, x)
-        } 
-        
+        }
+
         df_group(cd)
       }) # end df_group()
-      
+
       # RV: MK by Well ----------------------
       MK_conc_well <- reactiveVal()
-      
+
       observe({
         req(df(),
             input$type == "Concentration")
-        
+
         df_MW <- df() %>% rename(Group = WellID, Value = Concentration)
-        
+
         MK_conc_well(MannKendall_MAROS(d = df_MW))
       })
-      
+
       # RV: MK Concentration by Group ----------------------
       MK_conc_group <- reactiveVal()
-      
+
       observe({
         req(df_group(),
             input$group_method,
             input$type == "Concentration")
-        
+
         # Avg by Group
         if (input$group_method == 'Mean'){
           df_MW_group <- df_group() %>% group_by(Group, Date) %>%
             summarise(Concentration = mean(Concentration, na.rm=TRUE)) %>% ungroup()}
-        
+
         if (input$group_method == 'Geomean'){
           df_MW_group <- df_group() %>% group_by(Group, Date) %>%
             summarise(Concentration = exp(mean(log(Concentration), na.rm=TRUE))) %>% ungroup()}
-        
+
         MK_conc_group(MannKendall_MAROS(d = df_MW_group %>% rename(Value = Concentration)))
       })
-      
+
       # RV: Mass by Group ----------------------
      df_mass_group <- reactiveVal()
-      
+
       observe({
         req(df_group(),
             d_loc(),
@@ -321,8 +313,8 @@ TrendServer <- function(id, data_input, nav) {
             input$plume_bottom,
             input$plume_top,
             input$fraction_trans)
-        
-        cd <- df_group() %>% 
+
+        cd <- df_group() %>%
           left_join(d_loc() %>% select(-`Well Grouping`), by = c("WellID" = "Monitoring Wells")) %>%
           filter(!is.na(Latitude) & !is.na(Longitude) & Group %in% input$select_mw_group)
 
@@ -330,80 +322,87 @@ TrendServer <- function(id, data_input, nav) {
         porosityLK <- input$lowk_porosity
         thicknessHK <- (input$plume_bottom - input$plume_top) * input$fraction_trans # units in ft bgs
         thicknessLK <- (input$plume_bottom - input$plume_top) * (1 - input$fraction_trans)  # units in ft bgs
-        print(cd)
+    
         df_mass_group(sp_interpolation(d = cd, porosityHK, porosityLK, thicknessHK, thicknessLK))
       })
-      
+
       # RV: MK Mass by Group ----------------------
       MK_mass_group <- reactiveVal()
-      
+
       observe({
         req(df_group(),
             df_mass_group(),
             input$type == "Mass")
 
-        cd <- df_mass_group()[["overall_tbl"]] %>% 
+        cd <- df_mass_group()[["overall_tbl"]] %>%
           select(Group, Date, Value = total_mass_kg)
-        
+
         MK_mass_group(MannKendall_MAROS(d = cd))
       })
-      
+
       # Select Updates: Well Grouping --------------
       observe({
         req(nav() == "2. Expansion",
             input$type)
-        
+
         if(input$type == "Concentration"){
-          choices <- c("All Monitoring Wells", "Recent Sample Above Concentration Goal", 
+          choices <- c("All Monitoring Wells", "Recent Sample Above Concentration Goal",
                        sort(unique(d_loc()$`Well Grouping`)))
         }
-        
+
         if(input$type == "Mass"){
-          choices <- c("All Monitoring Wells", 
+          choices <- c("All Monitoring Wells",
                        sort(unique(d_loc()$`Well Grouping`)))
         }
-       
+
         updatePickerInput(session, "select_mw_group",
                           choices = choices,
                           selected = "All Monitoring Wells")
       }) # end update well grouping selection
-      
-      
+
+
       # Select Updates: Map Grouping --------------
       observe({
         req(nav() == "2. Expansion")
         req(d_loc())
         
-        choices <- c("All Monitoring Wells", "Recent Sample Above Concentration Goal", sort(unique(d_loc()$`Well Grouping`)))
+        if(input$type == "Concentration"){
+          choices <- c("All Monitoring Wells", 
+                       "Recent Sample Above Concentration Goal", 
+                       sort(unique(d_loc()$`Well Grouping`)))
+        }
         
+        if(input$type == "Mass"){
+          req(df_mass_group())
+          choices <- names(df_mass_group()[["All Monitoring Wells"]])
+        }
+
         updatePickerInput(session, "select_map",
                           choices = choices,
                           selected = "All Monitoring Wells")
       }) # end update well grouping selection
-      
-      
+
+
       # Results Table 1 -------------------------
       output$results_table_1 <- render_gt({
         validate(
-          need(d_conc_long(), "Please enter data into Data Input tab (Step 1)."),
+          need(d_conc(), "Please enter data into Data Input tab (Step 1)."),
           need(input$select_mw_group, "Please select well groupings (Step 2)."))
 
-        
+
         if(input$type == "Concentration"){
           validate(
-            need(ifelse(sum("Recent Sample Above Concentration Goal" %in% input$select_mw_group) > 0, !is.na(input$conc_goal), T), 
+            need(ifelse(sum("Recent Sample Above Concentration Goal" %in% input$select_mw_group) > 0, !is.na(input$conc_goal), T),
                  "Please enter concentration goal (Step 5)."))
-          
+
           req(MK_conc_group())
-          
-          cd <- MK_conc_group() %>% 
+
+          cd <- MK_conc_group() %>%
             select(Group, Trend, MK.S, MK.p, MK.CV, S.Slope)
-          
+
           t <- gt(cd) %>%
-            # fmt_percent(columns = c("MK.CF"),
-            #             decimals = 0) %>%
             fmt_number(columns = c("MK.p", "MK.CV", "S.Slope"),
-                       decimals = 3) %>%
+                       n_sigfig = 3) %>%
             fmt_number(columns = c("MK.S"),
                        decimals = 0) %>%
             cols_label(Group = md("**Groups of Wells**"),
@@ -413,51 +412,59 @@ TrendServer <- function(id, data_input, nav) {
                        MK.CV = md("*Coefficient of Variation*"),
                        S.Slope = md("*Sen's Slope*")) %>%
             tab_header(title = md("**OVERALL MANN-KENDALL TEST RESULTS**")) %>%
-            tab_style(style = list(cell_borders(sides = c("bottom"),
-                                                color = NULL,
-                                                weight = NULL)),
-                      locations = list(cells_body(rows = gt::everything())))
+            tab_style(style = style_body(),
+                      locations = cells_body()) %>%
+            tab_style(style = style_col_labels(),
+                      locations = cells_column_labels()) %>%
+            opt_table_outline() %>%
+            # GT bug fix
+            tab_options(table.additional_css = "th, td {padding: 5px 10px !important;	border: 1px solid white;}" )
+          
         }
-        
+
         if(input$type == "Mass"){
           validate(
             need(d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
           validate(
-            need(d_loc()$Latitude & d_loc()$Longitude, 
+            need(d_loc()$Latitude & d_loc()$Longitude,
                  "Please enter Latitude and Longitude information into the Monitoring Well Information in the Data Input tab (Step 1)."))
           validate(
             need(dim(d_loc() %>% filter(!is.na(as.numeric(Latitude)) & !is.na(as.numeric(Longitude))))[1],
                  "Please enter Latitude and Longitude information into the Monitoring Well Information in the Data Input tab (Step 1)."))
-          
+
           req(df_mass_group())
-          
-          
-          cd <- df_mass_group()[["overall_tbl"]] %>% group_by(Group) %>%
-            summarise(`Date Range` = paste(min(Date, na.rm = T), "to",
-                                           max(Date, na.rm = T)),
-                      `Approximate Mass in Transmissive Unit (kg)` = sum(highK_mass_kg, na.rm = T),
-                      `Approximate Mass in Low-k Units (kg)` = sum(lowK_mass_kg, na.rm = T),
-                      `Approximate Total Mass (kg)` = sum(total_mass_kg, na.rm = T))
-          
+
+
+          cd <- df_mass_group()[["overall_tbl"]] 
+
           t <- gt(cd) %>%
-            fmt_number(columns = c("Approximate Mass in Transmissive Unit (kg)",
-                                    "Approximate Mass in Low-k Units (kg)",
-                                    "Approximate Total Mass (kg)"),
-                        decimals = 2) %>%
+            tab_spanner(label = "Approximate Mass (kg)",
+                        columns = ends_with("mass_kg"), gather = T) %>%
+            cols_label(Group = "Group",
+                       Date = "Event",
+                       MW_count = "Number of Wells",
+                       highK_mass_kg = "Transmissive Unit",
+                       lowK_mass_kg = "Low-k Units",
+                       total_mass_kg = "Total Mass") %>%
+            fmt_number(columns = c(highK_mass_kg, lowK_mass_kg, total_mass_kg),
+                       decimals = 0) %>%
             tab_header(title = md("**ESTIMATE OF PLUME MASS**")) %>%
-            tab_style(style = list(cell_borders(sides = c("bottom"),
-                                                color = NULL,
-                                                weight = NULL)),
-                      locations = list(cells_body(rows = gt::everything())))
+            tab_style(style = style_body(),
+                      locations = cells_body()) %>%
+            tab_style(style = style_col_labels(),
+                      locations = cells_column_labels()) %>%
+            opt_table_outline() %>%
+            # GT bug fix
+            tab_options(table.additional_css = "th, td {padding: 5px 10px !important;	border: 1px solid white;}" )
           
-        } # end Mass Table 
-        
+        } # end Mass Table
+
         t # print table
       }, align = "center") # grouped result table
-      
+
       # Results Table 2 -------------------------
       output$results_table_2 <- render_gt({
-        req(d_conc_long())
+        req(d_conc())
 
         if(input$type == "Concentration"){
           req(MK_conc_well())
@@ -465,10 +472,8 @@ TrendServer <- function(id, data_input, nav) {
             select(Group, Trend, MK.S, MK.p, MK.CV, S.Slope)
 
           t <- gt(cd) %>%
-            # fmt_percent(columns = c("MK.CF"),
-            #             decimals = 0) %>%
             fmt_number(columns = c("MK.p", "MK.CV", "S.Slope"),
-                       decimals = 3) %>%
+                       n_sigfig = 3) %>%
             fmt_number(columns = c("MK.S"),
                        decimals = 0) %>%
             cols_label(Group = md("**Monitoring Well**"),
@@ -478,24 +483,26 @@ TrendServer <- function(id, data_input, nav) {
                        MK.CV = md("*Coefficient of Variation*"),
                        S.Slope = md("*Sen's Slope*")) %>%
             tab_header(title = md("**MANN-KENDALL TEST RESULTS BY WELL**")) %>%
-            tab_style(style = list(cell_borders(sides = c("bottom"),
-                                                color = NULL,
-                                                weight = NULL)),
-                      locations = list(cells_body(rows = gt::everything())))
+            tab_style(style = style_body(),
+                      locations = cells_body()) %>%
+            tab_style(style = style_col_labels(),
+                      locations = cells_column_labels()) %>%
+            opt_table_outline() %>%
+            # GT bug fix
+            tab_options(table.additional_css = "th, td {padding: 5px 10px !important;	border: 1px solid white;}" )
+          
 
         } # Concentration
 
         if(input$type == "Mass"){
           req(MK_mass_group())
-          
+
           cd <- MK_mass_group() %>%
             select(Group, Trend, MK.S, MK.p, MK.CV, S.Slope)
 
           t <- gt(cd) %>%
-            # fmt_percent(columns = c("MK.CF"),
-            #             decimals = 0) %>%
             fmt_number(columns = c("MK.p", "MK.CV", "S.Slope"),
-                       decimals = 3) %>%
+                       n_sigfig = 3) %>%
             fmt_number(columns = c("MK.S"),
                        decimals = 0) %>%
             cols_label(Group = md("**Group**"),
@@ -505,14 +512,18 @@ TrendServer <- function(id, data_input, nav) {
                        MK.CV = md("*Coefficient of Variation*"),
                        S.Slope = md("*Sen's Slope*")) %>%
             tab_header(title = md("**PLUME MASS MANN-KENDALL TEST RESULTS**")) %>%
-            tab_style(style = list(cell_borders(sides = c("bottom"),
-                                                color = NULL,
-                                                weight = NULL)),
-                      locations = list(cells_body(rows = gt::everything())))
+            tab_style(style = style_body(),
+                      locations = cells_body()) %>%
+            tab_style(style = style_col_labels(),
+                      locations = cells_column_labels()) %>%
+            opt_table_outline() %>%
+            # GT bug fix
+            tab_options(table.additional_css = "th, td {padding: 5px 10px !important;	border: 1px solid white;}" )
+          
         } # Mass Table
         t
       }, align = "center") # well result table
-      
+
       # Conclusion Table ----------------------
       output$concl_table <- render_gt({
 
@@ -531,10 +542,12 @@ TrendServer <- function(id, data_input, nav) {
         cd <- cd %>%
           mutate(expanding = ifelse(Trend %in% c("Decreasing", "Probably Decreasing", "Stable"), "No", "Yes")) %>%
           select(Group, expanding)
-
+        
         t <- gt(cd) %>%
           cols_label(Group = "",
-                     expanding = md("**Is the plume still expanding?**")) %>%
+                     expanding = md(ifelse(input$type == "Mass",
+                                           "**Is the mass still expanding?**",
+                                           "**Is the plume still expanding?**"))) %>%
           tab_style(style = list(cell_borders(sides = c("bottom"),
                                               color = NULL,
                                               weight = NULL)),
@@ -544,45 +557,45 @@ TrendServer <- function(id, data_input, nav) {
                     locations = list(cells_body(columns = "expanding"))) %>%
           tab_style(style = list(cell_text(align = "right")),
                     locations = list(cells_body(columns = "Group")))
-        
+
         t # print table
       }) # end conclusion table
-      
+
       # TS Plot ----------------------------------
       output$ts_plot <- renderPlotly({
         req(input$select_plot_group)
         req(input$log_linear)
 
         validate(
-          need(d_conc_long(), "Please enter data into Data Input tab (Step 1)."),
+          need(d_conc(), "Please enter data into Data Input tab (Step 1)."),
           need(ifelse(input$select_plot_group == "Grouped Wells",
                       !is.null(input$select_mw_group), T), "Please select well groupings (Step 2)."))
-        
+
         if(input$type == "Concentration"){
-          
+
           if(input$select_plot_group == "All Wells"){
             req(df())
             d <- df() %>% rename(Group = WellID)
           }
-          
+
           if(input$select_plot_group == "Grouped Wells"){
             req(df_group())
-            
+
             # Avg by Group
             if (input$group_method == 'Mean'){
               d <- df_group() %>% group_by(Group, Date) %>%
                 summarise(Concentration = mean(Concentration, na.rm=TRUE)) %>% ungroup()}
-            
+
             if (input$group_method == 'Geomean'){
               d <- df_group() %>% group_by(Group, Date) %>%
                 summarise(Concentration = exp(mean(log(Concentration), na.rm=TRUE))) %>% ungroup()}
           }
         }
-        
+
         if(input$type == "Mass"){
           d <- df_mass_group()[["overall_tbl"]] %>% rename(Mass = total_mass_kg)
         }
-  
+
 
         graph_vis(d, log_flag = input$log_linear, vis_flag = input$type)
 
@@ -591,9 +604,9 @@ TrendServer <- function(id, data_input, nav) {
       # Map -----------------------
       output$map <- renderLeaflet({
         validate(
-          need(d_conc_long(), "Please enter data into Data Input tab (Step 1)."),
+          need(d_conc(), "Please enter data into Data Input tab (Step 1)."),
           need(d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."),
-          need(input$select_map, "Please select well groupings (Step 2)."),
+          need(input$select_map, "Please select group to veiw (above)."),
           need(ifelse(sum("Recent Sample Above Concentration Goal" %in% input$select_map) > 0, !is.na(input$conc_goal), T),
                "Please enter concentration goal (Step 4)."))
         validate(
@@ -608,10 +621,6 @@ TrendServer <- function(id, data_input, nav) {
                            overlayGroups = c("Well Labels"),
                            position = "bottomright",
                            options = layersControlOptions(collapsed = FALSE)) %>%
-          addLegend(position = "bottomleft",
-                    labels = c("Insufficent Data", "No Trend", "Increasing", "Decreasing", "Stable"),
-                    colors = c("black", simp[3], simp[8], simp[6], simp[1]),
-                    opacity = 0.8) %>%
           hideGroup("Well Labels")
       }) # map
 
@@ -620,55 +629,103 @@ TrendServer <- function(id, data_input, nav) {
           clearGroup(group="markers")
 
         req(nav() == "2. Expansion",
-            input$type == "Concentration",
             input$Trend_Result_Tabs == "Trend Map",
-            input$select_map,
-            MK_conc_well(),
-            d_loc())
+            input$select_map)
+        
+        if(input$type == "Concentration"){
+          
+        req(
+          MK_conc_well(),
+          d_loc())
+          
+          cd <- left_join(MK_conc_well(), d_loc(), by = c("Group" = "Monitoring Wells")) %>%
+            filter(!is.na(Latitude), !is.na(Longitude))
+          req(dim(cd)[1] > 0)
+          
+          # Recent Sample Above Concentration Goal
+          if (sum("Recent Sample Above Concentration Goal" %in% input$select_map) > 0){
+            req(input$conc_goal)
+            req(d_conc())
+            
+            x <- d_conc() %>% group_by(WellID) %>%
+              mutate(Group = ifelse(Concentration[which.max(Date)] > input$conc_goal,
+                                    "Wells with Recent Samples Above Concentration Goal",
+                                    "Wells with Recent Samples Below Concentration Goal")) %>% ungroup() %>%
+              filter(Group == "Wells with Recent Samples Above Concentration Goal") %>% pull(WellID)
+            
+            cd <- cd %>% filter(Group %in% x)
+          }
+          
+          # Manually Assigned Groups
+          if (sum(unique(d_loc()$`Well Grouping`) %in% input$select_map) > 0){
+            cd <- cd %>%
+              filter(`Well Grouping` %in% input$select_map)
+          }
+          
+          proxy %>%
+            fitBounds(min(cd$Longitude), min(cd$Latitude), max(cd$Longitude), max(cd$Latitude)) %>%
+            addCircleMarkers(data = cd, lng = ~Longitude, lat = ~Latitude, label = ~Group,
+                             fillColor = ~Color, color = "black", group = "markers",
+                             radius = 8, stroke = TRUE, fillOpacity = 0.8, weight = 1, opacity = 1,
+                             popup = ~paste0("<b>",Group, "</b>:<br>",
+                                             "Trend: ", Trend, "<br>",
+                                             "p-Value: ", round(MK.p, 3), "<br>",
+                                             "S Statistic: ", round(MK.S, 0), "<br>",
+                                             "Sen's Slope: ", round(S.Slope, 3), "<br>"),
+                             layerId = ~Group, options = pathOptions(pane="markers")) %>%
+            addLabelOnlyMarkers(data = cd, lng = ~Longitude, lat = ~Latitude, label = ~MapFlag,
+                                layerId = ~paste0(Group, "_Label"),
+                                labelOptions = labelOptions(noHide = T, textOnly = TRUE, textsize = "25px",
+                                                            offset = c(25, 25)), group = "Well Labels")  %>%
+            addLegend(position = "bottomleft",
+                      labels = c("Insufficent Data", "No Trend", "Increasing", "Decreasing", "Stable"),
+                      colors = c("black", simp[3], simp[8], simp[6], simp[1]),
+                      opacity = 0.8) 
+          
+        }
+        
+        if(input$type == "Mass"){
+          req(df_mass_group())
+          
+          proxy <- proxy %>%
+            removeControl(layerId = "Legend") %>%
+            clearGroup(group = "image")
+          
+          cd <- df_mass_group()[["All Monitoring Wells"]][[input$select_map]][["df"]]
+          nnmsk <- df_mass_group()[["All Monitoring Wells"]][[input$select_map]][["shape"]]
 
-        cd <- left_join(MK_conc_well(), d_loc(), by = c("Group" = "Monitoring Wells")) %>%
-          filter(!is.na(Latitude), !is.na(Longitude))
-        req(dim(cd)[1] > 0)
+          
+          pal <- colorNumeric(palette = "viridis", nnmsk$total_mass,
+                              na.color = "transparent")
 
-        # Recent Sample Above Concentration Goal
-        if (sum("Recent Sample Above Concentration Goal" %in% input$select_map) > 0){
-          req(input$conc_goal)
-          req(d_conc_long())
-
-          x <- d_conc_long() %>% group_by(WellID) %>%
-            mutate(Group = ifelse(Concentration[which.max(Date)] > input$conc_goal,
-                                  "Wells with Recent Samples Above Concentration Goal",
-                                  "Wells with Recent Samples Below Concentration Goal")) %>% ungroup() %>%
-            filter(Group == "Wells with Recent Samples Above Concentration Goal") %>% pull(WellID)
-
-          cd <- cd %>% filter(Group %in% x)
+          nnmsk$colors <- pal(nnmsk$total_mass)
+          
+          proxy %>%
+            fitBounds(min(cd$Longitude), min(cd$Latitude), max(cd$Longitude), max(cd$Latitude)) %>%
+            addCircleMarkers(data = cd, lng = ~Longitude, lat = ~Latitude, label = ~WellID,
+                             fillColor = col["blue"], color = "black", group = "markers",
+                             radius = 8, stroke = TRUE, fillOpacity = 0.8, weight = 1, opacity = 1,
+                             popup = ~paste0("<b>",WellID, "</b>:<br>",
+                                             "Area: ", round(area, 0), "m<sup>2</sup><br>",
+                                             "Total Mass: ", round(total_mass, 0)),
+                             layerId = ~WellID, options = pathOptions(pane="markers")) %>%
+            addLabelOnlyMarkers(data = cd, lng = ~Longitude, lat = ~Latitude, label = ~WellID,
+                                layerId = ~paste0(WellID, "_Label"),
+                                labelOptions = labelOptions(noHide = T, textOnly = TRUE, textsize = "25px",
+                                                            offset = c(25, 25)), group = "Well Labels") %>%
+            addFeatures(nnmsk, weight = 1, color = "black", fillColor = ~colors, group = "image") %>%
+            addLegend("bottomleft", pal = pal, values = nnmsk$total_mass,
+                      title = "Dissolved Plume<br>Mass (kg)",
+                      layerId = "Legend")
+          
         }
 
-        # Manually Assigned Groups
-        if (sum(unique(d_loc()$`Well Grouping`) %in% input$select_map) > 0){
-          cd <- cd %>%
-            filter(`Well Grouping` %in% input$select_map)
-        }
 
-        proxy %>%
-          fitBounds(min(cd$Longitude), min(cd$Latitude), max(cd$Longitude), max(cd$Latitude)) %>%
-          addCircleMarkers(data = cd, lng = ~Longitude, lat = ~Latitude, label = ~Group,
-                           fillColor = ~Color, color = "black", group = "markers",
-                           radius = 8, stroke = TRUE, fillOpacity = 0.8, weight = 1, opacity = 1,
-                           popup = ~paste0("<b>",Group, "</b>:<br>",
-                                           "Trend: ", Trend, "<br>",
-                                           "p-Value: ", round(MK.p, 3), "<br>",
-                                           "S Statistic: ", round(MK.S, 0), "<br>",
-                                           "Sen's Slope: ", round(S.Slope, 3), "<br>"),
-                           layerId = ~Group, options = pathOptions(pane="markers")) %>%
-          addLabelOnlyMarkers(data = cd, lng = ~Longitude, lat = ~Latitude, label = ~MapFlag,
-                              layerId = ~paste0(Group, "_Label"),
-                              labelOptions = labelOptions(noHide = T, textOnly = TRUE, textsize = "25px",
-                                                          offset = c(25, 25)), group = "Well Labels")
       })
 
-      observeEvent({input$map_groups},{
-        if("Well Labels" %in% input$map_groups){
+      observeEvent({input$map_groups
+        input$type},{
+        if("Well Labels" %in% input$map_groups & input$type == "Concentration"){
 
           proxy <- leafletProxy("map") %>%
             removeControl(layerId = "label_legend")
@@ -687,24 +744,24 @@ TrendServer <- function(id, data_input, nav) {
 
         }
       })
-      
+
       # Data ----------------
       output$conc_time_data <- renderRHandsontable({
         validate(
           need(data_input$d_conc(), "Please enter data into Data Input tab (Step 1)."))
-        
+
         rhandsontable(data_input$d_conc(), readOnly = T, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE)
       })
-      
+
       output$mw_data <- renderRHandsontable({
         validate(
           need(data_input$d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
-        
+
         rhandsontable(data_input$d_loc(), readOnly = T, rowHeaders = NULL, width = 800, height = 600) %>%
           hot_cols(columnSorting = TRUE)
       })
-      
+
     }
   )
 } # end Trend Server  

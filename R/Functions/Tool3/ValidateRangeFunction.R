@@ -4,8 +4,8 @@ ValidateRangeFunction<-function(error,results,input){
          "Time between Source Started year and Source Removed year outside model range (10-100 years)"),
     need(input$tortuosity_LK>=0.07&input$tortuosity_LK<=0.7,
          "Tortuosity outside model range (0.07-0.7)."),
-    need(input$K>=0.01&input$tortuosity_LK<=0.4,
-         "Hydrulic Conductivity outside model range (0.01 - 0.1 cm/s)."),
+    # need(input$K>=0.01&input$K<=0.1,
+    #      "Hydrulic Conductivity outside model range (0.01 - 0.1 cm/s)."),
     need((input$Retardation_HK>=1&input$Retardation_LK>=1)&(input$Retardation_HK<=10&input$Retardation_LK<=10),
          "Low K or/and High K retardation factor outside model range (1-10)."),
     # need(round(log10(input$Concentration/input$Target_Clean_Level),3)<=3|round(log10(input$Concentration/input$Target_Clean_Level),3)>=1,
@@ -22,9 +22,9 @@ ValidateRangeFunction<-function(error,results,input){
          "Half-life outside model range (1-1,000 years)."),
     need(error != "Check Inputs", "Please Check Input Values."),
     need(nrow(results) >= 700, 
-         "Too many realizations being outside of the Borden's Tool range \n or choose parameters at the boundary, cannot generate rectagular distribution."),
-    need(input$N>=1&input$N<=4,
-         "Number of Low-K Layers outside model range (1-4 layers)")
+         "Too many realizations being outside of the Borden's Tool range \n or choose parameters at the boundary, cannot generate rectagular distribution.")#,
+    # need(input$N>=1&input$N<=2,
+    #      "Number of Low-K Layers outside model range (1-4 layers)")
   )
   
   if (input$BGLG=="1"){
@@ -41,6 +41,8 @@ ValidateRangeFunctionSilent<-function(error,results,input){
   validate(need(error != "Check Inputs", FALSE),
            need(nrow(results) >= 700, 
                 FALSE),
+           # need(input$K>=0.01&input$K<=0.1,
+           #      FALSE),
            need((input$Year_Removed-input$Year_Started)>=10&(input$Year_Removed-input$Year_Started)<=100,
                 FALSE),
            need(input$tortuosity_LK>=0.07&input$tortuosity_LK<=0.7,
@@ -56,9 +58,9 @@ ValidateRangeFunctionSilent<-function(error,results,input){
            need(input$Percent_T>=10&input$Percent_T<=90,
                 FALSE),
            need(input$HalfLife>=1&input$HalfLife<=1000,
-                FALSE),
-           need(input$N>=1&input$N<=4,
-                FALSE)
+                 FALSE)#,
+           # need(input$N>=1&input$N<=2,
+           #      FALSE)
   )
   if (input$BGLG=="1"){
     validate(need(input$Thickness>=0.5&input$Thickness<=3,

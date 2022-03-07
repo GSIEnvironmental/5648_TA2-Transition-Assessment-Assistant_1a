@@ -31,6 +31,10 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                     fluidRow(column(10,
                                     HTML("<h4><b>Step 2.</b> Select Wells to be included in analysis.</h4>"),
                                     fluidRow(align = "center",
+                                             radioButtons(ns("select_group_type"), label = NULL,
+                                                          choices = c("Individual Wells" = "individual",
+                                                                      "Well Groups" = "groups"),
+                                                          inline = T),
                                              pickerInput(ns("select_mw"), label = NULL,
                                                          choices = c(),
                                                          multiple = T,
@@ -59,8 +63,14 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                              column(2, align = "left", style = "padding:10px;",
                                     actionButton(ns("help4"), HTML("?"), style = button_style2))), br(),
                     fluidRow(column(10,
-                                    HTML("<h4><b>Step 5.</b> Select breakpoint between two different time periods.</h4>
-                                         <p>You can calculate First Order Decay Coefficents for the entire record and two different time intervals, such as before, during, or after remediation.</p>")),
+                                    HTML("<h4><b>Step 5.</b> Select date range for data.</h4>"),
+                                    dateRangeInput(ns("date_range"), label = NULL,
+                                                   start = "1900-01-01", end = Sys.Date())),
+                             column(2, align = "left", style = "padding:10px;",
+                                    actionButton(ns("help5"), HTML("?"), style = button_style2))),
+                    fluidRow(column(10,
+                                    HTML("<h4><b>Step 6.</b> Select breakpoint between two different time periods.</h4>"),
+                                    HTML("<p><i>Beakpoint is indicated on plot with a dotted line. To manually select a breakpoint click data point on plot.</i></p>")),
                              column(2, align = "left", style = "padding:10px;",
                                     actionButton(ns("help5"), HTML("?"), style = button_style2))),
                     HTML("<hr class='featurette-divider'>"),
@@ -74,30 +84,28 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                     #      Charles Newell and Tom McHugh, GSI Environmental. Contact: temchugh@gsi-net.com")
              ), #end instruction column
              column(9,
-             tabsetPanel(
-               # Overall Results -----------------------------
-               tabPanel("Overall Results",
-                        plotlyOutput(ns('ts_plot1'), height = "600px"), br(),
-                        gt_output(ns("rates_table"))), 
-               # Asymptote Analysis -------------------------
-               tabPanel("Asymptote Analysis", br(),
-                        fluidRow(
-                          column(6,
-                                 HTML("Why the interest in Asymptotes?  From the  National Research Council, 2013:")),
-                          # column(6,
-                          #        actionButton(ns("help4"), HTML("?"), style = button_style2))
-                          ),
-                        HTML("<i>“Specifically, if data indicate that contaminant concentrations are approaching an <b>asymptote</b>, resulting in exponential increases in the unit cost of the remedy, then there is limited benefit in its continued operation.”<br><br>
-                              “If <b>asymptotic conditions</b> have occurred, a transition assessment is performed.”</i>"),
-                        HTML("<hr class='featurette-divider'>"),
-                        plotlyOutput(ns('ts_plot2'), height = "600px"), br(),
-                        gt_output(ns("LOE_Table"))
-                        )), br(),
-             fluidRow(align = "center",
-                      actionButton(ns("save_data"),
-                                   HTML("Save Data and Analysis"), style = button_style))
-             ) # end results column
-           ), br()
+                    tabsetPanel(
+                      tabPanel("Results", br(),
+                               # Overall Results
+                               plotlyOutput(ns('ts_plot1'), height = "600px"), br(),
+                               HTML("<hr class='featurette-divider'>"),
+                               HTML("<h2><b>Overall Results</b></h2>"),
+                               gt_output(ns("rates_table")), br(),
+                               HTML("<hr class='featurette-divider'>"),
+                               # Asymptotic Analysis -------------------------
+                               HTML("<h2><b>Asymptote Analysis</b></h2>"),
+                               HTML("Why the interest in Asymptotes?  From the  National Research Council, 2013:<br><br>
+                                    <i>“Specifically, if data indicate that contaminant concentrations are approaching an <b>asymptote</b>, resulting in exponential increases in the unit cost of the remedy, then there is limited benefit in its continued operation.”<br><br>
+                                    “If <b>asymptotic conditions</b> have occurred, a transition assessment is performed.”</i>"), br(), br(),
+                               fluidRow(align = "center",
+                               gt_output(ns("LOE_Table")), br(), 
+                               uiOutput(ns("asy_summary")))),
+                      tabPanel("Data", br())
+                      ), br(),
+           fluidRow(align = "center",
+                    actionButton(ns("save_data"),
+                                 HTML("Save Data and Analysis"), style = button_style)), br())
+           )
   ) # end tab panel
 } # end Asymptote UI         
 
@@ -108,39 +116,56 @@ AsymptoteServer <- function(id, data_input, nav) {
     id,
     
     function(input, output, session) {
-      # Reactive Variables -----------------
-      # Concentration and Time Data (pivoting long)
-      d_conc_long <- reactiveVal()
-      
+      # RV: Concentration and Time Data -----------
+      d_conc <- reactiveVal(data_long(temp_data))
+
       observeEvent(data_input$d_conc(),{
-        d_conc_long(data_input$d_conc() %>% 
-                      select(where(~!all(is.na(.x)))) %>% # removing columns with no data
-                      filter(!if_all(starts_with("MW-"), ~is.na(.))) %>% #removing events with all NAs
-                      pivot_longer(cols = c(-"Event", -"Date", -"COC", -"Units"), 
-                                   names_to = "WellID", values_to = "Concentration")) 
-      }) # end d_conc_long()
-      
-      # Location Data
-      d_loc <- reactiveVal()
-      
+        d_conc(data_input$d_conc())
+      }) # end d_conc()
+
+      # RV: Location Data -----------------------
+      d_loc <- reactiveVal(data_mw_clean(temp_mw_info))
+
       observeEvent(data_input$d_loc(),{
-        d_loc(data_input$d_loc() %>% filter(!is.na(`Monitoring Wells`)))
+        d_loc(data_input$d_loc())
       }) # end d_loc()
       
-      # Series Data
+      # RV: Merge d_loc and d_conc -----------------------
+      d_mer <- reactiveVal()
+      
+      observeEvent({
+        d_loc()
+        d_conc()},{
+          d_mer(data_merge(d_conc(), d_loc()))
+        }) # end d_mer()
+      
+      # RV: Series Avg Data ---------------
       df <- reactiveVal()
       
       observe({
-        req(d_conc_long(),
+        req(d_conc(),
             input$select_mw,
-            input$group_method)
+            input$group_method,
+            input$date_range)
         
         ave_switch <- input$group_method
         
-        df_MW <- d_conc_long() %>%
-          filter(WellID %in% input$select_mw) #%>%
-          # mutate(Date = as.Date(Date))
+        # Filter to Wells/Grouping
+        if(input$select_group_type == "individual"){
+          df_MW <- d_mer() %>%
+            filter(WellID %in% input$select_mw,
+                   Date >= input$date_range[1],
+                   Date <= input$date_range[2]) 
+        }
         
+        if(input$select_group_type == "groups"){
+          df_MW <- d_mer() %>%
+            filter(`Well Grouping` %in% input$select_mw,
+                   Date >= input$date_range[1],
+                   Date <= input$date_range[2]) 
+        }
+        
+        # Apply Selected Avg. Method
         if (ave_switch == 'Mean'){
           df_MW <- df_MW %>% group_by(Date) %>%
             summarise(Concentration = mean(Concentration, na.rm=TRUE))
@@ -151,233 +176,215 @@ AsymptoteServer <- function(id, data_input, nav) {
             summarise(Concentration = exp(mean(log(Concentration), na.rm=TRUE)))
         }
         
+        # Add Period if breakpoint if available 
+        if(!is.null(bp()$x)){
+          df_MW <- df_MW %>%
+            mutate(period = ifelse(Date <= bp()$x, "Period 1", "Period 2"))
+        }
+        
         df(df_MW)
       }) # end df()
       
-      # Period 1 Data
-      df_1 <- reactiveVal()
+      # RV: Breakpoint ---------------
+      bp <- reactiveVal()
       
-      # Period 2 Data
-      df_2 <- reactiveVal()
+      observe({
+        req(df())
+        bp(event_data(event = "plotly_click", source = "ts_selected"))
+      })
+      
+      # RV: Sen Trend Model ---------------
+      sen_lm <- reactiveVal()
+    
+      observe({
+        req(length(df()$Concentration) > 2)
+        cd <- sen_trend(df())
+        cd_sen <- list(`Entire Record` = cd)
+        
+        # If Breakpoint is available calculate trend
+        if(!is.null(bp())){
+          # Calculate trend for first period
+          df_1 <- df() %>% filter(Date <= bp()$x)
+          if(length(df_1$Concentration) > 2){
+            cd_1 <- sen_trend(df_1)
+            cd_sen <- c(cd_sen, list(`Period 1`= cd_1))
+          }
+          
+          # Calculate trend for second period
+          df_2 <- df() %>% filter(Date > bp()$x)
+          if(length(df_2$Concentration) > 2){
+            cd_2 <- sen_trend(df_2)
+            cd_sen <- c(cd_sen, list(`Period 2` = cd_2))
+          }
+        }
+        sen_lm(cd_sen)
+      })
+      
+      # RV: Cleanup Forecast--------------------
+      sen_table <- reactiveVal()
+      
+      observeEvent({
+        sen_lm()
+        input$conc_goal},{
+          req(sen_lm(),
+              input$conc_goal > 0)
+          
+          cd <- map_dfr(1:length(sen_lm()), ~{
+            forecasted_clean(sen_lm()[[.x]], input$conc_goal) %>%
+              mutate(type = names(sen_lm())[.x])
+          })
+          
+          sen_table(cd)
+      })
+      
+      # RV: Results of Asymptotic Analysis --------------
+      asy_results <- reactiveVal()
+      
+      observe({
+        req(df(),
+            bp(),
+            sen_lm(),
+            length(df() %>% filter("period" == "Period 1")) > 2,
+            length(df() %>% filter("period" == "Period 2")) > 2)
+        
+        results <- Asymptote_Analysis(df(), sen_lm()) 
+        
+        asy_results(results)
+      })
       
       
-      # Select Updates --------------
-      # Well Selection
+      # Well Selection Updates -----------------------
       observe({
         req(nav() == "1. Asymptote")
-        req(d_conc_long())
+        req(d_conc())
         
-        choices <- sort(unique(d_conc_long()$WellID))
+        if(input$select_group_type == "individual"){
+          choices <- sort(unique(d_conc()$WellID))
+        }
         
-        # if(!is.null(d_loc())){
-        #   print(d_loc())
-        #   selected <- sort(unique(d_loc() %>% filter(`Downgradient Well` == T)))
-        # }else{
-        #   selected <- c()
-        # }
+        if(input$select_group_type == "groups"){
+          choices <- sort(unique(d_loc()$`Well Grouping`))
+        }
                          
-        updatePickerInput(session, "select_mw",
-                          choices = choices)
+        updatePickerInput(session, "select_mw", choices = choices)
+      }) # end update well selection
+      
+      # Date Range Updates -------------------
+      observe({
+        req(nav() == "1. Asymptote")
+        req(d_conc())
+
+        updateDateRangeInput(session, "date_range", 
+                             start = min(d_conc()$Date, na.rm = T),
+                             end = max(d_conc()$Date, na.rm = T))
       }) # end update well selection
       
       # Plot 1 ------------------
       output$ts_plot1 <- renderPlotly({
-        req(df())
-        df_MW <- df()
-        # create y axis as log
-        tval <- sort(as.vector(sapply(seq(1,9), 
-                                      function(x) 
-                                        x*10^seq(floor(log10(min(df_MW$Concentration,na.rm=TRUE))),
-                                                 ceiling(log10(max(df_MW$Concentration,na.rm=TRUE))))))) #generates a sequence of numbers in logarithmic divisions
+        validate(need(d_conc(), "Please enter data into the Data Input tab (Step 1)."))
+        validate(need(df(), "Please select wells or well grouping to analyze (Step 2)."))
         
-        ttxt <- rep(" ",length(tval))  # no label at most of the ticks
-        ttxt[seq(1,length(tval),9)] <- as.character(tval)[seq(1,length(tval),9)] # every 9th tick is labelled
-
-        p <- plot_ly() %>%
-          add_trace(data = df_MW, x= ~Date,
-                    y = ~Concentration ,
-                    name = ' ',
-                    type = "scatter", 
-                    mode = 'markers',marker = list(color='rgb(31,150,180)'),
-                    hovertemplate = paste('<br>Date: %{x}', '<br>Concentration: %{y:.2f} ug/L<br>')) %>%
-          layout(
-            xaxis = list(title="Year",
-                         automargin = T,
-                         showline=T,
-                         mirror = "ticks",
-                         linecolor = toRGB("black"),
-                         linewidth = 2,
-                         zeroline=F),
-            yaxis = list(title="COC Concentration at <br> Monitoring Well (ug/L)",
-                         type ='log',
-                         range = c(floor(log10(min(df_MW$Concentration,na.rm=TRUE))),
-                                   ceiling(log10(max(df_MW$Concentration,na.rm=TRUE)))),
-                         tickvals=tval,
-                         ticktext=ttxt,
-                         showline=T,
-                         mirror = "ticks",
-                         linecolor = toRGB("black"),
-                         linewidth = 2,
-                         zeroline=F),
-            showlegend = FALSE,
-            dragmode = "select", selectdirection = "h")
-        p
+        req(df(),
+            sen_lm())
+        
+        logscale_figure(df(), sen = sen_lm(), bp = bp()$x)
       })
       
       # Attenuation Rates Table -------------------------
       output$rates_table <- render_gt({
-        cd <- data.frame(Time = c("Entire Record", "Period 1", "Period 2"),
-                         Rates = c(0, 0, 0),
-                         Year = c(0, 0, 0),
-                         Lower_Year = c(0, 0, 0),
-                         Upper_Year = c(0, 0, 0))
+        req(input$select_mw)
+        validate(need(length(df()$Concentration) > 2, "Insufficent data to calculate rate. Make sure at least 2 data points are present."))
+        validate(need(input$conc_goal > 0, "Please select a valid concentration goal (Step 4)"))
+        req(sen_table())
         
-        gt(cd) %>%
-          # tab_spanner(label = "Forecasted Time-to-Clean", 
-          #             columns = c("Year", "Lower_Year", "Upper_Year"), gather = T) %>%
-          cols_label(Time = "",
-                     Rates = "First Order Source Attenuation Rates (per year)",
-                     Year = "Most Likely Year",
-                     Lower_Year = "Lower Bound",
-                     Upper_Year = "Upper Bound") %>%
-          tab_style(style = list(cell_borders(sides = "all",
-                                         style = "solid",
-                                         weight = px(2),
-                                         color = "#D3D3D3"),
-                                 cell_text(align = "center",
-                                           v_align = "middle")),
-                    locations = cells_body()) 
+        cd <- sen_table() %>%
+          select(type, rate_model, year_0.05, year_model, year_0.95)
+        
+        gt(cd, rowname_col = "type") %>%
+          tab_spanner(label = "Estimated Time-to-Clean",
+                      columns = starts_with("year"), gather = T) %>%
+          cols_label(rate_model = HTML("First Order Source Attenuation Rates<br>(per year)"),
+                     year_0.05 = "Lower Bound Year",
+                     year_model = "Year",
+                     year_0.95 = "Upper Bound Year") %>%
+          fmt_number(columns = rate_model, n_sigfig = 3) %>%
+          tab_source_note(source_note = "Lower and upper bound years based on 90% confidence interval.") %>%
+          tab_style(style = style_body(),
+                    locations = cells_body()) %>%
+          tab_style(style = style_col_labels(),
+                    locations = cells_column_labels()) %>%
+          opt_table_outline() %>%
+          # GT bug fix
+          tab_options(table.additional_css = "th, td {padding: 5px 10px !important;	border: 1px solid white;}" )
+          
       })
       
-      # Plot 2 ------------------
-      output$ts_plot2 <- renderPlotly({
-        req(df())
-        df_MW <- df()
-        # create y axis as log
-        tval <- sort(as.vector(sapply(seq(1,9), 
-                                      function(x) 
-                                        x*10^seq(floor(log10(min(df_MW$Concentration,na.rm=TRUE))),
-                                                 ceiling(log10(max(df_MW$Concentration,na.rm=TRUE))))))) #generates a sequence of numbers in logarithmic divisions
-        
-        ttxt <- rep(" ",length(tval))  # no label at most of the ticks
-        ttxt[seq(1,length(tval),9)] <- as.character(tval)[seq(1,length(tval),9)] # every 9th tick is labelled
-        
-        p <- plot_ly() %>%
-          add_trace(data = df_MW, x= ~Date,
-                    y = ~Concentration ,
-                    name = ' ',
-                    type = "scatter", 
-                    mode = 'markers',marker = list(color='rgb(31,150,180)'),
-                    hovertemplate = paste('<br>Date: %{x}', '<br>Concentration: %{y:.2f} ug/L<br>')) %>%
-          layout(
-            xaxis = list(title="Year",
-                         automargin = T,
-                         showline=T,
-                         mirror = "ticks",
-                         linecolor = toRGB("black"),
-                         linewidth = 2,
-                         zeroline=F),
-            yaxis = list(title="COC Concentration at <br> Monitoring Well (ug/L)",
-                         type ='log',
-                         range = c(floor(log10(min(df_MW$Concentration,na.rm=TRUE))),
-                                   ceiling(log10(max(df_MW$Concentration,na.rm=TRUE)))),
-                         tickvals=tval,
-                         ticktext=ttxt,
-                         showline=T,
-                         mirror = "ticks",
-                         linecolor = toRGB("black"),
-                         linewidth = 2,
-                         zeroline=F),
-            showlegend = FALSE,
-            dragmode = "select", selectdirection = "h")
-        p
-      })
+      
       
       # LOE Table -------------------------
       output$LOE_Table <- render_gt({
-        cd <- data.frame(LOE = c("LOE 1 Absolute rate: Is Rate 2 Statistically Significant Different than rate of zero?",
-                                 "LOE 2 Compare Rates: Is the rate of the first period you selected more than two times the second rate?",
-                                 "LOE 3 Order of Magnitude?: Is the Concentration Difference of the last points on the regression lines shown in the graph greater than 1 Order of Magnitude (OoM)?",
-                                 "LOE 4  Very Low Rate: Is the Period 3 rate from Step 4 less than 0.0693 per year (10 year half-life)?"),
-                         Method = c("", "", "", ""),
-                         Values = c("", "", "", ""),
-                         Condition = c("No", "No", "No", "No"))
+        req(input$select_mw)
+        validate(need(bp()$x, "Please select a beakpoint between two different time periods (Step 6)."))
+        # validate(need(dim(df() %>% filter("period" == "Period 2"))[1] > 2, "Period 1 must have at least 2 data points."))
+        # validate(need(dim(df() %>% filter("period" == "Period 2"))[1] > 2, "Period 2 must have at least 2 data points."))
+        
+        print(df())
+
+        print(as.data.frame(df()) %>% filter("period" == "Period 2"))
+        print(length(df() %>% filter("period" == "Period 2")) > 2)
+        req(df(), 
+            bp(),
+            sen_lm())
+        
+        results <- asy_results()
+        
+        cd <- data.frame(LOE = c("1. Are the two slopes for the two periods significantlly different?",
+                                 "2. Is the rate for period 2 significantly different then 0?",
+                                 "3. Is the rate of the first period more than two times the second rate?",
+                                 "4. Is the concentration difference of the last points on the regression lines shown in the graph greater than one order of magnitude?",
+                                 "5. Is the period 2 rate less than 0.0693 per year (10 year half-life)?"),
+                         Condition = 1:5)
+        
+        cd <- left_join(cd, results, by = "Condition") %>% select(-Condition) %>%
+          mutate(LOE = map(LOE, gt::html))
+          
         
         gt(cd) %>%
-          cols_label(LOE = "",
-                     Method = "",
-                     Values = "",
-                     Condition = "Is the Condition Met?")
+          cols_label(LOE = "Possible Asymptotic Conditions",
+                     Met = "Is the Condition Met?") %>%
+          cols_width(LOE ~ px(700)) %>%
+          tab_style(style = style_body(),
+                    locations = cells_body(columns = Met)) %>%
+          tab_style(style = list(cell_text(weight = "bold",
+                                           color = "white"),
+                                 cell_fill(color = col["purple"])),
+                    locations = cells_body(columns = Met,
+                                           rows = Met == "YES")) %>%
+          tab_style(style = style_body("left"),
+                    locations = cells_body(columns = LOE)) %>%
+          tab_style(style = style_col_labels(),
+                    locations = cells_column_labels()) %>%
+          opt_table_outline() %>%
+          # GT bug fix
+          tab_options(table.additional_css = "th, td {padding: 5px 10px !important;	border: 1px solid white;}" )
+        
         
       })
+      
+      # Asymptotic Summary Text ------------------
+      output$asy_summary <- renderUI({
+        req(df(),
+            bp(),
+            sen_lm(),
+            length(df() %>% filter("period" == "Period 1")) > 2,
+            length(df() %>% filter("period" == "Period 2")) > 2)
+        
+        results <- asy_results() %>% 
+          mutate(Met = (Met == "YES"))
+        
+        HTML(paste0("<h3><b style='color:", col["purple"],"'>", sum(results$Met), "</b> of the <b style='color:", col["purple"],"'>5</b> possible asymptotic conditions are present.</h3>"))
+      })
 
-      ## FOLLOWING IS THE CHEAT SHEET OF CALLING EACH FUNCTION
-      ##CHEAT SHEET
-
-      # library(tidyverse)
-      # library(readxl)
-      # library(plotly)
-      # library(stringr)
-      # library(lubridate)
-      # 
-      # lapply(paste0("./R/Functions/",
-      #               list.files(path = "./R/Functions",
-      #                          pattern = "[.]R$",
-      #                          recursive = TRUE),
-      #               sep=''),
-      #        source)
-      # # -----read in files
-      # location <- read_excel("C:/Users/hmori/Desktop/GSI Work Files/5648_SERDP_Borden/TA2 Module 1 2 Data File v3.xlsx",
-      #                        sheet = "Data File Template", skip = 2,
-      #                        n_max = 2)
-      # 
-      # 
-      # df <- read_excel("C:/Users/hmori/Desktop/GSI Work Files/5648_SERDP_Borden/TA2 Module 1 2 Data File v3.xlsx",
-      #                  sheet = "Data File Template", range = "B6:K26",
-      #                  col_types = c("date", "numeric", "numeric",
-      #                                "numeric", "numeric", "numeric",
-      #                                "numeric", "numeric", "numeric","numeric"))
-      # 
-      # cname <-c('Date',colnames(location)[2:10])
-      # 
-      # colnames(df)<-cname
-      # 
-      # # ----- Step 3 monitoring well group to be averaged user input
-      # pickwell<-c('MW-1','MW-2')
-      # 
-      # 
-      # 
-      # # ----- Step 4 choose whether mean or geomean user input
-      # ave_switch = 'mean' #or 'geomean
-      # 
-      # 
-      # # ----- Step 5 concentration goal user input
-      # C_goal <-0.5
-      # 
-      # # user input
-      # date_slider1 = '2012-03-02'
-      # date_slider2 = '2013-08-31'
-      # 
-      # #################################################################
-      # #  project # 5648 TA2 - Transition Assessment
-      # # function for Tool 1
-      # # Asymptote Analysis
-      # 
-      # 
-      # #--- export the averaged monitoring well concentration for all period, period1, and period2
-      # test<-df_series(df,ave_switch,pickwell,
-      #                 date_slider1,date_slider2)
-      # 
-      # #--- export the fitness of the models range 1 and range 2
-      # fit_test <- regression_fitness(test)
-      # 
-      # #--- export figure
-      # p <- logscale_figure(test,fit_test,date_slider1,date_slider2)
-      # 
-      # # To Hannah,
-      # # make sliders for choosing the date_slider1 and date_slider2
-      # # --- Results return all the necessary information to fill in the cell in storyboard
-      # Results <- Asymptote_Analysis(C_goal,test,fit_test)
     }
   )
 } # end Asymptote Server  

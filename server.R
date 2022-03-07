@@ -9,7 +9,7 @@ shinyServer(function(input, output, session) {
   data_input <- Data_Input_Server("Data_Input")
   
   AsymptoteServer("01_Asymptote", data_input = data_input, nav = nav)
-  
+
   TrendServer("02_Trend", data_input = data_input, nav = nav)
   
   # ExpansionServer("02_Expansion")

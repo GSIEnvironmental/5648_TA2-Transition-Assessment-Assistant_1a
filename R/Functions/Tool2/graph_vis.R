@@ -34,7 +34,8 @@ graph_vis <-function(df_all, log_flag, vis_flag){
               color = ~Group,
               name = ~Group,
               type = "scatter", 
-              mode = 'markers',# marker = list(color='rgb(31,150,180)'),
+              mode = 'markers',
+              marker = marker_plotly(color='rgb(31,150,180)'),
               hovertemplate = ifelse(vis_flag =='Concentration',
                                      paste('<br>Date: %{x}', '<br>Concentration: %{y:.2f} ug/L<br>'),
                                      paste('<br>Date: %{x}', '<br>Dissolved Mass: %{y:.2f} kg<br>'))
