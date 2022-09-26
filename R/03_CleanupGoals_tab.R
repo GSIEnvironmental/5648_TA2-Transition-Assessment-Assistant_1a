@@ -14,9 +14,10 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                     HTML("<h3>This is a simple tool to estimate the number of years it will take to reduce the 
                     concentration in a plume monitoring well by 90%, 99%, or 99.9% after complete source removal. 
                     The Tool was developed by Dr. Bob Borden (Borden and Cha, 2021) and is based on the REMChlor-MD model.  
-                    </h3><br>"),
-                    HTML("<h3><p style='color:red;'>This tool is currently under development and restricted K value to be between 0.01 - 0.1 cm/s. 
-                         We are work in progress to exapand this range.</h3></p>"))
+                    </h3><br>")#,
+                    # HTML("<h3><p style='color:red;'>This tool is currently under development and restricted K value to be between 0.01 - 0.1 cm/s. 
+                    #      We are work in progress to exapand this range.</h3></p>")
+                    )
            ), # end Page Title
            
            ## Input Data ----------
@@ -45,14 +46,14 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                         fluidRow(column(6, align = "right",
                                                         HTML("Distance from Source to Monitoring Well (meters):")),
                                                  column(4, align = "center",
-                                                        numericInput(ns("X"), NULL, value=500, min = 0, step = 0.01)),#28.8 before
+                                                        numericInput(ns("X"), NULL, value=50, min = 0, step = 0.01)),#28.8 before
                                                  column(2, align = "left",
                                                         actionButton(ns("help1"), HTML("?"), style = button_style2))), 
                                         br(), 
                                         fluidRow(column(6, align = "right", 
                                                         HTML("Hydraulic Gradient (-):")),
                                                  column(4, align = "center",
-                                                        numericInput(ns("i"), NULL, value=0.001, min = 0, step = 0.00001)),
+                                                        numericInput(ns("i"), NULL, value=0.0001, min = 0, step = 0.00001)),
                                                  column(2, align = "left",
                                                         actionButton(ns("help2"), HTML("?"), style = button_style2))), 
                                         br(), 
@@ -415,7 +416,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
 } # end Cleanup Goals UI  
 
 ## Server -------------------------------------
-CleanupGoals_tabServer <- function(id) {
+CleanupGoals_tabServer <- function(id,nav) {
   beginning <- Sys.time()
   moduleServer(
     id,
@@ -585,6 +586,7 @@ CleanupGoals_tabServer <- function(id) {
       observe({
         # error("Check Inputs")
         req(input$X_LL < input$X & input$X_UL > input$X,
+            input$Year_Started_LL < input$Year_Removed,
             input$Year_Started_LL < input$Year_Started & input$Year_Started_UL > input$Year_Started,
             input$tortuosity_LK_LL < input$tortuosity_LK & input$tortuosity_LK_UL > input$tortuosity_LK,
             input$Retardation_HK_LL < input$Retardation_HK & input$Retardation_HK_UL > input$Retardation_HK,
@@ -616,7 +618,12 @@ CleanupGoals_tabServer <- function(id) {
         
 
         df<-MC_function_LHC(input)
-
+        validate(
+          need(
+            (input$Year_Removed-input$Year_Started)-0.75*input$Retardation_HK*
+              (input$X/(input$K*input$i/input$ne*60*60*24*365/100))>0,FALSE
+          )#need
+                 )#validate
         if (df$type=='BG'){
           results_list<-BG_BordenFunction(df)
         }else if (df$type =='LG'){
@@ -627,7 +634,12 @@ CleanupGoals_tabServer <- function(id) {
         #print (results_list)
 
         validate(need(1%in%df$remain_index, 'Initial assignment of parameters failed to be within the travel time between 0.4 - 11.94 yr'))
-        results(results_list[c(df$remain_index),])
+        # validate(need(length(df$remain_index)>=700, paste0("Too many realizations being outside of the travel time between 0.4 - 11.94 yr for MC realizations. Median travel time is ", 
+        #                                                    median(df$X/df$Seep_V,na.rm=TRUE),".",sep='')))
+        
+        results_list<-results_list[c(df$remain_index),]
+        results_list<-results_list[rowSums(is.na(results_list)) != ncol(results_list), ]
+        results(results_list)
         error("")
       })
       
@@ -698,8 +710,9 @@ CleanupGoals_tabServer <- function(id) {
         results_list<-apply(results_list_all[2:lineNum,],2,mean)
         print ('results_list')
         print (results_list)
-        P10_list <-apply(results_list_all[2:lineNum,],2,function(x) quantile(x, probs = .1))
-        P90_list <-apply(results_list_all[2:lineNum,],2,function(x) quantile(x, probs = .9))
+
+        P10_list <-apply(results_list_all[2:lineNum,],2,function(x) quantile(x, probs = .1,na.rm =TRUE))
+        P90_list <-apply(results_list_all[2:lineNum,],2,function(x) quantile(x, probs = .9,na.rm =TRUE))
         
         #min_list <-apply(results_list_all,2,min)
         #max_list <-apply(results_list_all,2,max)
@@ -743,13 +756,17 @@ CleanupGoals_tabServer <- function(id) {
           ttxt[seq(1,length(tval),9)] <- as.character(tval)[seq(1,length(tval),9)] # every 9th tick is labelled
           ttxt = append(ttxt,as.character(results_list[7]),after=ind_cl-1)
         }
-        
-        
+
+        if (max(cd_1$Concentration)>=100000){
+          shapeindex = "linear"
+        }else{
+          shapeindex = "spline"
+        }
         p <-plot_ly()%>%
           add_trace(data = cd_1, x= ~time+input$Year_Removed,
                     y = ~Concentration ,
                     name = 'Mean',
-                    type = "scatter", line = list(shape = "spline",color='rgb(31,150,180)'),
+                    type = "scatter", line = list(shape = shapeindex,color='rgb(31,150,180)'),
                     mode = 'lines+markers',
                     hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration: %{y} ug/L<br>')
           )
@@ -758,7 +775,7 @@ CleanupGoals_tabServer <- function(id) {
             add_trace(data = cd_1, x= ~p90range+input$Year_Removed,#90%
                     y = ~Concentration , 
                     name = 'CI 90%',
-                    type = "scatter", line = list(shape = "spline",color='rgba(0,100,80,1)'),
+                    type = "scatter", line = list(shape = shapeindex,color='rgba(0,100,80,1)'),
                     mode = 'lines',
                     hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration 90th %: %{y} ug/L<br>')
           )%>%
@@ -769,7 +786,7 @@ CleanupGoals_tabServer <- function(id) {
                       mode = 'lines',
                       fill='tonexty',
                       fillcolor = 'rgba(0,100,80,0.2)',
-                      line = list(shape = "spline",color='rgba(0,100,80,1)'),
+                      line = list(shape = shapeindex,color='rgba(0,100,80,1)'),
                       hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration 10th %: %{y} ug/L<br>')
             )
         }
@@ -790,7 +807,7 @@ CleanupGoals_tabServer <- function(id) {
           #          mode = 'lines+markers')  %>%
           #add_trace(data = cd_2, x= ~date, y = ~results, color = ~Analyte_Units, type = "scatter", mode = 'lines+markers',
           #          symbol = ~I(fill), yaxis = "y2") %>%
-          layout(legend = list(orientation = 'h'),
+          plotly::layout(legend = list(orientation = 'h'),
                  shapes = list(hline(results_list[7])),
             xaxis = list(title="Year",
                          automargin = T,
@@ -839,51 +856,51 @@ CleanupGoals_tabServer <- function(id) {
         results_list<-apply(cd[2:listnum,],2,mean) # calculate mean
         #results_list<-apply(cd,2,mean)
         #min_list <-apply(cd,2,min)
-        max_list <-apply(cd[2:listnum,],2,function(x) quantile(x, probs = .9))
-        min_list <-apply(cd[2:listnum,],2,function(x) quantile(x, probs = .1))
+        max_list <-apply(cd[2:listnum,],2,function(x) quantile(x, probs = .9,na.rm =TRUE))
+        min_list <-apply(cd[2:listnum,],2,function(x) quantile(x, probs = .1,na.rm =TRUE))
         
 
         
         if (HalfLife()==0){
-          maxdev<-round(max_list[c(4:6)]-results_list[c(4:6)],0)
-          mindev<-round(results_list[c(4:6)]-min_list[c(4:6)],0)
+          maxdev<-round(max_list[c(4:6)]+results_list[c(4:6)]+input$Year_Removed,0)#round(max_list[c(4:6)]-results_list[c(4:6)],0)
+          mindev<-round(results_list[c(4:6)]-min_list[c(4:6)]+input$Year_Removed,0)#round(results_list[c(4:6)]-min_list[c(4:6)],0)
           cd <- data.frame(A = c('90% (1 OoM)','99% (2 OoMs)','99.9% (3 OoMs)'),
                            B = c(results_list[c(1:3)]),
                            C = c(results_list[c(4:6)]+input$Year_Removed),
-                           D = c(ifelse(results_list[c(4)]+input$Year_Removed>as.numeric(format(Sys.Date(),'%Y')),
+                           D = c(paste(ifelse(mindev<1,'<1',mindev),'-',maxdev)),
+                           E = c(ifelse(results_list[c(4)]+input$Year_Removed>as.numeric(format(Sys.Date(),'%Y')),
                                         as.character(round(results_list[c(4)]+input$Year_Removed-as.numeric(format(Sys.Date(),'%Y')),0)),'-'),
                                  ifelse(results_list[c(5)]+input$Year_Removed>as.numeric(format(Sys.Date(),'%Y')),
                                         as.character(round(results_list[c(5)]+input$Year_Removed-as.numeric(format(Sys.Date(),'%Y')),0)),'-'),
                                  ifelse(results_list[c(6)]+input$Year_Removed>as.numeric(format(Sys.Date(),'%Y')),
                                         as.character(round(results_list[c(6)]+input$Year_Removed-as.numeric(format(Sys.Date(),'%Y')),0)),'-')
-                           ),
-                           E = c(paste(ifelse(mindev<1,'<1',mindev),'-',maxdev))
+                           )
           )
           
           
         }else if (HalfLife()>0&input$BGLG!=1){
-          maxdev<-round(max_list[c(5:6)]-results_list[c(5:6)],0)
-          mindev<-round(results_list[c(5:6)]-min_list[c(5:6)],0)
+          maxdev<-round(max_list[c(5:6)]+results_list[c(5:6)]+input$Year_Removed,0)#round(max_list[c(5:6)]-results_list[c(5:6)],0)
+          mindev<-round(results_list[c(5:6)]-min_list[c(5:6)]+input$Year_Removed,0)#round(results_list[c(5:6)]-min_list[c(5:6)],0)
           cd <- data.frame(A = c('99% (2 OoMs)','99.9% (3 OoMs)'),
                            B = c(results_list[c(2:3)]),
                            C = c(results_list[c(5:6)])+input$Year_Removed,
+                           E = c(paste(ifelse(mindev<1,'<1',mindev),'-',maxdev)),
                            D = c(ifelse(results_list[c(5)]+input$Year_Removed>as.numeric(format(Sys.Date(),'%Y')),
                                         as.character(round(results_list[c(5)]+input$Year_Started-as.numeric(format(Sys.Date(),'%Y')),0)),'-'),
                                  ifelse(results_list[c(6)]+input$Year_Removed>as.numeric(format(Sys.Date(),'%Y')),
                                         as.character(round(results_list[c(6)]+input$Year_Removed-as.numeric(format(Sys.Date(),'%Y')),0)),'-')
-                           ),
-                           E = c(paste(ifelse(mindev<1,'<1',mindev),'-',maxdev)))
+                           ))
           
         }else{
-          maxdev<-round(max_list[c(6)]-results_list[c(6)],0)
-          mindev<-round(results_list[c(6)]-min_list[c(6)],0)
+          maxdev<-round(max_list[c(6)]+results_list[c(6)]+input$Year_Removed,0)#round(max_list[c(6)]-results_list[c(6)],0)
+          mindev<-round(results_list[c(6)]-min_list[c(6)]+input$Year_Removed,0)#round(results_list[c(6)]-min_list[c(6)],0)
           cd <- data.frame(A = c('99.9% (3 OoMs)'),
                            B = c(results_list[c(3)]),
                            C = c(results_list[c(6)])+input$Year_Removed,
-                           D = c(ifelse(results_list[c(6)]+input$Year_Removed>as.numeric(format(Sys.Date(),'%Y')),
+                           D = c(paste(ifelse(mindev<1,'<1',paste0(mindev,'-',maxdev)))),
+                           E = c(ifelse(results_list[c(6)]+input$Year_Removed>as.numeric(format(Sys.Date(),'%Y')),
                                         as.character(round(results_list[c(6)]+input$Year_Removed-as.numeric(format(Sys.Date(),'%Y')),0)),'-')
-                           ),
-                           E = c(paste(ifelse(mindev<1,'<1',mindev),'-',maxdev)))
+                           ))
           # cd <- data.frame(Parameters = c('A 99.9% Reduction in Concentration to …'),
           #                  ConValues = c(cd[3]),
           #                  text1 = c(' (ug/L) will occur about...'),
@@ -902,8 +919,8 @@ CleanupGoals_tabServer <- function(id) {
               A = "Concentration Reduction",
               B = "Concentration (ug/L)",
               C = "Year Achieved",
-              D = glue(" Years From Now (",format(Sys.Date(),'%Y'),")"),
-              E = "Deviation of Years from Mean"
+              D = "Estimated Ranges of Year Achieved",
+              E = glue(" Years From Now (",format(Sys.Date(),'%Y'),")"),
             )%>%
             #tab_header("RESULTS") %>%
             fmt_number(columns = c(2,3), rows = everything(), decimals = 0, use_seps=FALSE) %>%

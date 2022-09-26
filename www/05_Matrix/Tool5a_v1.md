@@ -9,11 +9,11 @@
             <br>
             </br>
               <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><strong><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Resources</span></strong></p>
-                <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Doner, L. and T. Sale, date unknown. Matrix Diffusion Visualization Video. ESTCP EnviroWiki, &ldquo;Matrix Diffusion&rdquo;, Figure 2.&nbsp;</span><a href="http://www.enviro.wiki/index.php?title=Matrix_Diffusion"><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>http://www.enviro.wiki/index.php?title=Matrix_Diffusion</span></a></p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>ESTCP EnviroWiki, 2020. Matrix Diffusion.&nbsp;</span><a href="http://www.enviro.wiki/index.php?title=Matrix_Diffusion"><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>http://www.enviro.wiki/index.php?title=Matrix_Diffusion</span></a></p>
-<p style='text-align: left; margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>National Research Council. (2005). Contaminants in the Subsurface: Source Zone Assessment and Remediation. National Research Council.&nbsp;</span><a href="https://doi.org/10.17226/11146"><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>https://doi.org/10.17226/11146</span></a><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>&nbsp;</span><a href="https://www.nap.edu/catalog/11146/contaminants-in-the-subsurface-source-zone-assessment-and-remediation"><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>https://www.nap.edu/catalog/11146/contaminants-in-the-subsurface-source-zone-assessment-and-remediation</span></a></p>
-<p style='text-align: left; margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Sale, T. C. and C. J. N. (2011). Decision Guide: A Guide for Selecting Remedies for Subsurface Releases of Chlorinated Solvents.&nbsp;</span><a href="https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-200530"><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-200530</span></a></p>
-<p style='text-align: left; margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Sale, T., Parker, B., Newell, C., &amp; Devlin, J. (2013). Management of Contaminants Stored in Low Permeability Zones. In SERDP: Vol. ER-1740. Strategic Environmental Research and Development Program (SERDP).&nbsp;</span><a href="https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-1740"><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-1740</span></a></p>
+                <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Doner, L. and T. Sale, date unknown. Matrix Diffusion Visualization Video. ESTCP EnviroWiki, &ldquo;Matrix Diffusion&rdquo;, Figure 2.&nbsp;</span><a href="http://www.enviro.wiki/index.php?title=Matrix_Diffusion" target="_blank"><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>http://www.enviro.wiki/index.php?title=Matrix_Diffusion</span></a></p>
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>ESTCP EnviroWiki, 2020. Matrix Diffusion.&nbsp;</span><a href="http://www.enviro.wiki/index.php?title=Matrix_Diffusion" target="_blank"><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>http://www.enviro.wiki/index.php?title=Matrix_Diffusion</span></a></p>
+<p style='text-align: left; margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>National Research Council. (2005). Contaminants in the Subsurface: Source Zone Assessment and Remediation. National Research Council.&nbsp;</span><a href="https://doi.org/10.17226/11146" target="_blank"><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>https://doi.org/10.17226/11146</span></a><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>&nbsp;</span><a href="https://www.nap.edu/catalog/11146/contaminants-in-the-subsurface-source-zone-assessment-and-remediation" target="_blank"><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>https://www.nap.edu/catalog/11146/contaminants-in-the-subsurface-source-zone-assessment-and-remediation</span></a></p>
+<p style='text-align: left; margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Sale, T. C. and C. J. N. (2011). Decision Guide: A Guide for Selecting Remedies for Subsurface Releases of Chlorinated Solvents.&nbsp;</span><a href="https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-200530" target="_blank"><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-200530</span></a></p>
+<p style='text-align: left; margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Sale, T., Parker, B., Newell, C., &amp; Devlin, J. (2013). Management of Contaminants Stored in Low Permeability Zones. In SERDP: Vol. ER-1740. Strategic Environmental Research and Development Program (SERDP).&nbsp;</span><a href="https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-1740" target="_blank"><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-1740</span></a></p>
                         
 </div>
 
@@ -22,12 +22,12 @@
 <table style="border-collapse: collapse; border: none;">
 <tr style="border: none;">
 <td style="border: none;">
-<a href="https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-200530">
+<a href="https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-200530" target="_blank">
   <img src="05_Matrix/FIG/Tool5a_fig1.png" width= 468 height=281 class="center">
 </a>
 </td>
 <td style="border: none;">
-<a href="https://www.nap.edu/catalog/11146/contaminants-in-the-subsurface-source-zone-assessment-and-remediation">
+<a href="https://www.nap.edu/catalog/11146/contaminants-in-the-subsurface-source-zone-assessment-and-remediation" target="_blank">
   <img src="05_Matrix/FIG/Tool5a_fig2.png" width= 468 height=319 class="center">
 </a>
 </td>
@@ -37,12 +37,12 @@
 <table style="border-collapse: collapse; border: none;">
 <tr style="border: none;">
 <td style="border: none;">
-<a href="https://www.nap.edu/catalog/14668/alternatives-for-managing-the-nations-complex-contaminated-groundwater-sites">
+<a href="https://www.nap.edu/catalog/14668/alternatives-for-managing-the-nations-complex-contaminated-groundwater-sites" target="_blank">
   <img src="05_Matrix/FIG/Tool5a_fig3.png" width= 468 height=448 class="center">
 </a>
 </td>
 <td style="border: none;">
-<a href="http://www.enviro.wiki/index.php?title=Matrix_Diffusion">
+<a href="http://www.enviro.wiki/index.php?title=Matrix_Diffusion" target="_blank">
   <img src="05_Matrix/FIG/Tool5a_fig4.png" width= 468 height=360 class="center">
 </a>
 </td>

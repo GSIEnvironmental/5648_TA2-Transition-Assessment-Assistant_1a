@@ -33,7 +33,7 @@ sp_interpolation<-function(df_MW_compiled,
       
       if(dim(df)[1] > 3){
       
-      # generate Dalaunay triangulation for each MW
+      # generate Voronoi triangulation for each MW
       dsp <- SpatialPoints(df[,c("Longitude", "Latitude")], proj4string=CRS("+proj=longlat +datum=NAD83"))
       dsp <- SpatialPointsDataFrame(dsp, df)
       

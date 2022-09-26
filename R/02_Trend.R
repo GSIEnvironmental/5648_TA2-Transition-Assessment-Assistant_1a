@@ -156,13 +156,13 @@ TrendUI <- function(id, label = "01_Trend"){
                              tabPanel("Trend Map", br(),
                                       fluidRow(
                                         column(3, align = "right", style = "padding:10px;",
-                                               HTML("<h4>Select Group to Display:")),
+                                               HTML("<h4>Select Date to Display:")),
                                         column(3, align = "left", style = "padding:10px;",
                                                pickerInput(ns("select_map"), label = NULL,
                                                            choices = c("All Monitoring Wells"),
                                                            multiple = F,
                                                            options = list(`live-search`=TRUE,
-                                                                          `none-selected-text` = "Select Group"))),
+                                                                          `none-selected-text` = "Select Date"))),
                                         column(6, align = "center", 
                                                actionButton(ns("save_map"),
                                                             HTML("Save Map"), style = button_style))), br(),
@@ -276,7 +276,7 @@ TrendServer <- function(id, data_input, nav) {
             input$type == "Concentration")
 
         df_MW <- df() %>% rename(Group = WellID, Value = Concentration)
-
+        
         MK_conc_well(MannKendall_MAROS(d = df_MW))
       })
 
@@ -707,7 +707,7 @@ TrendServer <- function(id, data_input, nav) {
                              radius = 8, stroke = TRUE, fillOpacity = 0.8, weight = 1, opacity = 1,
                              popup = ~paste0("<b>",WellID, "</b>:<br>",
                                              "Area: ", round(area, 0), "m<sup>2</sup><br>",
-                                             "Total Mass: ", round(total_mass, 0)),
+                                             "Total Mass: ", signif(total_mass, 2)),
                              layerId = ~WellID, options = pathOptions(pane="markers")) %>%
             addLabelOnlyMarkers(data = cd, lng = ~Longitude, lat = ~Latitude, label = ~WellID,
                                 layerId = ~paste0(WellID, "_Label"),
@@ -749,8 +749,11 @@ TrendServer <- function(id, data_input, nav) {
       output$conc_time_data <- renderRHandsontable({
         validate(
           need(data_input$d_conc(), "Please enter data into Data Input tab (Step 1)."))
-
-        rhandsontable(data_input$d_conc(), readOnly = T, rowHeaders = NULL, width = 1200, height = 600) %>%
+        
+        tbl_name <- data_input$d_conc()%>%
+          rename(`Date (Month/Day/Year)`=Date)
+        
+        rhandsontable(tbl_name, readOnly = T, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE)
       })
 
@@ -758,7 +761,7 @@ TrendServer <- function(id, data_input, nav) {
         validate(
           need(data_input$d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
 
-        rhandsontable(data_input$d_loc(), readOnly = T, rowHeaders = NULL, width = 800, height = 600) %>%
+        rhandsontable(data_input$d_loc(), readOnly = T, rowHeaders = NULL, width = 1000, height = 600) %>%
           hot_cols(columnSorting = TRUE)
       })
 

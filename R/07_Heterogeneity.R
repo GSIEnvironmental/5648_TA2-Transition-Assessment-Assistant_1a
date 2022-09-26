@@ -16,17 +16,17 @@ HeterogeneityUI <- function(id, label = "07_Heterogeneity"){
                            remediation more difficult and the impact of cleanup times can be categorized as being Low, Moderate or High.</h4>")),
                     column(6,
                            HTML("<h3><b>How Does it Work?</b></h3>
-                           <h4>You use pick one of four aquitard configurations for where the plume is in contact with overlying
-                           or underlying aquitards.  Then you enter data from boring logs at your site to determine the impact of
-                           geologic low permeability lenses that are in contact with the plume.</h4>"))),
+                           <h4>You pick one of four aquitard configurations for where the plume is in contact with overlying
+                           or underlying aquitards (Input Tab 2).  Then you enter data from boring logs at your site to determine the impact of
+                           geologic low permeability lenses that are in contact with the plume (Input Tab 3).</h4>"))),
            fluidRow(br(),
-                    column(7,style='border-right: 5px solid black',
+                    column(7,#style='border-right: 5px solid black',
                            HTML("<h2><b>Input Data </b></h2>"),
                            tabsetPanel(
                              tabPanel(HTML('1. Introduction'),
                                       fluidRow(
                                         column(11,
-                                               HTML("<h3><p style='color:blue;'><b>Learn about how to distinguish between transmissive (T-Zone)
+                                               HTML("<h3><p style='color:#337ab7;'><b>Learn about how to distinguish between transmissive (T-Zone)
                                  and low-permeability  zones (T-Zone vs. Low-k Zones).</h3></p></b>"),
                                                HTML("<h4><b>What is the Difference Between Transmissive and Low-K Media? </b>
                            A simple rule of the thumb is matrix diffusion effects are likely important if
@@ -35,13 +35,13 @@ HeterogeneityUI <- function(id, label = "07_Heterogeneity"){
                            being equal,  the length of any plume that entirely through the lower permeable media
                            will be 10 times shorter than the actual plume length at a site.  For more detailed
                            explanation, click on the button below:</h4>"),
-                                               actionButton(ns("Detailed_Explanation"), HTML("See more detaild explanation"), style = button_style)
+                                               actionButton(ns("Detailed_Explanation"), HTML("See more detailed explanation"), style = button_style)
                                                )# column
                                       )#fluid row end
                              ),#tabpanel
                              tabPanel(HTML('2. Select Aquifer Setting'),
                                       fluidRow(column(11,
-                                                      HTML("<h3><p style='color:blue;'><b>Any aquitards in contact with plume?</h3></p></b>"),
+                                                      HTML("<h3><p style='color:#337ab7;'><b>Any aquitards in contact with plume?</h3></p></b>"),
                                                       fluidRow(column(6,
                                                                       HTML("<h4>Select one of the four aquitard configurations to the right.</h4>")
                                                                       ),
@@ -67,42 +67,51 @@ HeterogeneityUI <- function(id, label = "07_Heterogeneity"){
                                       )#column
                                       ),#tabpanel
                              tabPanel(HTML('3. Enter Boring Logs'),
-                               fluidRow(column(11,
-                                               HTML("<h3><p style='color:blue;'><b>Enter data for layers/lenses within the plume.</h3></p></b>"),
-                                               column(4,
-                                                      HTML("<h4>Enter low permeability (“Low-k”) layer/Lens data from one or more boring
-                                logs into the data entry screen below.</h4>"),
-                                                      actionButton(ns("help1"), HTML("See Example"), style = button_style),
-                                                      actionButton(ns("help1"), HTML("?"), style = button_style2)),
-                                               column(8, align = "left", style = "padding:10px;",
-                                                      fluidRow(column(4, align = "left",
-                                                                      HTML("Step 1. Enter typical top of plume in transmissive media (e.g., gravels, sands)
+                               fluidRow(column(12,
+                                               HTML("<h3><p style='color:#337ab7;'><b>Enter data for layers/lenses within the plume.</h3></p></b>"),
+                                               
+                                               fluidRow(align = "left", style = "padding:10px;",
+                                                        fluidRow(column(10, align = "left",
+                                                          HTML("<h4>Enter low permeability (“Low-k”) layer/lens data from one or more boring logs into the data entry screen below.</h4>")
+                                                          )),
+                                                        fluidRow(column(10,align ='center',
+                                                               actionButton(ns("help1"), HTML("See Example"), style = button_style),
+                                                               actionButton(ns("help1"), HTML("?"), style = button_style2))),
+                                                        br(),
+                                                        fluidRow(column(10, align = "left",
+                                                                      HTML("Step 1. Enter typical depth of top of plume in transmissive media (e.g., gravels, sands)
                                                 in meters below ground surface")),
-                                                               column(8, align = "left",
+                                                               column(2, align = "left",
                                                                       numericInput(ns("TOP"), NULL, value = 10, min = 0))),
-                                                      br(),
-                                                      fluidRow(column(4, align = "left",
-                                                                      HTML("Step 2. Enter typical bottom of plume in transmissive media (e.g., gravels, sands)
+                                                        br(),
+                                                        fluidRow(column(10, align = "left",
+                                                                      HTML("Step 2. Enter typical depth of bottom of plume in transmissive media (e.g., gravels, sands)
                                                 in meters below ground surface:")),
-                                                               column(8, align = "left",
+                                                               column(2, align = "left",
                                                                       numericInput(ns("Bottom"), NULL, value = 21, min = 0))),
-                                                      br(),
-                                                      fluidRow(column(4, align = "left",
-                                                                      HTML("Step 3.   For each low-layer/lens within plume zone
+                                                        br(),
+                                                        fluidRow(column(10, align = "left",
+                                                                      HTML("Step 3.   For each low-K layer/lens within the plume zone
                                                 (don't include upper or lower aquitards) enter thickness in meters."),
+                                                                      br(),
                                                                       br(),
                                                                       HTML("More Details:<ol>
                                            <li>Enter layers/lens data for at least three and up to 10 representative boring logs in the plume.</li>
                                            <li>Most boring logs will only have a few layers/lenses, leave all other entries blank </li>
-                                           <li>See Module 7 J27 to understand definition of a low permeability (low-k) unit.</li>
-                                           <li>For detailed information:  see Appendix 6 of REMChlor-MD User's Manual.</li></ol>")),
-                                                               column(8, align = "left",
+                                           
+                                           <li>For detailed information:  see Appendix 6 of REMChlor-MD User's Manual.</li></ol>"))
+                                                                 ),
+                                                        br(),
+                                                        br(),
+                                                        fluidRow( #<li>See Module 7 J27 to understand definition of a low permeability (low-k) unit.</li>
+                                                               column(5, align = "center",
                                                                       rHandsontableOutput(ns("boring"))
+                                                                      )
                                                                )
-                                                      )
-                                               )
-                               ) #fluid row
-                               )#column
+                                                        )#fluidRow
+                                               )#column
+                                        ) #fluid row
+                               #)#column
                                         
                              )#tabpanel
                              
@@ -115,7 +124,7 @@ HeterogeneityUI <- function(id, label = "07_Heterogeneity"){
                              font-weight: bold;
                              font-size: 18pt;}")),
                                     HTML("<h2><b>View Results</b></h2>"),
-                                    HTML("<h3><p style='color:blue;'><b>See how much heterogeneity your site has for purpose of
+                                    HTML("<h3><p style='color:#337ab7;'><b>See how much heterogeneity your site has for purposes of
                     a Remediation Transition Assessment.</h3></p></b>"),
                                     HTML("<h4>The heterogeneity calculator provides the following information about
                            how much matrix diffusion could impact remediation and remediation timeframes:</h4>")),#fluid row end
@@ -170,6 +179,7 @@ HeterogeneityServer <- function(id) {
         rhandsontable(temp_boring, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE) %>%
           hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
+
       })
 
       
@@ -229,8 +239,8 @@ HeterogeneityServer <- function(id) {
           assign(nam, (Result_table[[var]]))
         }
 
-        Table2<- data.frame(Key =c('Percent of aquifer thickness (B) that is tranmissive','Numbers of Layer'),
-                            Value = c(round(Percent_B,2),round(N_layer,1)),
+        Table2<- data.frame(Key =c('Percent of aquifer thickness (B) that is transmissive','Number of layers'),
+                            Value = c(signif(Percent_B,2),round(N_layer,1)),
                             MD = Impact_diffusion2)
         Table2
       })
@@ -246,7 +256,7 @@ HeterogeneityServer <- function(id) {
         Table1<-gt(Table1)%>%
           cols_align(align=c('center'))%>%
           cols_label(Key = HTML("Key Matrix Diffusion<br>Variable for Aquitard(s)"),
-                     Value = "Values from Step 2",
+                     Value = "# of Aquitards",
                      MD = HTML("Impact on<br>Matrix Diffusion"))%>%
           tab_style(style = list(cell_borders(sides = "all",
                                               style = "solid",
@@ -274,7 +284,7 @@ HeterogeneityServer <- function(id) {
 
         Table2<- gt(Table2)%>%
           cols_align(align=c('center'))%>%
-          cols_label(Key = HTML("Key Matrix Diffusion<br>Variable for Layers/Lenses(s)"),
+          cols_label(Key = HTML("Key Matrix Diffusion<br>Variable for Layers/Lenses"),
                      Value = "Values from Step 3",
                      MD = HTML("Impact on<br>Matrix Diffusion"))%>%
           fmt_number(columns = c(2), rows = c(2), decimals = 0, use_seps=FALSE)%>%
@@ -306,7 +316,7 @@ HeterogeneityServer <- function(id) {
         Result_table = Result_table()
 
         
-        glue("<H3>","Combined step 2 and 3,","</H3>",
+        glue("<H3>","Combining values from Step 2 and 3,","</H3>",
              "<H3>","overall impact on matrix diffusion is ",
              "<font color=\"#ff0000\"><b>", Result_table$Overall,
              "</b></font>",".","</H3>"

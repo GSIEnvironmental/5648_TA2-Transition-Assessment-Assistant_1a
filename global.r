@@ -41,7 +41,7 @@ library(shinycssloaders)
  require(plotly)
  library(rsconnect)
  
- # library(reticulate)
+library(reticulate)
 
 library(rhandsontable)
 library(shinyscreenshot)
@@ -49,18 +49,23 @@ library(glue)
 library(EnvStats)
 library(lhs)
 library(Rcpp)
+library(psych)
+
+library(ggplot2)
+library(ggrepel)
+library(scales)
 
 # Plot Parameters -------------
 # Colors
 # The palette with grey:
-col <- c(dark_blue = "#112447", green = "#11691d", light_purple = "#b990db", blue = "204b9b", purple = "#330349")
+col <- c(dark_blue = "#053356", green = "#11691d", light_purple = "#b990db", blue = "#053356", purple = "#330349")
 
 # GGPLOT Theme Object
 theme <- theme(
   #Panel Border
   panel.border = element_rect(color = "black", fill = NA, linetype = 1, size = 0.5),
   plot.margin = unit(c(0.5,0.5,.5,0.5),"cm"),
-  #Background
+  #Background950
   panel.background = element_rect(fill = NA),
   strip.background =element_rect(fill = NA),
   #Grid Lines
@@ -101,7 +106,7 @@ hline <- function(y = 0, color = "black") {
 temp_data <- read.xlsx("./data/data_template.xlsx", sheet = "Concentration_Time_Data", startRow = 2,
                        check.names = F) %>%
   mutate(Event = as.integer(Event),
-         Date = as.Date(Date, origin="1899-12-30"))
+         Date = as.Date(Date, origin="1899-12-30",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y")))
 
 temp_mw_info <- read.xlsx("./data/data_template.xlsx", sheet = "Monitoring_Well_Information", startRow = 1,
                        check.names = F, sep.names = " ")
@@ -152,6 +157,32 @@ figure_list <-c("01_X.png","02_i.png","03_COC.png",
                 "22_HK_bulkD.png","23_LK_bulkD.png","24_HK_retardation.png",
                 "25_LK_retardation.png","26_KOC.png","27_TCLevel.png",
                 "28_MC.png","29_Seepage.png")
+
+
+# tool 4 default database
+df_tool4 = read_excel("./data/TA2 ESTCP Remediation Performance Database.xlsx",
+                                      range = "A2:K308",
+                                      sheet = "Sheet1")
+linear_df <- read_excel("./data/TA2 ESTCP Remediation Performance Database.xlsx",
+                                                 sheet = "Sheet2")
+linear_df_Benzene <- read_excel("./data/TA2 ESTCP Remediation Performance Database.xlsx",
+                        sheet = "Sheet3")
+
+MCL <- read_excel("./data/TA2 ESTCP Remediation Performance Database.xlsx",
+                                sheet = "Sheet4")
+
+site_max = c('All Sites','>200,000 ug/L','2,000 to 200,000 ug/L',
+             '20 to 2,000 ug/L', '<20 ug/L')
+
+BRemlist<- c(df_tool4%>%filter(`Parent CVOC`=='Benzene')%>%
+  select(Technology)%>%
+  distinct())$Technology
+
+CRemlist<- c(df_tool4%>%filter(`Parent CVOC`!='Benzene')%>%
+           select(Technology)%>%
+           distinct())$Technology
+
+
 # # Functions -----------------
 # #Convert lat/long
 # convert_coords <- function(x,y) {
@@ -236,13 +267,13 @@ source("./R/03_CleanupGoals_tab.R")
 
 # # source("./R/03_CleanupGoals_MCtab.R")
 # 
-# source("./R/04_Performance.R")
+source("./R/04_Performance.R")
 # 
 # source("./R/05_MatrixDiffusion.R")
 # 
  source("./R/07_Heterogeneity.R")
 # 
-# source("./R/09_PlumeZone.R")
+source("./R/08_PlumeZone.R")
 # 
 # source("./R/10_Summary.R")
 
@@ -258,5 +289,5 @@ lapply(paste0("./R/Functions/",
 # source("./R/Functions/HelpButtonFunction.R")
 
 # Shinyio ------------------------------------------
-# rsconnect::deployApp(appId = "4413726")
-
+## rsconnect::deployApp(appId = "4413726")
+#rsconnect::deployApp(appName = "5648_SERDP_DEV")

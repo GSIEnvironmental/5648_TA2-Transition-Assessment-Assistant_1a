@@ -59,7 +59,7 @@
   <p class=MsoNormal><b><span style='font-size:14.0pt;line-height:107%;
   color:black;mso-color-alt:windowtext'>Chlorinated Solvents<br>
   </span></b><span style='color:black;mso-color-alt:windowtext'><a
-  href="https://www.osti.gov/servlets/purl/899964"><b><span style='font-size:
+  href="https://www.osti.gov/servlets/purl/899964" target="_blank"><b><span style='font-size:
   14.0pt;line-height:107%'>(Truex et al., 2007)</span></b></a></span><span
   style='font-size:14.0pt;line-height:107%'><o:p></o:p></span></p>
   </td>
@@ -67,7 +67,7 @@
   none;border-bottom:solid white 1.0pt;border-right:solid white 1.0pt;
   mso-border-top-alt:solid white 3.0pt;mso-border-left-alt:solid white 1.0pt;
   background:#CCD2DE;padding:.05in .1in .05in .1in;height:2.3in'>
-  <p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+  <p class=MsoNormal onclick="$('li:eq(50) a').tab('show');" role="button" style='margin-top:0in;margin-right:0in;margin-bottom:0in;
   margin-left:.5in;text-indent:-.25in;line-height:normal;mso-list:l0 level1 lfo3;
   tab-stops:list .5in'><![if !supportLists]><span style='font-size:14.0pt;
   font-family:"Arial",sans-serif;mso-fareast-font-family:Arial'><span
@@ -166,7 +166,7 @@
   <p class=MsoNormal><b><span style='font-size:14.0pt;line-height:107%;
   color:black;mso-color-alt:windowtext'>Inorganics and Radionuclides<br>
   </span></b><span style='color:black;mso-color-alt:windowtext'><a
-  href="https://clu-in.org/download/techfocus/na/NA-SRNL-STI-2011-00459.pdf"><b><span
+  href="https://clu-in.org/download/techfocus/na/NA-SRNL-STI-2011-00459.pdf" target="_blank"><b><span
   style='font-size:14.0pt;line-height:107%'>(Truex et al., 2011)</span></b></a></span><span
   style='font-size:14.0pt;line-height:107%'><o:p></o:p></span></p>
   </td>
@@ -266,7 +266,7 @@
   style='font-size:14.0pt;line-height:107%'><o:p></o:p></span></p>
   <p class=MsoNormal style='margin-bottom:0in'><span style='color:black;
   mso-color-alt:windowtext'><a
-  href="https:/doi.org/10.1002/rem.21697"><b><span
+  href="https:/doi.org/10.1002/rem.21697" target="_blank"><b><span
   style='font-size:14.0pt;line-height:107%'>(Newell et al., 2021)</span></b></a></span><span
   style='font-size:14.0pt;line-height:107%'><o:p></o:p></span></p>
   </td>
@@ -367,7 +367,7 @@
 </br>
 <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'><strong>REFERENCES</strong></p>
 <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'>ITRC. (2008). Enhanced Attenuation: Chlorinated Organics. ITRC Technical and Regulatory Guidance, 1&ndash;109. papers2://publication/uuid/933FC773-F308-4F98-82C6-684086F014C7</p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'>Newell, C. J., Adamson, D. T., Kulkarni, P. R., Nzeribe, B. N., Connor, J. A., Popovic, J., &amp; Stroo, H. F. (2021). Monitored natural attenuation to manage PFAS impacts to groundwater: Potential guidelines. <em>Remediation Journal</em>, <em>n/a</em>(n/a). <a href="https:/doi.org/10.1002/rem.21697">https://doi.org/10.1002/rem.21697</a></p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'>Truex, M. J., Newel, C. J., Looney, B. B., &amp; Vangelas, K. M. (2007). <em>Scenarios Evaluation Tool for Chlorinated Solvent Monitored Natural Attenuation</em>. Washington Savannah River Company, Savannah River National Laboratory, United States Department of Energy. <a href="https://www.osti.gov/servlets/purl/899964">https://www.osti.gov/servlets/purl/899964</a> </p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'>Truex, M., Brady, P., Newell, C., Rysz, M., &amp; Vangelas, K. (2011). The Scenarios Approach to Attenuation <span style='font-family:"Cambria Math",serif;'>‐</span> Based Remedies for Inorganic and Radionuclide Contaminants. In <em>Energy</em>. Savannah River National Laboratory, U.S. Department of Energy. <a href="https://clu-in.org/download/techfocus/na/NA-SRNL-STI-2011-00459.pdf">https://clu-in.org/download/techfocus/na/NA-SRNL-STI-2011-00459.pdf</a></p>
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'>Newell, C. J., Adamson, D. T., Kulkarni, P. R., Nzeribe, B. N., Connor, J. A., Popovic, J., &amp; Stroo, H. F. (2021). Monitored natural attenuation to manage PFAS impacts to groundwater: Potential guidelines. <em>Remediation Journal</em>, <em>n/a</em>(n/a). <a href="https:/doi.org/10.1002/rem.21697" target="_blank">https://doi.org/10.1002/rem.21697</a></p>
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'>Truex, M. J., Newel, C. J., Looney, B. B., &amp; Vangelas, K. M. (2007). <em>Scenarios Evaluation Tool for Chlorinated Solvent Monitored Natural Attenuation</em>. Washington Savannah River Company, Savannah River National Laboratory, United States Department of Energy. <a href="https://www.osti.gov/servlets/purl/899964" target="_blank">https://www.osti.gov/servlets/purl/899964</a> </p>
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'>Truex, M., Brady, P., Newell, C., Rysz, M., &amp; Vangelas, K. (2011). The Scenarios Approach to Attenuation <span style='font-family:"Cambria Math",serif;'>‐</span> Based Remedies for Inorganic and Radionuclide Contaminants. In <em>Energy</em>. Savannah River National Laboratory, U.S. Department of Energy. <a href="https://clu-in.org/download/techfocus/na/NA-SRNL-STI-2011-00459.pdf" target="_blank">https://clu-in.org/download/techfocus/na/NA-SRNL-STI-2011-00459.pdf</a></p>
 </div>

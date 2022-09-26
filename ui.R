@@ -20,7 +20,7 @@ shinyUI <- navbarPage(theme="styles.css",
                       collapsible = TRUE, fluid=TRUE, 
                       windowTitle = "SERDP Transition Assessment Assistant",
                       title=div(a(" ",
-                                  img(src = "https://www.serdp-estcp.org/design/hgl_user/images/mainLogo-serdp-estcp.png", width = "75%", height = "75%"),
+                                  img(src = "https://www.serdp-estcp.org/img/logo/serdp-estcp-horizontal_bw.png", width = "60%", height = "60%"),
                                   href = 'https://serdp-estcp.org/', target="_blank")),
                       id="nav",
                       # Tab panels 
@@ -68,7 +68,7 @@ shinyUI <- navbarPage(theme="styles.css",
                    SummaryUI("10_Summary"),
                    
                    footer = HTML('<a href="https://www.gsi-net.com/en/" target="_blank">
-                   <div style="background-color: #112447; padding: 10px; margin-right: 0;  margin-left: 0;">
+                   <div style="background-color: #0f212f; padding: 10px; margin-right: 0;  margin-left: 0;">
                                    <h3 class="featurette-heading" style="color:white;" ><i>Powered by <b>GSI Environmental</b> (2022)</i></h3>
                                    </div></a>')
                    

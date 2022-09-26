@@ -1,16 +1,3 @@
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Computer models can be used for Transition Assessments by comparing which particular site risk profiles would improve if additional mass removal projects are implemented; or if the progress toward reaching remediation goals is constrained by matrix diffusion effects. Therefore, if modeling is being considered for a Transition Assessment it is important that a model that can account for matrix diffusion effects be used. As of early 2022, there are several general approaches for performing matrix diffusion modeling for analyzing remediation scenarios.</span></p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><strong><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Problems with Conventional Models and Matrix Diffusion</span></strong></p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>With the knowledge that significant accumulation of contaminants can occur in low-k zones at sites, there has been the concurrent desire to apply groundwater models to estimate future impacts to groundwater affected by matrix diffusion processes. However, most conventional groundwater transport models in the 2022 timeframe either do not have the capability to directly model matrix diffusion, or if they do, they may have accuracy problems in some cases (Farhat et al., 2020).</span></p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><strong><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Models Less Useful for Transition Assessment Modeling</span></strong></p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>In general, most standard advection-dispersion groundwater transport models do not simulate matrix diffusion. Both the BIOSCREEN (Newell et al., 1996) and the BIOCHLOR models (Aziz et al., 1999) do not simulate remediation scenarios (they are both MNA models) and do not simulate matrix diffusion.&nbsp;</span></p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><strong><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Potential Problems With Finite Difference Models</span></strong></p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Conventional applications of most numerical models (like MODFLOW-MT3D) may not accurately simulate matrix diffusion when applied at typical field scales (layer thicknesses on the order of meters). Chapman et al. (2012) describes the problem with conventional numerical models this way:</span></p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><em><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>&ldquo;A major challenge of diffusion as a governing process, both in terms of field characterization efforts and incorporation in numerical models, is that it occurs over small scales relative to the typical dimensions of plumes. The response of plumes at the scale of 100s to 1000s of meters can be dependent on concentration gradients that evolve over dimensions of centimeters or less.&rdquo;</span></em></p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Carey et al. (2015) re-emphasized the need for small grid spacing and small time steps when using a finite difference groundwater transport model like MT3D to simulate matrix diffusion effects:</span></p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><em><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>&ldquo;The use of numerical models to simulate diffusion between transmissive and low-permeability zones requires small grid spacing and time steps (Chapman et al., 2012; Weatherill et al., 2008). Modeling vertical diffusion in a silt or clay lens may require the addition of dozens to hundreds of model layers, depending on the thickness and number of low-permeability lenses to be represented. This can be computationally prohibitive for a numerical model, particularly three-dimensional (3-D) models which already incorporate small horizontal grid spacing or multiple solutes.</span></em></p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Farhat et al. (2020) then provided examples of how much errors can occur when using conventional finite difference numerical models to simulate matrix diffusion. They concluded:</span></p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><em><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>&ldquo;&hellip;conventional vertical discretization of numerical groundwater transport models at contaminated sites (with layers that are greater than one meter thick) can lead to significant errors when compared to more accurate high-resolution vertical discretization schemes (layers that are centimeters thick).&rdquo;</span></em></p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>&nbsp;</span></p>
 <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><strong><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Eight Ways to Simulate Matrix Diffusion and Remediation</span></strong></p>
 <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>As of 2022, there are eight general ways to model the impact of matrix diffusion on remediation for Transition Assessments (Table 1). Links to key resources (ESTCP project pages or key papers) are provided. A quick selection guide is provided below:</span></p>
 <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>For a <strong>quick screening&nbsp;</strong>model approach:&nbsp;</span></p>
@@ -44,14 +31,16 @@ figcaption {
 </style>
 
 <div class="col-md-4" style = "text-align: center;">
+<a href="#top" onclick="$('li:eq(5) a').tab('show');" role="button">
 <figure>
   <img src="05_Matrix/FIG/Tool5c_fig1.png" width= 468 height=459 class="center">
   <figcaption>Model 1</figcaption>
 </figure>
+</a>
 </div>
 
 <div class="col-md-4" style = "text-align: center;">
-<a href="https://serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-201426/(language)/eng-US">
+<a href="https://serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-201426/(language)/eng-US" target="_blank">
 <figure>
   <img src="05_Matrix/FIG/Tool5c_fig2.png" width= 468 height=291 class="center">
   <figcaption>Model 2</figcaption>
@@ -60,7 +49,7 @@ figcaption {
 </div>
 
 <div class="col-md-4" style = "text-align: center;">
-<a href="https://serdp-estcp.org/Tools-and-Training/Environmental-Restoration/Groundwater-Plume-Treatment/Matrix-Diffusion-Tool-Kit">
+<a href="https://serdp-estcp.org/Tools-and-Training/Environmental-Restoration/Groundwater-Plume-Treatment/Matrix-Diffusion-Tool-Kit" target="_blank">
 <figure>
   <img src="05_Matrix/FIG/Tool5c_fig3.png" width= 468 height=421 class="center">
   <figcaption>Model 3</figcaption>
@@ -82,8 +71,7 @@ figcaption {
 </div>
 
 <div align=center>
-
-<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=1164
+<table class="center" class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=1164
  style='width:872.7pt;border-collapse:collapse;mso-yfti-tbllook:1184;
  mso-padding-alt:0in 0in 0in 0in'>
  <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes;height:25.25pt'>
@@ -128,7 +116,7 @@ figcaption {
   Model<br>
   </span><span style='color:yellow'>(SERDP TA<sup>2 </sup>Tool 3)<br>
   </span></b><span style='color:black;mso-color-alt:windowtext'><a
-  href="https://www.sciencedirect.com/science/article/abs/pii/S0169772221001285?via%3Dihub"><b><span
+  href="https://www.sciencedirect.com/science/article/abs/pii/S0169772221001285?via%3Dihub" target="_blank"><b><span
   style='color:yellow'>(Borden and Cha, 2021)</span></b></a></span><span
   style='color:white;mso-themecolor:background1'><o:p></o:p></span></p>
   </td>
@@ -173,7 +161,7 @@ figcaption {
   <p class=MsoNormal><b><span style='color:white;mso-themecolor:background1'>2.
   ESTCP REMChlor-MD Model<br>
   </span></b><span style='color:black;mso-color-alt:windowtext'><a
-  href="https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-201426"><b><span
+  href="https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-201426" target="_blank"><b><span
   style='color:yellow'>(ESTCP Project ER-201426)</span></b></a></span><b><span
   style='color:yellow'> <br>
   (Falta et al., 2018; Farhat et al., 2018)</span></b><span style='color:white;
@@ -225,7 +213,7 @@ figcaption {
   <p class=MsoNormal><b><span style='color:white;mso-themecolor:background1'>3.
   MODFLOW with Matrix Diffusion Transport (MDT) Package <br>
   </span></b><span style='color:black;mso-color-alt:windowtext'><a
-  href="https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER19-5028"><b><span
+  href="https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER19-5028" target="_blank"><b><span
   style='color:yellow'>(ESTCP ER-19-5028)</span></b></a></span><span
   style='color:white;mso-themecolor:background1'><o:p></o:p></span></p>
   <p class=MsoNormal><b><span style='color:white;mso-themecolor:background1'>&nbsp;</span></b><span
@@ -289,7 +277,7 @@ figcaption {
   mso-themecolor:background1'>4. ESCTP Matrix Diffusion Toolkit <o:p></o:p></span></b></p>
   <p class=MsoNormal style='margin-bottom:0in'><span style='color:black;
   mso-color-alt:windowtext'><a
-  href="https://www.serdp-estcp.org/Tools-and-Training/Environmental-Restoration/Groundwater-Plume-Treatment/Matrix-Diffusion-Tool-Kit"><b><span
+  href="https://www.serdp-estcp.org/Tools-and-Training/Environmental-Restoration/Groundwater-Plume-Treatment/Matrix-Diffusion-Tool-Kit" target="_blank"><b><span
   style='color:yellow'>(Farhat et al., 2012)</span></b></a></span><span
   style='color:white;mso-themecolor:background1'><o:p></o:p></span></p>
   </td>
@@ -334,15 +322,15 @@ figcaption {
   MT3DMS / RT3D <br>
   3-D Model with Thin Layers <br>
   </span></b><span style='color:black;mso-color-alt:windowtext'><a
-  href="https://www.sciencedirect.com/science/article/abs/pii/S0169772212000599?via%3Dihub"><b><span
+  href="https://www.sciencedirect.com/science/article/abs/pii/S0169772212000599?via%3Dihub" target="_blank"><b><span
   style='color:yellow'>(Chapman et al., 2012)</span></b></a></span><b><span
   style='color:yellow'><br>
   </span></b><span style='color:black;mso-color-alt:windowtext'><a
-  href="https://onlinelibrary.wiley.com/doi/10.1002/rem.21440"><b><span
+  href="https://onlinelibrary.wiley.com/doi/10.1002/rem.21440" target="_blank"><b><span
   style='color:yellow'>(Carey et al., 2015)</span></b></a></span><b><span
   style='color:yellow'><br>
   </span></b><span style='color:black;mso-color-alt:windowtext'><a
-  href="https://ngwa.onlinelibrary.wiley.com/doi/abs/10.1111/gwmr.12373/"><b><span
+  href="https://ngwa.onlinelibrary.wiley.com/doi/abs/10.1111/gwmr.12373/" target="_blank"><b><span
   style='color:yellow'>(Farhat et al., 2020)</span></b></a></span><span
   style='color:white;mso-themecolor:background1'><o:p></o:p></span></p>
   </td>
@@ -394,11 +382,11 @@ figcaption {
   MT3DMS / RT3D <br>
   2-D “Bread Slices”<br>
   </span></b><span style='color:black;mso-color-alt:windowtext'><a
-  href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3267905/"><b><span
+  href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3267905/" target="_blank"><b><span
   style='color:yellow'>(Rasa et al., 2011)</span></b></a></span><b><span
   style='color:yellow'><br>
   </span></b><span style='color:black;mso-color-alt:windowtext'><a
-  href="https://ngwa.onlinelibrary.wiley.com/doi/abs/10.1111/gwmr.12373/"><b><span
+  href="https://ngwa.onlinelibrary.wiley.com/doi/abs/10.1111/gwmr.12373/" target="_blank"><b><span
   style='color:yellow'>(Farhat et al., 2020)</span></b></a></span><span
   style='color:white;mso-themecolor:background1'><o:p></o:p></span></p>
   </td>
@@ -444,7 +432,7 @@ figcaption {
   MT3DMS / RT3D <br>
   3-D Model with Dual Domain<br>
   </span></b><span style='color:black;mso-color-alt:windowtext'><a
-  href="http://www.ees.nmt.edu/outside/courses/hyd547/supplemental/MODFLOW_Tutorial/MT3DMS-AdvancedTransport.pdf"><b><span
+  href="http://www.ees.nmt.edu/outside/courses/hyd547/supplemental/MODFLOW_Tutorial/MT3DMS-AdvancedTransport.pdf" target="_blank"><b><span
   style='color:yellow'>(GMS Tutorial)</span></b></a></span><b><span
   style='color:yellow'> </span></b><span style='color:white;mso-themecolor:
   background1'><o:p></o:p></span></p>
@@ -498,7 +486,7 @@ figcaption {
   REMChlor (Falta et al., 2005a, b; Falta et al., 2008)</span><span
   style='color:yellow'><br>
   </span></b><span style='color:black;mso-color-alt:windowtext'><a
-  href="https://www.epa.gov/water-research/remediation-evaluation-model-chlorinated-solvents-remchlor"
+  href="https://www.epa.gov/water-research/remediation-evaluation-model-chlorinated-solvents-remchlor" target="_blank"
   title="https://www.epa.gov/water-research/remediation-evaluation-model-chlorinated-solvents-remchlor"><b><span
   style='color:yellow'>(USEPA)</span></b></a></span><span style='color:white;
   mso-themecolor:background1'><o:p></o:p></span></p>

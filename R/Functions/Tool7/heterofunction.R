@@ -29,7 +29,6 @@ heterofunction<-function(df,TOP,Bottom,aquitard){
 
   ave = mean(rowSums(df[,c(2:5)],na.rm=TRUE))
   
-  
   Percent_B = (1-ave/Thickness)*100
   N_layer = round(mean(rowSums(df[,c(2:5)]!="",na.rm=TRUE)))
   rowSums(df != "")

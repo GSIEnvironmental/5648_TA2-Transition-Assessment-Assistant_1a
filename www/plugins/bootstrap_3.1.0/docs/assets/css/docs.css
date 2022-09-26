@@ -455,7 +455,7 @@ body {
 }
 .bs-featurette-img:hover {
   text-decoration: none;
-  color: #428bca;
+  color: #053356;
 }
 .bs-featurette-img img {
   display: block;
@@ -709,7 +709,7 @@ h1[id] {
 .color-swatches .gray          { background-color: #555; }
 .color-swatches .gray-light    { background-color: #999; }
 .color-swatches .gray-lighter  { background-color: #eee; }
-.color-swatches .brand-primary { background-color: #428bca; }
+.color-swatches .brand-primary { background-color: #053356; }
 .color-swatches .brand-success { background-color: #5cb85c; }
 .color-swatches .brand-warning { background-color: #f0ad4e; }
 .color-swatches .brand-danger  { background-color: #d9534f; }

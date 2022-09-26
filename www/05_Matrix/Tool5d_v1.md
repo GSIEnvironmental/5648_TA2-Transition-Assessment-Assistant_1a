@@ -12,7 +12,7 @@
 </style>
       
 <div class="col-md-4">
-      <a href="https://youtu.be/NQKblmf9mvs">
+      <a href="https://youtu.be/NQKblmf9mvs" target="_blank">
         <figure>
         <img src="05_Matrix/FIG/Tool5d_fig1.png" width= 468 height=283 class="center">
           </figure>
@@ -20,7 +20,7 @@
           </div>
           
  <div class="col-md-4" style = "text-align: justify;">
-            <a href="https://serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-201426/(language)/eng-US">
+            <a href="https://serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-201426/(language)/eng-US" target="_blank">
               <figure>
               <img src="05_Matrix/FIG/Tool5d_fig2.png" width= 468 height=320 class="center">
                 </figure>

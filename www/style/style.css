@@ -27,7 +27,7 @@ code {
 }
 
 h1, h2, h3, h4, h5, h6 {
-	color: #333;
+	color: #053356;
 	font-family: 'Montserrat', sans-serif;
 }
 
@@ -44,7 +44,7 @@ h1 {
 }
 
 h1.title{
-	color: #005a87;
+	color: #053356;
 }
 
 .carousel h1:after, .carousel h1:before {
@@ -105,7 +105,7 @@ h3 {
 }
 
 p {
-	color: #333;
+	color: #053356;
 	font-size: 20px;
 }
 

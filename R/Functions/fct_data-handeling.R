@@ -9,12 +9,17 @@
 
 
 data_long <- function(d){
-  cd <- d %>% 
-    select(where(~!all(is.na(.x)))) %>% # removing columns with no data
-    filter(!if_all(c(-"Event", -"Date", -"COC", -"Units"), ~is.na(.))) %>% #removing events with no concentration data
-    pivot_longer(cols = c(-"Event", -"Date", -"COC", -"Units"),
-                 names_to = "WellID", values_to = "Concentration") %>%
-    filter(!is.na(Concentration))
+    if("Date (Month/Day/Year)"%in%colnames(d)){
+      cd <- d %>% rename(Date = `Date (Month/Day/Year)`)
+    }else{
+      cd <- d
+    }
+      cd <- cd %>%
+        select(where(~!all(is.na(.x)))) %>% # removing columns with no data
+        filter(!if_all(c(-"Event", -"Date", -"COC", -"Units"), ~is.na(.))) %>% #removing events with no concentration data
+        pivot_longer(cols = c(-"Event", -"Date", -"COC", -"Units"),
+                     names_to = "WellID", values_to = "Concentration") %>%
+        filter(!is.na(Concentration))
   
   return(cd)
 } # end data_long

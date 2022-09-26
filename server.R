@@ -18,17 +18,17 @@ shinyServer(function(input, output, session) {
   #CleanupGoalsServer("03_CleanupGoals")
   #CleanupGoals_linearServer("03_CleanupGoals_linear")
   
-  CleanupGoals_tabServer("03_CleanupGoals_tab")
+  CleanupGoals_tabServer("03_CleanupGoals_tab", nav = nav)
   
   # CleanupGoals_MCtabServer("03_CleanupGoals_MCtab")
   
-  # PerformanceServer("04_Performance")
+  PerformanceServer("04_Performance")
   
-  # MatrixDiffusionServer("05_MatrixDiffusion")
+  MatrixDiffusionServer("05_MatrixDiffusion")
   
-   HeterogeneityServer("07_Heterogeneity")
+  HeterogeneityServer("07_Heterogeneity")
   
-  # PlumeZoneServer("09_PlumeZone")
+  PlumeZoneServer("08_PlumeZone", data_input = data_input, nav = nav)
   
   # SummaryServer("10_Summary")
 

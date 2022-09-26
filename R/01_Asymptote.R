@@ -7,7 +7,7 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
   tabPanel("1. Asymptote",
            # Page Title ------
            fluidRow(style='border-bottom: 5px solid black',
-                    HTML("<h1><b>Tool 1. Has a concentration vs time asymptote been reached at my site?</h1></b>"),
+                    HTML("<h1><b>Tool 1. Am I Approaching a Concentration vs Time Asymptotic Condition at My Site?</h1></b>"),
                     column(5,
                            HTML("<h3><b>What Does this Tool Do?</b></h3>
                            <h4><ol>
@@ -69,8 +69,19 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                              column(2, align = "left", style = "padding:10px;",
                                     actionButton(ns("help5"), HTML("?"), style = button_style2))),
                     fluidRow(column(10,
-                                    HTML("<h4><b>Step 6.</b> Select breakpoint between two different time periods.</h4>"),
-                                    HTML("<p><i>Beakpoint is indicated on plot with a dotted line. To manually select a breakpoint click data point on plot.</i></p>")),
+                                    HTML("<h4><b>Step 6.</b> Select Confidence Inteval (max 0.99).</h4>"),
+                                    fluidRow(
+                                      column(6, align = "right", 
+                                             numericInput(ns("CI_input"), label = NULL,
+                                                          value = 0.95, min = 0, step = 0.01,
+                                                          width = "80px")),
+                                      column(6, align = "left", 
+                                             HTML("<h4></h4>")))),
+                             column(2, align = "left", style = "padding:10px;",
+                                    actionButton(ns("help5"), HTML("?"), style = button_style2))), br(),
+                    fluidRow(column(10,
+                                    HTML("<h4><b>Step 7.</b> Select breakpoint between two different time periods.</h4>"),
+                                    HTML("<p><i>Beakpoint is indicated on plot with a dotted line. To manually select a breakpoint click data point on plot.To deselect double click the figure where no data point.</i></p>")),
                              column(2, align = "left", style = "padding:10px;",
                                     actionButton(ns("help5"), HTML("?"), style = button_style2))),
                     HTML("<hr class='featurette-divider'>"),
@@ -100,8 +111,15 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                                fluidRow(align = "center",
                                gt_output(ns("LOE_Table")), br(), 
                                uiOutput(ns("asy_summary")))),
-                      tabPanel("Data", br())
-                      ), br(),
+                      tabPanel("Data", br(),
+                               tabsetPanel(
+                                 tabPanel(HTML("1. Concentration and Time Data"), br(),
+                                          rHandsontableOutput(ns("conc_time_data"))
+                                          ), # end concentration and time table
+                                 tabPanel(HTML("2. Monitoring Well Information"), br(),
+                                          rHandsontableOutput(ns("mw_data"))
+                                          ) # end concentration and time table
+                               ))), br(), br(),
            fluidRow(align = "center",
                     actionButton(ns("save_data"),
                                  HTML("Save Data and Analysis"), style = button_style)), br())
@@ -188,9 +206,16 @@ AsymptoteServer <- function(id, data_input, nav) {
       # RV: Breakpoint ---------------
       bp <- reactiveVal()
       
-      observe({
+      observeEvent(event_data(event = "plotly_click", source = "ts_selected"),{
         req(df())
         bp(event_data(event = "plotly_click", source = "ts_selected"))
+        print (bp())
+      })
+      
+      observeEvent(event_data(event = "plotly_doubleclick", source = "ts_selected"),{
+        req(df())
+        bp(NULL)
+        print ('bp')
       })
       
       # RV: Sen Trend Model ---------------
@@ -225,15 +250,16 @@ AsymptoteServer <- function(id, data_input, nav) {
       
       observeEvent({
         sen_lm()
-        input$conc_goal},{
+        input$conc_goal
+        input$CI_input},{
           req(sen_lm(),
               input$conc_goal > 0)
           
           cd <- map_dfr(1:length(sen_lm()), ~{
-            forecasted_clean(sen_lm()[[.x]], input$conc_goal) %>%
+            forecasted_clean(sen_lm()[[.x]], input$conc_goal, input$CI_input) %>%
               mutate(type = names(sen_lm())[.x])
           })
-          
+          print (cd)
           sen_table(cd)
       })
       
@@ -244,10 +270,11 @@ AsymptoteServer <- function(id, data_input, nav) {
         req(df(),
             bp(),
             sen_lm(),
+            input$CI_input,
             length(df() %>% filter("period" == "Period 1")) > 2,
             length(df() %>% filter("period" == "Period 2")) > 2)
         
-        results <- Asymptote_Analysis(df(), sen_lm()) 
+        results <- Asymptote_Analysis(df(), sen_lm(),input$CI_input) 
         
         asy_results(results)
       })
@@ -279,15 +306,18 @@ AsymptoteServer <- function(id, data_input, nav) {
                              end = max(d_conc()$Date, na.rm = T))
       }) # end update well selection
       
+      p = plot_ly(source = 'ts_selected')
+      
       # Plot 1 ------------------
       output$ts_plot1 <- renderPlotly({
         validate(need(d_conc(), "Please enter data into the Data Input tab (Step 1)."))
         validate(need(df(), "Please select wells or well grouping to analyze (Step 2)."))
         
         req(df(),
-            sen_lm())
+            sen_lm(),
+            input$CI_input)
         
-        logscale_figure(df(), sen = sen_lm(), bp = bp()$x)
+        logscale_figure(df(), name = input$group_method, sen = sen_lm(), bp = bp()$x,fit = sen_lm(),CI = input$CI_input)
       })
       
       # Attenuation Rates Table -------------------------
@@ -298,17 +328,38 @@ AsymptoteServer <- function(id, data_input, nav) {
         req(sen_table())
         
         cd <- sen_table() %>%
-          select(type, rate_model, year_0.05, year_model, year_0.95)
-        
+          mutate(year_0.1 = ifelse(slope_LCL<0,year_LCL,'Increasing'),
+                 year_0.9 = ifelse(slope_UCL<0,year_UCL,'Increasing'),
+                 pearson_model = signif(pearson_model,3),
+                 pvalue = signif(pvalue_model,3),
+                 interpretation = case_when( pearson_model>=0.8|pearson_model<=-0.8&pvalue_model<0.05~ 'Very High Correlation, Statistically Significant',
+                                            (pearson_model<0.8& pearson_model>=0.6&pvalue_model<0.05)|(pearson_model<=-0.6& pearson_model>-0.8&pvalue_model<0.05) ~ 'High Correlation, Statistically Significant',
+                                            (pearson_model<0.6& pearson_model>=0.4&pvalue_model<0.05)|(pearson_model<=-0.4& pearson_model>-0.6&pvalue_model<0.05) ~ 'Moderate Correlation, Statistically Significant',
+                                            (pearson_model<0.4& pearson_model>=0.2&pvalue_model<0.05)|(pearson_model<=-0.2& pearson_model>-0.4&pvalue_model<0.05) ~ 'Low Correlation, Statistically Significant',
+                                            (pearson_model<0.2& pearson_model>=0&pvalue_model<0.05)|(pearson_model<=0& pearson_model>-0.2&pvalue_model<0.05) ~ 'Very Low Correlation, Statistically Significant',
+                                             pearson_model>=0.8|pearson_model<=-0.8&pvalue_model>=0.05~ 'Very High Correlation, Statistically Not Significant',
+                                            (pearson_model<0.8& pearson_model>=0.6&pvalue_model>=0.05)|(pearson_model<=-0.6& pearson_model>-0.8&pvalue_model>=0.05) ~ 'High Correlation Statistically Not Significant',
+                                            (pearson_model<0.6& pearson_model>=0.4&pvalue_model>=0.05)|(pearson_model<=-0.4& pearson_model>-0.6&pvalue_model>=0.05) ~ 'Moderate Correlation Statistically Not Significant',
+                                            (pearson_model<0.4& pearson_model>=0.2&pvalue_model>=0.05)|(pearson_model<=-0.2& pearson_model>-0.4&pvalue_model>=0.05) ~ 'Low Correlation Statistically Not Significant',
+                                            (pearson_model<0.2& pearson_model>=0&pvalue_model>=0.05)|(pearson_model<=0& pearson_model>-0.2&pvalue_model>=0.05) ~ 'Very Low Correlation Statistically Not Significant'
+                                            )
+                 )%>%
+          select(type, rate_model, year_0.1, year_model, year_0.9, pearson_model, pvalue,interpretation)
+    
         gt(cd, rowname_col = "type") %>%
           tab_spanner(label = "Estimated Time-to-Clean",
                       columns = starts_with("year"), gather = T) %>%
           cols_label(rate_model = HTML("First Order Source Attenuation Rates<br>(per year)"),
-                     year_0.05 = "Lower Bound Year",
+                     year_0.1 = "Lower Bound Year",
                      year_model = "Year",
-                     year_0.95 = "Upper Bound Year") %>%
+                     year_0.9 = "Upper Bound Year",
+                     pearson_model = HTML("Pearson's<br>Correlation<br>Coefficient (r)"),
+                     pvalue = 'p-value',
+                     interpretation = HTML('Correlation<br>Strength')
+                     ) %>%
           fmt_number(columns = rate_model, n_sigfig = 3) %>%
-          tab_source_note(source_note = "Lower and upper bound years based on 90% confidence interval.") %>%
+          tab_source_note(source_note = "Lower and upper bound years based on 95% confidence interval.")%>%
+          tab_source_note(source_note = "Cells says increasing is where it had a positive first order attenuation rate.") %>%
           tab_style(style = style_body(),
                     locations = cells_body()) %>%
           tab_style(style = style_col_labels(),
@@ -324,21 +375,21 @@ AsymptoteServer <- function(id, data_input, nav) {
       # LOE Table -------------------------
       output$LOE_Table <- render_gt({
         req(input$select_mw)
-        validate(need(bp()$x, "Please select a beakpoint between two different time periods (Step 6)."))
+        validate(need(bp()$x, "Please select a breakpoint between two different time periods (Step 6)."))
         # validate(need(dim(df() %>% filter("period" == "Period 2"))[1] > 2, "Period 1 must have at least 2 data points."))
         # validate(need(dim(df() %>% filter("period" == "Period 2"))[1] > 2, "Period 2 must have at least 2 data points."))
         
-        print(df())
+        #print(df())
 
-        print(as.data.frame(df()) %>% filter("period" == "Period 2"))
-        print(length(df() %>% filter("period" == "Period 2")) > 2)
+        #print(as.data.frame(df()) %>% filter("period" == "Period 2"))
+        #print(length(df() %>% filter("period" == "Period 2")) > 2)
         req(df(), 
             bp(),
             sen_lm())
         
         results <- asy_results()
         
-        cd <- data.frame(LOE = c("1. Are the two slopes for the two periods significantlly different?",
+        cd <- data.frame(LOE = c("1. Are the two slopes for the two periods significantly different?",
                                  "2. Is the rate for period 2 significantly different then 0?",
                                  "3. Is the rate of the first period more than two times the second rate?",
                                  "4. Is the concentration difference of the last points on the regression lines shown in the graph greater than one order of magnitude?",
@@ -382,7 +433,28 @@ AsymptoteServer <- function(id, data_input, nav) {
         results <- asy_results() %>% 
           mutate(Met = (Met == "YES"))
         
-        HTML(paste0("<h3><b style='color:", col["purple"],"'>", sum(results$Met), "</b> of the <b style='color:", col["purple"],"'>5</b> possible asymptotic conditions are present.</h3>"))
+        HTML(paste0("<h3><b style='color:", col["purple"],"'>", sum(results$Met,na.rm=TRUE), "</b> of the <b style='color:", col["purple"],"'>5</b> possible asymptotic conditions are present.</h3>"))
+      })
+      
+      
+      # Data ----------------
+      output$conc_time_data <- renderRHandsontable({
+        validate(
+          need(data_input$d_conc(), "Please enter data into Data Input tab (Step 1)."))
+        
+        tbl_name <- data_input$d_conc()%>%
+          rename(`Date (Month/Day/Year)`=Date)
+       
+        rhandsontable(tbl_name, readOnly = T, rowHeaders = NULL, width = 1200, height = 600) %>%
+          hot_cols(columnSorting = TRUE)
+      })
+      
+      output$mw_data <- renderRHandsontable({
+        validate(
+          need(data_input$d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
+        
+        rhandsontable(data_input$d_loc(), readOnly = T, rowHeaders = NULL, width = 1000, height = 600) %>%
+          hot_cols(columnSorting = TRUE)
       })
 
     }

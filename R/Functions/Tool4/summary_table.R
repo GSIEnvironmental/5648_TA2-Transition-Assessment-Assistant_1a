@@ -9,7 +9,7 @@
 # Con_flag: STEP2 choose sites with pre remediation max concentrations
 # Tech_flag: list of technology to plot
 
-summary_table<-function(df,COC_flag,Con_flag,Tech_flag){
+summary_table<-function(df,BorC,COC_flag,Con_flag,Tech_flag){
   
   
 
@@ -17,30 +17,33 @@ summary_table<-function(df,COC_flag,Con_flag,Tech_flag){
   
   df <- df%>%
     mutate(Rem_flag=ifelse(`Parent CVOC`!='Benzene',1,0),
-           Conc_flag = case_when(`Parent Maximum Before, ug/L`> 200000 ~ "> 200,000 µg/L",
-                                 `Parent Maximum Before, ug/L`> 2000 & `Parent Maximum Before, ug/L`<= 200000 ~ "2,000 - 200,000 µg/L",
-                                 `Parent Maximum Before, ug/L`> 20 & `Parent Maximum Before, ug/L`<= 2000 ~ "20 - 2,000 µg/L",
-                                 `Parent Maximum Before, ug/L`<=20 ~ "< 20 µg/L")
+           Conc_flag = case_when(`Parent Maximum Before, ug/L`> 200000 ~ ">200,000 ug/L",
+                                 `Parent Maximum Before, ug/L`> 2000 & `Parent Maximum Before, ug/L`<= 200000 ~ "2,000 to 200,000 ug/L",
+                                 `Parent Maximum Before, ug/L`> 20 & `Parent Maximum Before, ug/L`<= 2000 ~ "20 to 2,000 ug/L",
+                                 `Parent Maximum Before, ug/L`<=20 ~ "<20 ug/L")
     )
   
 
 
   
   #filter data with COC and Concentration range
-  if (COC_flag=='all'){
+  if (BorC=='C'){
     df<-df%>%filter(Rem_flag==1)
-  }else{
+  }
+  
+
+  if(!'All Chlorinated Solvents'%in%COC_flag){
     df<-df%>%filter(`Parent CVOC`%in% COC_flag)
   }
   
-  if (Con_flag!='all'){
-    df<-df%>%filter(`Parent Maximum Before, ug/L`==Con_flag)
+  if (!'All Sites'%in%Con_flag){
+    df<-df%>%filter(Conc_flag%in%Con_flag)
   }
 
-  if (Tech_flag!='all'){
+  if (!'All Technologies'%in%Tech_flag){
     df<-df%>%filter(Technology%in%Tech_flag)
   }  
-
+  
   Num_Proj = nrow(df)
   
   

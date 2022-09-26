@@ -11,13 +11,13 @@ simp <- pal_simpsons("springfield")(12)
 MannKendall_MAROS<-function(d){
   
   # function for ManKendall Test
-  
+
   # Calculate MK for each well
   MKeach <- map_dfr(unique(d$Group), ~{
     x <- d %>% filter(Group == .x)%>%
       filter(!is.na(Value)) %>%
       arrange(Date)
-
+ 
     if(length(unique(x %>% pull(Value))) >= 4){
       y <- mk.test(x %>% pull(Value))
       z <- sens.slope(x %>% pull(Value), conf.level = 0.95) # sen's slope calculation
@@ -45,7 +45,7 @@ MannKendall_MAROS<-function(d){
            Trend = case_when(enough_data == F ~ "Insufficent Data",
                              MK.CF > 0.95 & MK.S > 0 & S.Slope > 0  ~ "Increasing",
                              MK.CF >= 0.90 & MK.CF <= 0.95 & MK.S > 0 & S.Slope > 0 ~ "Probably Increasing",
-                             MK.CF < 0.90 & MK.S > 0 & S.Slope > 0 ~ "No Trend",
+                             MK.CF < 0.90 & MK.S > 0 & S.Slope >= 0 ~ "No Trend",
                              MK.CV >= 1 & MK.S <= 0 & MK.CF < 0.90 & S.Slope <= 0  ~ "No Trend",
                              MK.CV < 1 & MK.S <= 0 & MK.CF < 0.90 & S.Slope <= 0 ~ "Stable",
                              MK.CF >= 0.90 & MK.CF <= 0.95 & MK.S < 0 & S.Slope < 0 ~ "Probably Decreasing",

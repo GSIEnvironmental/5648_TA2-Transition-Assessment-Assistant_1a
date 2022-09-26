@@ -14,14 +14,13 @@ BG_BordenFunction<-function(df){
   D_new = D*tortuosity_LK*(365*24*60*60)/10000 #convert to cm2/s to m2/yr
   TL = Year_Removed - Year_Started #loading period # for BG, TL=TD (diffusion time yr)
   Tt = X_m/Seep_V # High K travel time (yr)
-  
   LD = (4.73*(TL-0.75*Retardation_HK*Tt)*D_new/Retardation_LK)^0.5 # diffusion length (m)
   TM = Tt*Retardation_HK+(X_m*n*LD*Retardation_LK)/(K_m*B*i) # mass retention time (yr)
   # This function has been reduced from the form in Borden and Cha (2021)
   # to allow for seepage velocity to be included as its own variable.
   gamma =(Retardation_LK*n*LD)/(Retardation_HK*ne*B)
   
-  TimeCleanupCalculation(df,Parameters,'BG',TM,gamma,TL,HalfLife)
+  TimeCleanupCalculation(df,Parameters,'BG',TM,gamma,TL,HalfLife,Tt)
   
 }
 
@@ -49,11 +48,11 @@ LG_BordenFunction<-function(df){
   TD = (Retardation_LK*LD^2)/(4*D_new) # diffusion time
   print (summary(TM/TD))
 
-  TimeCleanupCalculation(df,Parameters,'LG',TM,TD,TD,HalfLife)
+  TimeCleanupCalculation(df,Parameters,'LG',TM,TD,TD,HalfLife,Tt)
 }
 
 
-TimeCleanupCalculation<-function(df,Parameters,BGorLG,TM,Beta,TD,HalfLife){
+TimeCleanupCalculation<-function(df,Parameters,BGorLG,TM,Beta,TD,HalfLife,Tt){
   
 
   
@@ -63,15 +62,28 @@ TimeCleanupCalculation<-function(df,Parameters,BGorLG,TM,Beta,TD,HalfLife){
   }
   #coefficient filter by either BG or LG
   coeff <-Parameters%>%filter(Style==BGorLG)
-  lnT1 = exp(coeff$lnT1[1]+coeff$lnT1[2]*log(TM)+coeff$lnT1[3]*log(Beta))
-  lnT2 = exp(coeff$lnT2[1]+coeff$lnT2[2]*log(TM)+coeff$lnT2[3]*log(Beta))
-  lnT3 = exp(coeff$lnT3[1]+coeff$lnT3[2]*log(TM)+coeff$lnT3[3]*log(Beta))
   
-  #---- Step7: Results Calculation
-  T1 = lnT1
-  T2 = lnT2
-  T3 = lnT3
-  
+    df_time <-data.frame("TM" = TM,
+                         "Beta" = Beta,
+                         "TD" = TD)
+    df_time <-df_time%>%
+      mutate(lnT1 = ifelse(TM/TD>100&BGorLG=='LG',
+                           exp(coeff$lnT1[6]+coeff$lnT1[7]*log(TM)+coeff$lnT1[8]*log(Beta)),
+                           exp(coeff$lnT1[1]+coeff$lnT1[2]*log(TM)+coeff$lnT1[3]*log(Beta))),
+             lnT2 = ifelse(TM/TD>100&BGorLG=='LG',
+                           exp(coeff$lnT2[6]+coeff$lnT2[7]*log(TM)+coeff$lnT2[8]*log(Beta)),
+                           exp(coeff$lnT2[1]+coeff$lnT2[2]*log(TM)+coeff$lnT2[3]*log(Beta))),
+             lnT3 = ifelse(TM/TD>100&BGorLG=='LG',
+                           exp(coeff$lnT3[6]+coeff$lnT3[7]*log(TM)+coeff$lnT3[8]*log(Beta)),
+                           exp(coeff$lnT3[1]+coeff$lnT3[2]*log(TM)+coeff$lnT3[3]*log(Beta))),
+             )
+
+    # #---- Step7: Results Calculation
+
+      T1 = df_time$lnT1
+      T2 = df_time$lnT2
+      T3 = df_time$lnT3
+
   
   # half life implementation
   if (HalfLife>0){
@@ -94,8 +106,11 @@ TimeCleanupCalculation<-function(df,Parameters,BGorLG,TM,Beta,TD,HalfLife){
     
     Y = data.frame(A,B,C)
     Yrem = Y[complete.cases(Y),]
-    Time_Cleanup = c()
+    Yz = data.frame(A,B,C,Tt)
+    Yremz = Yz[complete.cases(Y),]
 
+
+    Time_Cleanup = c()
     for (k in c(1:nrow(Yrem))){
       Y_1 <- as.list(as.data.frame(t(Yrem[k,])))[[1]]
       coef = summary(lm(Y_1~X1+X2))
@@ -113,14 +128,16 @@ TimeCleanupCalculation<-function(df,Parameters,BGorLG,TM,Beta,TD,HalfLife){
       T1 = T1[-remind]
       T2 = T2[-remind]
       T3 = T3[-remind]
+      Tt = Tt[-remind]
     }
     
  # }else{
  #   Time_Cleanup=NA
  # }
  #  
+ 
+  results_list1 = data.frame(OM1,OM2,OM3,T1,T2,T3,Target_Clean_Level,Time_Cleanup,Yremz$Tt)
 
-  results_list1 = data.frame(OM1,OM2,OM3,T1,T2,T3,Target_Clean_Level,Time_Cleanup)
   #print ('results_list1')
   #print (results_list1)
   return(results_list1)

@@ -76,3 +76,16 @@ y_axis_fmt <- function(title, tval, ttxt, type = "linear"){
        linewidth = 2,
        zeroline = F)
 }
+
+
+y_axis_nofmt<- function(title, type = "linear"){
+  list(title = title,
+       type = type,
+       #tickvals = tval,
+       #ticktext = ttxt,
+       showline = T,
+       mirror = "ticks",
+       linecolor = toRGB("black"),
+       linewidth = 2,
+       zeroline = F)
+}

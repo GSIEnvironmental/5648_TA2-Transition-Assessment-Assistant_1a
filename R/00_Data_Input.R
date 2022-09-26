@@ -17,8 +17,8 @@ Data_Input_UI <- function(id, label = "Data_Input"){
              column(9,
                     fluidRow(# Buttons ---------------------
                       column(6, align = "right",
-                             actionButton(ns("instr_data"),
-                                          HTML("Additional Instructions"), style = button_style),
+                             # actionButton(ns("instr_data"),
+                             #              HTML("Additional Instructions"), style = button_style),
                              actionButton(ns("save_data"),
                                           HTML("Save Data"), style = button_style)),
                       column(6, style = "padding:21px;",
@@ -53,6 +53,44 @@ Data_Input_Server <- function(id) {
       
       # Reactive Variables -------------------
       # Concentration/Time Dataframe
+      
+      # check whether data is uploaded or not
+      observeEvent(input$input_file,{
+        # If no file is loaded nothing happens 
+        if(!is.null(input$input_file)){
+
+          file <- input$input_file
+          temp_data <- read.xlsx(file$datapath, sheet = "Concentration_Time_Data", startRow = 2,
+                                 check.names = F)
+          temp_data$Event <- as.integer(temp_data$Event)
+          temp_data$Date = as.Date(temp_data$Date,origin="1899-12-30",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y"))
+          
+          temp_mw_info <- read.xlsx(file$datapath, sheet = "Monitoring_Well_Information", startRow = 1,
+                                    check.names = F, sep.names = " ")
+          
+          d_conc <- reactiveVal(temp_data)
+          
+          d_loc <- reactiveVal(temp_mw_info)
+
+          temp_data2<-temp_data%>%
+            rename(`Date (Month/Day/Year)`=Date)
+          
+          output$conc_time_data <- renderRHandsontable({
+            rhandsontable(temp_data2, rowHeaders = NULL, width = 1200, height = 600) %>%
+              hot_cols(columnSorting = TRUE) %>%
+              hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
+          })
+          
+          output$mw_data <- renderRHandsontable({
+            rhandsontable(temp_mw_info, rowHeaders = NULL, width = 1200, height = 600) %>%
+              hot_cols(columnSorting = TRUE) %>%
+              hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
+          })
+          
+        }
+      })
+      
+      
       d_conc <- reactiveVal(temp_data)
       
       observeEvent(input$conc_time_data,{
@@ -66,17 +104,33 @@ Data_Input_Server <- function(id) {
         d_loc(hot_to_r(input$mw_data))
       })
       
+         temp_data2<-temp_data%>%
+           rename(`Date (Month/Day/Year)`=Date)
+         
       output$conc_time_data <- renderRHandsontable({
-        rhandsontable(temp_data, rowHeaders = NULL, width = 1200, height = 600) %>%
+        rhandsontable(temp_data2, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE) %>%
           hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
         })
       
       output$mw_data <- renderRHandsontable({
-        rhandsontable(temp_mw_info, rowHeaders = NULL, width = 800, height = 600) %>%
+        rhandsontable(temp_mw_info, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE) %>%
           hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
       })
+      
+      
+      # Save Dataframes --------------------
+      observeEvent(input$save_data,
+                   {if (!is.null(input$conc_time_data))
+                     {#Convert to R object
+                       x <- hot_to_r(input$conc_time_data)
+                       write.xlsx(x, file = 'Concentration_Data.xlsx')
+                       y <- hot_to_r(input$mw_data)
+                       write.xlsx(y, file = 'MW_Data.xlsx')
+                       }}
+                   )
+      
       
       # Return Dataframes ------------------
       

@@ -2,19 +2,18 @@
 "Arial",sans-serif'>Borden, R. C., and Cha, K. Y., 2021. Evaluating the impact
 of back diffusion on groundwater cleanup time. Journal of Contaminant
 Hydrology, 243, 103889. </span><a
-href="https://doi.org/10.1016/j.jconhyd.2021.103889"><span style='font-size:
+href="https://doi.org/10.1016/j.jconhyd.2021.103889" target="_blank"><span style='font-size:
 12.0pt;line-height:107%;font-family:"Arial",sans-serif'>https://doi.org/10.1016/j.jconhyd.2021.103889</span></a><span
 style='font-size:12.0pt;line-height:107%;font-family:"Arial",sans-serif'><o:p></o:p></span></p>
   
-  <p class=MsoNormal><span style='font-size:12.0pt;line-height:107%;font-family:
+<p class=MsoNormal><span style='font-size:12.0pt;line-height:107%;font-family:
 "Arial",sans-serif'>Carey, G.R., Chapman, S.W., Parker, B.L. and McGregor, R.,
 2015. Application of an adapted version of MT3DMS for modeling back</span><span
 style='font-size:12.0pt;line-height:107%;font-family:"Cambria Math",serif;
 mso-bidi-font-family:"Cambria Math"'>&#8208;</span><span style='font-size:12.0pt;
   line-height:107%;font-family:"Arial",sans-serif'>diffusion remediation
 timeframes.&nbsp;Remediation Journal,&nbsp;25(4), pp.55-79. </span><a
-href="https://onlinelibrary.wiley.com/doi/10.1002/rem.21440"><span
-style='font-size:12.0pt;line-height:107%;font-family:"Arial",sans-serif'>https://onlinelibrary.wiley.com/doi/10.1002/rem.21440</span></a><span
+href="https://onlinelibrary.wiley.com/doi/10.1002/rem.21440" target="_blank"><span style='font-size:12.0pt;line-height:107%;font-family:"Arial",sans-serif'>https://onlinelibrary.wiley.com/doi/10.1002/rem.21440</span></a><span
 style='font-size:12.0pt;line-height:107%;font-family:"Arial",sans-serif'><o:p></o:p></span></p>
 
 <p class=MsoNormal><span style='font-size:12.0pt;line-height:107%;font-family:
@@ -56,7 +55,7 @@ class=GramE> .</span>” Environmental Security Technology Certification Program
 Sophia A. Lee, Ronald W. Falta, and Charles J. Newell, 2020. “Vertical
 Discretization Impact in Numerical Modeling of Matrix Diffusion in Contaminated
 Groundwater.” Groundwater Monitoring and Remediation 40 (2): 52–64. </span><a
-href="https://doi.org/10.1111/gwmr.12373"><span style='font-size:12.0pt;
+href="https://doi.org/10.1111/gwmr.12373" target="_blank"><span style='font-size:12.0pt;
 line-height:107%;font-family:"Arial",sans-serif'>https://doi.org/10.1111/gwmr.12373</span></a><span
 style='font-size:12.0pt;line-height:107%;font-family:"Arial",sans-serif'>.<o:p></o:p></span></p>
 
@@ -77,13 +76,13 @@ style='font-size:12.0pt;line-height:107%;font-family:"Arial",sans-serif'>, N.
 and Falta, R. W., 2018. Semi-analytical method for matrix diffusion in
 heterogeneous and fractured systems with parent-daughter reactions. Journal of
 Contaminant Hydrology, 218, 94–109. </span><a
-href="https://doi.org/10.1016/j.jconhyd.2018.10.002"><span style='font-size:
+href="https://doi.org/10.1016/j.jconhyd.2018.10.002" target="_blank"><span style='font-size:
   12.0pt;line-height:107%;font-family:"Arial",sans-serif'>https://doi.org/10.1016/j.jconhyd.2018.10.002</span></a><span
 style='font-size:12.0pt;line-height:107%;font-family:"Arial",sans-serif'><o:p></o:p></span></p>
 
 <p class=MsoNormal><span style='font-size:12.0pt;line-height:107%;font-family:
   "Arial",sans-serif'>USEPA, REMChlor Model. </span><a
-href="https://www.epa.gov/water-research/remediation-evaluation-model-chlorinated-solvents-remchlor"><span
+href="https://www.epa.gov/water-research/remediation-evaluation-model-chlorinated-solvents-remchlor" target="_blank"><span
 style='font-size:12.0pt;line-height:107%;font-family:"Arial",sans-serif'>https://www.epa.gov/water-research/remediation-evaluation-model-chlorinated-solvents-remchlor</span></a><span
 style='font-size:12.0pt;line-height:107%;font-family:"Arial",sans-serif'><o:p></o:p></span></p>
 
