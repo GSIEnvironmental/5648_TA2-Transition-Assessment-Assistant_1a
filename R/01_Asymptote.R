@@ -36,8 +36,9 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                                                                       "Well Groups" = "groups"),
                                                           inline = T),
                                              pickerInput(ns("select_mw"), label = NULL,
-                                                         choices = c(),
+                                                         choices = c(""),
                                                          multiple = T,
+                                                         selected = "PW-1",
                                                          options = list(`live-search`=TRUE,
                                                                         `none-selected-text` = "Select Wells")))),
                              column(2, align = "left", style = "padding:10px;",
@@ -226,7 +227,7 @@ AsymptoteServer <- function(id, data_input, nav) {
         cd <- sen_trend(df())
         cd_sen <- list(`Entire Record` = cd)
         
-        # If Breakpoint is available calculate trend
+        # If Breakpoint is chosen by user 
         if(!is.null(bp())){
           # Calculate trend for first period
           df_1 <- df() %>% filter(Date <= bp()$x)
@@ -274,8 +275,11 @@ AsymptoteServer <- function(id, data_input, nav) {
             length(df() %>% filter("period" == "Period 1")) > 2,
             length(df() %>% filter("period" == "Period 2")) > 2)
         
-        results <- Asymptote_Analysis(df(), sen_lm(),input$CI_input) 
-        
+        if (bp()$pointNumber>2){
+          results <- Asymptote_Analysis(df(), sen_lm(),input$CI_input) 
+        }else{
+          results <-NULL
+        }
         asy_results(results)
       })
       
@@ -292,8 +296,9 @@ AsymptoteServer <- function(id, data_input, nav) {
         if(input$select_group_type == "groups"){
           choices <- sort(unique(d_loc()$`Well Grouping`))
         }
-                         
-        updatePickerInput(session, "select_mw", choices = choices)
+                      
+        updatePickerInput(session, "select_mw", choices = choices,
+                          selected = 'PW-1')
       }) # end update well selection
       
       # Date Range Updates -------------------
@@ -317,7 +322,8 @@ AsymptoteServer <- function(id, data_input, nav) {
             sen_lm(),
             input$CI_input)
         
-        logscale_figure(df(), name = input$group_method, sen = sen_lm(), bp = bp()$x,fit = sen_lm(),CI = input$CI_input)
+        unit = unique(d_conc()$Units)
+        logscale_figure(df(), name = input$group_method, sen = sen_lm(), bp = bp()$x,fit = sen_lm(),CI = input$CI_input,unit = unit)
       })
       
       # Attenuation Rates Table -------------------------
@@ -327,6 +333,7 @@ AsymptoteServer <- function(id, data_input, nav) {
         validate(need(input$conc_goal > 0, "Please select a valid concentration goal (Step 4)"))
         req(sen_table())
         
+   
         cd <- sen_table() %>%
           mutate(year_0.1 = ifelse(slope_LCL<0,year_LCL,'Increasing'),
                  year_0.9 = ifelse(slope_UCL<0,year_UCL,'Increasing'),
@@ -375,7 +382,15 @@ AsymptoteServer <- function(id, data_input, nav) {
       # LOE Table -------------------------
       output$LOE_Table <- render_gt({
         req(input$select_mw)
-        validate(need(bp()$x, "Please select a breakpoint between two different time periods (Step 6)."))
+        # calculate binary segmentation
+        fit_changepoint = cpt.mean(df()$Concentration,method='BinSeg',Q=1)
+        # Return estimates
+        fitcp_tbl = c(ints = param.est(fit_changepoint)$mean,
+                      cp = cpts(fit_changepoint))
+       
+        validate(need(bp()$x, paste0("Please select a breakpoint between two different time periods (Step 6).\n",
+                                     "Binary Segmentation suggest change point at ",
+                                     as.character(as.Date(df()[as.numeric(fitcp_tbl[3]),]$Date)),sep='')))
         # validate(need(dim(df() %>% filter("period" == "Period 2"))[1] > 2, "Period 1 must have at least 2 data points."))
         # validate(need(dim(df() %>% filter("period" == "Period 2"))[1] > 2, "Period 2 must have at least 2 data points."))
         
@@ -386,6 +401,8 @@ AsymptoteServer <- function(id, data_input, nav) {
         req(df(), 
             bp(),
             sen_lm())
+        
+        validate(need(bp()$pointNumber>2,"Please select a breakpoint has more than two points for each segment"))
         
         results <- asy_results()
         
@@ -430,6 +447,7 @@ AsymptoteServer <- function(id, data_input, nav) {
             length(df() %>% filter("period" == "Period 1")) > 2,
             length(df() %>% filter("period" == "Period 2")) > 2)
         
+        validate(need(!is.null(asy_results()),""))
         results <- asy_results() %>% 
           mutate(Met = (Met == "YES"))
         
@@ -443,7 +461,8 @@ AsymptoteServer <- function(id, data_input, nav) {
           need(data_input$d_conc(), "Please enter data into Data Input tab (Step 1)."))
         
         tbl_name <- data_input$d_conc()%>%
-          rename(`Date (Month/Day/Year)`=Date)
+          rename(`Date (Month/Day/Year)`=Date)%>%
+          filter(WellID%in%input$select_mw)
        
         rhandsontable(tbl_name, readOnly = T, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE)
@@ -453,7 +472,10 @@ AsymptoteServer <- function(id, data_input, nav) {
         validate(
           need(data_input$d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
         
-        rhandsontable(data_input$d_loc(), readOnly = T, rowHeaders = NULL, width = 1000, height = 600) %>%
+        loc_name<-data_input$d_loc()%>%
+          filter(`Monitoring Wells`%in%input$select_mw)
+        
+        rhandsontable(loc_name, readOnly = T, rowHeaders = NULL, width = 1000, height = 600) %>%
           hot_cols(columnSorting = TRUE)
       })
 

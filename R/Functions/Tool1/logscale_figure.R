@@ -6,7 +6,7 @@
 # data base of average concentration from df_series function
 # regression model for each averaged/geomean database from regression_fitness
 # check the sliders
-logscale_figure <- function(df_series, name,sen = NULL, bp = NULL,fit,CI){
+logscale_figure <- function(df_series, name,sen = NULL, bp = NULL,fit,CI,unit){
   
 
   # create y axis as log
@@ -27,7 +27,7 @@ logscale_figure <- function(df_series, name,sen = NULL, bp = NULL,fit,CI){
               type = "scatter",
               mode = 'markers',
               marker = marker_plotly(color='rgb(31,150,180)'),
-              hovertemplate = paste('<br>Date: %{x}', '<br>Concentration: %{y:.2f} ug/L<br>'))
+              hovertemplate = paste('<br>Date: %{x}', '<br>Concentration: %{y:.2f} ',unit,'<br>'))
   
   # Add Breakpoint if available 
   s <- list()
@@ -99,7 +99,7 @@ logscale_figure <- function(df_series, name,sen = NULL, bp = NULL,fit,CI){
       title = title_plotly(paste0("<b>",name," Concentration of COC in Selected Wells Over Time</b>")),
       shapes = s,
       xaxis = x_axis_fmt(title = "Year"),
-      yaxis = y_axis_fmt(title = "COC Concentration<br>(ug/L)", type = "log",
+      yaxis = y_axis_fmt(title = paste0("COC Concentration<br>(",unit,")",sep=''), type = "log",
                          tval = tval, ttxt = ttxt),
       showlegend = FALSE,
       margin = margin)

@@ -31,6 +31,7 @@ shinyUI <- navbarPage(theme="styles.css",
                                  tags$link(rel = "stylesheet", 
                                            type = "text/css", 
                                            href = "./plugins/font-awesome-4.7.0/css/font-awesome.min.css"),
+                                 includeCSS("./www/style/style_flip.css"),
                                  tags$link(rel = "icon",  
                                            type = "image/png", 
                                            href = "./images/logo_icon.png")
@@ -43,27 +44,27 @@ shinyUI <- navbarPage(theme="styles.css",
                                      includeMarkdown("./www/00b_About/app_info.md"))
                             )# end Fluid Row
                    ), #end About tab
-                   
+
                    Data_Input_UI("Data_Input"),
-                   
+
                    AsymptoteUI("01_Asymptote"),
-                   
+
                    TrendUI("02_Trend"),
-                   
+
                    CleanupGoals_tabUI("03_CleanupGoals_tab"),
 
                    PerformanceUI("04_Performance"),
 
                    MatrixDiffusionUI("05_MatrixDiffusion"),
-                   
+
                    EnhanceMNAUI("06_EnhanceMNA"),
-                   
+
                    HeterogeneityUI("07_Heterogeneity"),
 
                    PlumeZoneUI("08_PlumeZone"),
-                   
+
                    SERDPUI("09_SERDP"),
-                   
+
 
                    SummaryUI("10_Summary"),
                    

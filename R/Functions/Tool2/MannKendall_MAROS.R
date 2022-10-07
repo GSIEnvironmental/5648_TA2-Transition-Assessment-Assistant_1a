@@ -13,6 +13,7 @@ MannKendall_MAROS<-function(d){
   # function for ManKendall Test
 
   # Calculate MK for each well
+  
   MKeach <- map_dfr(unique(d$Group), ~{
     x <- d %>% filter(Group == .x)%>%
       filter(!is.na(Value)) %>%

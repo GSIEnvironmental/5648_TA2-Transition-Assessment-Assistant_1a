@@ -84,7 +84,7 @@ TrendUI <- function(id, label = "01_Trend"){
                                            fluidRow(align = "center",
                                                     pickerInput(ns("select_mw_group"), label = NULL,
                                                                 choices = c("All Monitoring Wells", "Recent Sample Above Concentration Goal"),
-                                                                selected = "All Monitoring Wells",
+                                                                selected = "P&T Wells",
                                                                 multiple = F,
                                                                 options = list(`live-search`=TRUE,
                                                                                `none-selected-text` = "Select Well Groups")))),
@@ -357,7 +357,7 @@ TrendServer <- function(id, data_input, nav) {
 
         updatePickerInput(session, "select_mw_group",
                           choices = choices,
-                          selected = "All Monitoring Wells")
+                          selected = "P&T Wells")
       }) # end update well grouping selection
 
 
@@ -379,7 +379,8 @@ TrendServer <- function(id, data_input, nav) {
 
         updatePickerInput(session, "select_map",
                           choices = choices,
-                          selected = "All Monitoring Wells")
+                          selected = input$select_mw_group)
+                          #selected = "All Monitoring Wells")
       }) # end update well grouping selection
 
 
@@ -398,10 +399,11 @@ TrendServer <- function(id, data_input, nav) {
           req(MK_conc_group())
 
           cd <- MK_conc_group() %>%
-            select(Group, Trend, MK.S, MK.p, MK.CV, S.Slope)
-
+            select(Group, Trend, MK.S, MK.p, MK.CV, S.Slope)%>%
+            mutate(MK.p = ifelse(MK.p<0.05,'<0.05',as.character(signif(MK.p,3))))
+       
           t <- gt(cd) %>%
-            fmt_number(columns = c("MK.p", "MK.CV", "S.Slope"),
+            fmt_number(columns = c("MK.CV", "S.Slope"),
                        n_sigfig = 3) %>%
             fmt_number(columns = c("MK.S"),
                        decimals = 0) %>%
@@ -416,6 +418,9 @@ TrendServer <- function(id, data_input, nav) {
                       locations = cells_body()) %>%
             tab_style(style = style_col_labels(),
                       locations = cells_column_labels()) %>%
+            tab_style(style = list(cell_fill(color= "#F9E3D6"),
+                                   cell_text(weight="bold")),
+                      locations = cells_body(columns=c(Group,Trend)))%>%
             opt_table_outline() %>%
             # GT bug fix
             tab_options(table.additional_css = "th, td {padding: 5px 10px !important;	border: 1px solid white;}" )
@@ -469,10 +474,13 @@ TrendServer <- function(id, data_input, nav) {
         if(input$type == "Concentration"){
           req(MK_conc_well())
           cd <- MK_conc_well() %>%
-            select(Group, Trend, MK.S, MK.p, MK.CV, S.Slope)
+            select(Group, Trend, MK.S, MK.p, MK.CV, S.Slope)%>%
+            mutate(MK.p = ifelse(MK.p<0.05,'<0.05',as.character(signif(MK.p,3))))%>%
+            filter(Group%in%unique(df_group()$WellID))
 
+          
           t <- gt(cd) %>%
-            fmt_number(columns = c("MK.p", "MK.CV", "S.Slope"),
+            fmt_number(columns = c("MK.CV", "S.Slope"),
                        n_sigfig = 3) %>%
             fmt_number(columns = c("MK.S"),
                        decimals = 0) %>%
@@ -487,6 +495,9 @@ TrendServer <- function(id, data_input, nav) {
                       locations = cells_body()) %>%
             tab_style(style = style_col_labels(),
                       locations = cells_column_labels()) %>%
+            tab_style(style = list(cell_fill(color= "#F9E3D6"),
+                                   cell_text(weight="bold")),
+                      locations = cells_body(columns=c(Group,Trend)))%>%
             opt_table_outline() %>%
             # GT bug fix
             tab_options(table.additional_css = "th, td {padding: 5px 10px !important;	border: 1px solid white;}" )
@@ -498,10 +509,11 @@ TrendServer <- function(id, data_input, nav) {
           req(MK_mass_group())
 
           cd <- MK_mass_group() %>%
-            select(Group, Trend, MK.S, MK.p, MK.CV, S.Slope)
+            select(Group, Trend, MK.S, MK.p, MK.CV, S.Slope)%>%
+            mutate(MK.p = ifelse(MK.p<0.05,'<0.05',as.character(signif(MK.p,3))))
 
           t <- gt(cd) %>%
-            fmt_number(columns = c("MK.p", "MK.CV", "S.Slope"),
+            fmt_number(columns = c("MK.CV", "S.Slope"),
                        n_sigfig = 3) %>%
             fmt_number(columns = c("MK.S"),
                        decimals = 0) %>%
@@ -516,6 +528,9 @@ TrendServer <- function(id, data_input, nav) {
                       locations = cells_body()) %>%
             tab_style(style = style_col_labels(),
                       locations = cells_column_labels()) %>%
+            tab_style(style = list(cell_fill(color= "#F9E3D6"),
+                                   cell_text(weight="bold")),
+                      locations = cells_body(columns=c(Group,Trend)))%>%
             opt_table_outline() %>%
             # GT bug fix
             tab_options(table.additional_css = "th, td {padding: 5px 10px !important;	border: 1px solid white;}" )
@@ -745,13 +760,30 @@ TrendServer <- function(id, data_input, nav) {
         }
       })
 
+      # Save Map ----------------------
+      observeEvent(input$save_map,{
+        filename = paste0( Sys.Date()
+                           , "_TrendAnalysis"
+                           , ".png")
+          # saveWidget(map,paste0('.test.html',sep=''), selfcontained = FALSE)
+          # webshot(output_file, file = filename,
+          #       vwidth = 960,vheight = 960)
+          # mapshot( x = "map"
+          #          , file = filename
+          #          #, cliprect = "viewport" # the clipping rectangle matches the height & width from the viewing port
+          #          #, selfcontained = FALSE # when this was not specified, the function for produced a PDF of two pages: one of the leaflet map, the other a blank page.
+          # )
+      })
+
+      
       # Data ----------------
       output$conc_time_data <- renderRHandsontable({
         validate(
           need(data_input$d_conc(), "Please enter data into Data Input tab (Step 1)."))
         
         tbl_name <- data_input$d_conc()%>%
-          rename(`Date (Month/Day/Year)`=Date)
+          rename(`Date (Month/Day/Year)`=Date)%>%
+          filter(WellID%in%unique(df_group()$WellID))
         
         rhandsontable(tbl_name, readOnly = T, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE)
@@ -761,7 +793,10 @@ TrendServer <- function(id, data_input, nav) {
         validate(
           need(data_input$d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
 
-        rhandsontable(data_input$d_loc(), readOnly = T, rowHeaders = NULL, width = 1000, height = 600) %>%
+        loc_name<-data_input$d_loc()%>%
+          filter(`Monitoring Wells`%in%unique(df_group()$WellID))
+        
+        rhandsontable(loc_name, readOnly = T, rowHeaders = NULL, width = 1000, height = 600) %>%
           hot_cols(columnSorting = TRUE)
       })
 

@@ -54,6 +54,9 @@ library(psych)
 library(ggplot2)
 library(ggrepel)
 library(scales)
+library(changepoint)
+library(htmlwidgets)
+library(webshot2)
 
 # Plot Parameters -------------
 # Colors
