@@ -40,7 +40,7 @@ PlumeZoneUI <- function(id, label = "08_PlumeZone"){
                                                                                         width = "80px")
                                                                     ),
                                                                     column(6, align = "left", 
-                                                                           HTML("<h4>ug/L</h4>")),br())),
+                                                                           htmlOutput(ns("unit"))),br())),
                                                     column(2, align = "left", style = "padding:10px;",
                                                            actionButton(ns("help1"), HTML("?"), style = button_style2))), 
                                            br(),
@@ -182,6 +182,17 @@ PlumeZoneServer <- function(id,data_input,nav) {
         #browser()
       }) # end d_conc()
       
+      # update Units -------------------
+      observe({
+        req(nav() == "8. Plume Zone")
+        req(d_conc())
+        
+        output$unit<- renderUI({
+          HTML(paste0("<h4>",unique(d_conc()$Units),"</h4>",sep=''))
+        })
+      }) # end update unit 
+      
+      
       # RV: Location Data -----------------------
       d_loc <- reactiveVal(data_mw_clean(temp_mw_info))
       
@@ -196,6 +207,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         d_loc()
         d_conc()},{
           d_mer(data_merge(d_conc(), d_loc()))
+          
         }) # end d_mer()
       
       # Well Selection Updates -----------------------

@@ -7,7 +7,7 @@
 # log_flag: user need to define whether linear or log axis to plot
 # vis_flag: "Concentration" or "Mass" 
 
-graph_vis <-function(df_all, log_flag, vis_flag){
+graph_vis <-function(df_all, log_flag, vis_flag,unit){
   
   # # --- filter data either all or downgradient well to plot
   # df_all <- df_MW_compiled%>%filter(WellID==name)
@@ -37,7 +37,7 @@ graph_vis <-function(df_all, log_flag, vis_flag){
               mode = 'markers',
               marker = marker_plotly(color='rgb(31,150,180)'),
               hovertemplate = ifelse(vis_flag =='Concentration',
-                                     paste('<br>Date: %{x}', '<br>Concentration: %{y:.2f} ug/L<br>'),
+                                     paste('<br>Date: %{x}', '<br>Concentration: %{y:.2f} ',unit,'<br>'),
                                      paste('<br>Date: %{x}', '<br>Dissolved Mass: %{y:.2f} kg<br>'))
     )
   
@@ -58,7 +58,7 @@ graph_vis <-function(df_all, log_flag, vis_flag){
   if (log_flag =='Log'){
     p<-p%>%
       layout(yaxis = list(title=ifelse(vis_flag=='Concentration',
-                                       "COC Concentration at <br> Monitoring Well (ug/L)",
+                                       paste0("COC Concentration at <br> Monitoring Well (",unit,")",sep=''),
                                        "Dissolved Mass (kg)"
                                        ),
                  #automargin = T,
@@ -79,7 +79,7 @@ graph_vis <-function(df_all, log_flag, vis_flag){
   }else{
     p<-p%>%
       layout(yaxis = list(title=ifelse(vis_flag=='Concentration',
-                                       "COC Concentration at <br> Monitoring Well (ug/L)",
+                                       paste0("COC Concentration at <br> Monitoring Well (",unit,")",sep=''),
                                        "Dissolved Mass (kg)"),
                           
                    #automargin = T,

@@ -107,7 +107,7 @@ TrendUI <- function(id, label = "01_Trend"){
                                                                  value = NULL, min = 0, step = 0.01,
                                                                  width = "80px")),
                                              column(6, align = "left", 
-                                                    HTML("<h4>ug/L</h4>")))),
+                                                    htmlOutput(ns("unit"))))),
                                     column(2, align = "left", style = "padding:10px;",
                                            actionButton(ns("help4"), HTML("?"), style = button_style2)))#,
                            # HTML("<hr class='featurette-divider'>"),
@@ -205,6 +205,17 @@ TrendServer <- function(id, data_input, nav) {
       observeEvent(data_input$d_loc(),{
         d_loc(data_input$d_loc())
       }) # end d_loc()
+      
+      
+      # update Units -------------------
+      observe({
+        req(nav() == "2. Expansion")
+        req(d_conc())
+        
+        output$unit<- renderUI({
+          HTML(paste0("<h4>",unique(d_conc()$Units),"</h4>",sep=''))
+        })
+      }) # end update unit 
       
       # RV: Series Data (Avg By Date) -------------------
       df <- reactiveVal()
@@ -322,8 +333,9 @@ TrendServer <- function(id, data_input, nav) {
         porosityLK <- input$lowk_porosity
         thicknessHK <- (input$plume_bottom - input$plume_top) * input$fraction_trans # units in ft bgs
         thicknessLK <- (input$plume_bottom - input$plume_top) * (1 - input$fraction_trans)  # units in ft bgs
-    
-        df_mass_group(sp_interpolation(d = cd, porosityHK, porosityLK, thicknessHK, thicknessLK))
+        
+        unit = unique(d_conc()$Units)
+        df_mass_group(sp_interpolation(d = cd, porosityHK, porosityLK, thicknessHK, thicknessLK,unit))
       })
 
       # RV: MK Mass by Group ----------------------
@@ -611,8 +623,8 @@ TrendServer <- function(id, data_input, nav) {
           d <- df_mass_group()[["overall_tbl"]] %>% rename(Mass = total_mass_kg)
         }
 
-
-        graph_vis(d, log_flag = input$log_linear, vis_flag = input$type)
+        unit = unique(d_conc()$Units)
+        graph_vis(d, log_flag = input$log_linear, vis_flag = input$type,unit=unit)
 
       }) # end TS plot
 
@@ -756,23 +768,13 @@ TrendServer <- function(id, data_input, nav) {
                                  "<b>S</b>: Stable"),
                       colors = c(NA, NA, NA, NA, NA, NA, NA),
                       layerId = "label_legend")
-
+      
         }
       })
 
       # Save Map ----------------------
       observeEvent(input$save_map,{
-        filename = paste0( Sys.Date()
-                           , "_TrendAnalysis"
-                           , ".png")
-          # saveWidget(map,paste0('.test.html',sep=''), selfcontained = FALSE)
-          # webshot(output_file, file = filename,
-          #       vwidth = 960,vheight = 960)
-          # mapshot( x = "map"
-          #          , file = filename
-          #          #, cliprect = "viewport" # the clipping rectangle matches the height & width from the viewing port
-          #          #, selfcontained = FALSE # when this was not specified, the function for produced a PDF of two pages: one of the leaflet map, the other a blank page.
-          # )
+        screenshot(filename = "Expansion")
       })
 
       

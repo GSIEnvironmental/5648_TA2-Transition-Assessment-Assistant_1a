@@ -250,6 +250,15 @@ button_style_big <- "white-space: normal;
                         width:300px;
                         font-size: 18px;"
 
+button_style4 <- "white-space: normal;
+                        background-color:#eee;
+                        text-align:center;
+                        height:60px;
+                        width:100px;
+                        font-size: 14px;
+                        padding: 10px 0;
+                        margin:5px;"
+
 ## Tab Titles ----------------
 
 # Asymptote -----------------
@@ -260,7 +269,7 @@ button_style_big <- "white-space: normal;
 ## Loading Modules ------------------------------------
 source("./R/00_Data_Input.R")
 source("./R/01_Asymptote.R")
-# 
+#
 # source("./R/02_Expansion.R")
 
 #source("./R/BordenTool.R")
@@ -269,15 +278,15 @@ source("./R/01_Asymptote.R")
 source("./R/03_CleanupGoals_tab.R")
 
 # # source("./R/03_CleanupGoals_MCtab.R")
-# 
+#
 source("./R/04_Performance.R")
-# 
+#
 # source("./R/05_MatrixDiffusion.R")
-# 
+#
  source("./R/07_Heterogeneity.R")
-# 
+#
 source("./R/08_PlumeZone.R")
-# 
+#
 # source("./R/10_Summary.R")
 
 ## Loading Functions ------------------------------------------------

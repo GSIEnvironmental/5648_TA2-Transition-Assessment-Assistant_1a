@@ -19,8 +19,13 @@ Data_Input_UI <- function(id, label = "Data_Input"){
                       column(6, align = "right",
                              # actionButton(ns("instr_data"),
                              #              HTML("Additional Instructions"), style = button_style),
-                             actionButton(ns("save_data"),
-                                          HTML("Save Data"), style = button_style)),
+                             downloadButton(ns("save_data"),
+                                          HTML("Save Time Series Data"), style = button_style4)),
+                      # column(1, align = "right",
+                      #        # actionButton(ns("instr_data"),
+                      #        #              HTML("Additional Instructions"), style = button_style),
+                      #        downloadButton(ns("save_location_data"),
+                      #                       HTML("Save Location Data"), style = button_style4)),
                       column(6, style = "padding:21px;",
                              tags$style(HTML("
                              .shiny-input-container {
@@ -58,20 +63,24 @@ Data_Input_Server <- function(id) {
       observeEvent(input$input_file,{
         # If no file is loaded nothing happens 
         if(!is.null(input$input_file)){
-
+         
           file <- input$input_file
-          temp_data <- read.xlsx(file$datapath, sheet = "Concentration_Time_Data", startRow = 2,
-                                 check.names = F)
-          temp_data$Event <- as.integer(temp_data$Event)
-          temp_data$Date = as.Date(temp_data$Date,origin="1899-12-30",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y"))
+          temp_data <- read.xlsx(file$datapath, sheet = "Concentration", startRow = 1,
+                                 check.names = F,detectDates=T)
           
-          temp_mw_info <- read.xlsx(file$datapath, sheet = "Monitoring_Well_Information", startRow = 1,
+          temp_data<-temp_data%>%
+            mutate(Event = as.integer(Event))%>%
+            rename(Date = `Date.(Month/Day/Year)`)%>%
+            mutate(Date = as.Date(temp_data$Date,origin="1900-01-01",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y")))
+            
+          
+          temp_mw_info <- read.xlsx(file$datapath, sheet = "Location", startRow = 1,
                                     check.names = F, sep.names = " ")
           
           d_conc <- reactiveVal(temp_data)
           
           d_loc <- reactiveVal(temp_mw_info)
-
+          
           temp_data2<-temp_data%>%
             rename(`Date (Month/Day/Year)`=Date)
           
@@ -106,7 +115,8 @@ Data_Input_Server <- function(id) {
       
          temp_data2<-temp_data%>%
            rename(`Date (Month/Day/Year)`=Date)
-         
+      
+      
       output$conc_time_data <- renderRHandsontable({
         rhandsontable(temp_data2, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE) %>%
@@ -121,16 +131,70 @@ Data_Input_Server <- function(id) {
       
       
       # Save Dataframes --------------------
-      observeEvent(input$save_data,
-                   {if (!is.null(input$conc_time_data))
-                     {#Convert to R object
-                       x <- hot_to_r(input$conc_time_data)
-                       write.xlsx(x, file = 'Concentration_Data.xlsx')
-                       y <- hot_to_r(input$mw_data)
-                       write.xlsx(y, file = 'MW_Data.xlsx')
-                       }}
-                   )
+      output$save_data <- downloadHandler(
+        
+        filename = function() {
+          paste0("Concentration_Data", ".xlsx")
+        },
+        content = function(file) {
+          
+          if (is.null(input$mw_data)){
+            list_of_datasets<-list(
+            "Concentration" = hot_to_r(input$conc_time_data),
+            "Location" = temp_mw_info
+          )
+          }else{
+            list_of_datasets<-list(
+              "Concentration" = hot_to_r(input$conc_time_data),
+              "Location" = input$mw_data
+            )
+          }
+          
+          
+          write.xlsx(list_of_datasets, file)
+          
+         
+        }
+        
+      )
       
+      # # Save Dataframes --------------------
+      # output$save_location_data <- downloadHandler(
+      #   
+      #   filename = function() {
+      #     paste0("MW_Data", ".xlsx")
+      #   },
+      #   content = function(file) {
+      #     if(is.null(input$mw_data)){
+      #       write.xlsx(temp_mw_info, file)
+      #     }else{
+      #       write.xlsx(hot_to_r(input$mw_data), file)
+      #     }
+      #     
+      #   }
+      #   
+      # )
+      # observeEvent(input$save_data,
+      #              {if (!is.null(input$conc_time_data))
+      #              {#Convert to R object
+      #                
+      #                if (is.null(input$mw_data)){
+      #                  y<- temp_mw_info
+      #                }else{
+      #                  y <- hot_to_r(input$mw_data)
+      #                }
+      #                }
+      #                content = function(x,y){
+      #                    file.copy('Concentration_Data.xlsx',x)
+      #                    file.copy('MW_Data.xlsx',y)
+      #                  }
+      #                  
+      #                  content(x,y)
+      #                  #write.xlsx(x, file = 'Concentration_Data.xlsx')
+      #                  #write.xlsx(y, file = 'MW_Data.xlsx')
+      #                  }
+      #              )
+      # 
       
       # Return Dataframes ------------------
       

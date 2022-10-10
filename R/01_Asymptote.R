@@ -60,7 +60,7 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                                                  value = NULL, min = 0, step = 0.01,
                                                  width = "80px")),
                                       column(6, align = "left", 
-                                             HTML("<h4>ug/L</h4>")))),
+                                             htmlOutput(ns("unit"))))),
                              column(2, align = "left", style = "padding:10px;",
                                     actionButton(ns("help4"), HTML("?"), style = button_style2))), br(),
                     fluidRow(column(10,
@@ -75,9 +75,7 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                                       column(6, align = "right", 
                                              numericInput(ns("CI_input"), label = NULL,
                                                           value = 0.95, min = 0, step = 0.01,
-                                                          width = "80px")),
-                                      column(6, align = "left", 
-                                             HTML("<h4></h4>")))),
+                                                          width = "80px")))),
                              column(2, align = "left", style = "padding:10px;",
                                     actionButton(ns("help5"), HTML("?"), style = button_style2))), br(),
                     fluidRow(column(10,
@@ -309,6 +307,9 @@ AsymptoteServer <- function(id, data_input, nav) {
         updateDateRangeInput(session, "date_range", 
                              start = min(d_conc()$Date, na.rm = T),
                              end = max(d_conc()$Date, na.rm = T))
+        output$unit<- renderUI({
+          HTML(paste0("<h4>",unique(d_conc()$Units),"</h4>",sep=''))
+        })
       }) # end update well selection
       
       p = plot_ly(source = 'ts_selected')
