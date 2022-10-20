@@ -13,7 +13,7 @@
 <div class="col-md-6" style = "text-align: justify;">
 
 <figure>
-              <img src="05_Matrix/FIG/Tool5d_fig4a.png" width= 600 height=523 class="center">
+              <img src="06_Matrix/FIG/Tool6d_fig4a.png" width= 600 height=523 class="center">
 </figure>
 
 </div>
@@ -21,7 +21,7 @@
 <div class="col-md-6" style = "text-align: justify;">
 
 <figure>
-              <img src="05_Matrix/FIG/Tool5d_fig4b.png" width= 600 height=635 class="center">
+              <img src="06_Matrix/FIG/Tool6d_fig4b.png" width= 600 height=635 class="center">
 </figure>
 
 </div>

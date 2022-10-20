@@ -12,24 +12,16 @@ shinyServer(function(input, output, session) {
 
   TrendServer("02_Trend", data_input = data_input, nav = nav)
 
-  # ExpansionServer("02_Expansion")
+   CleanupGoals_tabServer("03_CleanupGoals_tab", nav = nav)
+ 
+   PerformanceServer("04_Performance")
+  
+   PlumeZoneServer("05_PlumeZone", data_input = data_input, nav = nav)
+  
+   MatrixDiffusionServer("06_MatrixDiffusion")
+  
+   HeterogeneityServer("08_Heterogeneity")
 
-  #BordenToolServer("Borden_Tool")
-  #CleanupGoalsServer("03_CleanupGoals")
-  #CleanupGoals_linearServer("03_CleanupGoals_linear")
-
-  CleanupGoals_tabServer("03_CleanupGoals_tab", nav = nav)
-
-  # CleanupGoals_MCtabServer("03_CleanupGoals_MCtab")
-
-  PerformanceServer("04_Performance")
-
-  MatrixDiffusionServer("05_MatrixDiffusion")
-
-  HeterogeneityServer("07_Heterogeneity")
-
-  PlumeZoneServer("08_PlumeZone", data_input = data_input, nav = nav)
-
-  # SummaryServer("10_Summary")
+  SummaryServer("10_Summary")
 
 })

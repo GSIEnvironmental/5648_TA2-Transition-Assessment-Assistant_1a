@@ -23,12 +23,12 @@
 <tr style="border: none;">
 <td style="border: none;">
 <a href="https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-200530" target="_blank">
-  <img src="05_Matrix/FIG/Tool5a_fig1.png" width= 468 height=281 class="center">
+  <img src="06_Matrix/FIG/Tool6a_fig1.png" width= 468 height=281 class="center">
 </a>
 </td>
 <td style="border: none;">
 <a href="https://www.nap.edu/catalog/11146/contaminants-in-the-subsurface-source-zone-assessment-and-remediation" target="_blank">
-  <img src="05_Matrix/FIG/Tool5a_fig2.png" width= 468 height=319 class="center">
+  <img src="06_Matrix/FIG/Tool6a_fig2.png" width= 468 height=319 class="center">
 </a>
 </td>
 </tr>
@@ -38,12 +38,12 @@
 <tr style="border: none;">
 <td style="border: none;">
 <a href="https://www.nap.edu/catalog/14668/alternatives-for-managing-the-nations-complex-contaminated-groundwater-sites" target="_blank">
-  <img src="05_Matrix/FIG/Tool5a_fig3.png" width= 468 height=448 class="center">
+  <img src="06_Matrix/FIG/Tool6a_fig3.png" width= 468 height=448 class="center">
 </a>
 </td>
 <td style="border: none;">
 <a href="http://www.enviro.wiki/index.php?title=Matrix_Diffusion" target="_blank">
-  <img src="05_Matrix/FIG/Tool5a_fig4.png" width= 468 height=360 class="center">
+  <img src="06_Matrix/FIG/Tool6a_fig4.png" width= 468 height=360 class="center">
 </a>
 </td>
 </tr>

@@ -30,8 +30,9 @@ PerformanceUI <- function(id, label = "04_Performance"){
                                                                                              choices = c('All Chlorinated Solvents',unique(df_tool4$`Parent CVOC`)[1:5]),
                                                                                              selected = "All Chlorinated Solvents", multiple = T)
                                                                                  ),br()))),
-                                                      column(2, align = "left", style = "padding:10px;",
-                                                             actionButton(ns("help1"), HTML("?"), style = button_style2))), br())),
+                                                      # column(2, align = "left", style = "padding:10px;",
+                                                      #        actionButton(ns("help1"), HTML("?"), style = button_style2))
+                                                    ), br())),
                     fluidRow(column(10,
                                     fluidRow(column(10,
                                                     HTML("<h4><b>Step 2.</b> Select Sites with These Pre-Remediation Maximum Concentrations</h4>"),
@@ -39,8 +40,9 @@ PerformanceUI <- function(id, label = "04_Performance"){
                                                              pickerInput(ns("maxC"),label = NULL,
                                                                          choices = site_max,
                                                                          selected = "All Sites", multiple = T))),
-                                             column(2, align = "left", style = "padding:10px;",
-                                                    actionButton(ns("help1"), HTML("?"), style = button_style2))), br())),
+                                             # column(2, align = "left", style = "padding:10px;",
+                                             #        actionButton(ns("help1"), HTML("?"), style = button_style2))
+                                             ), br())),
                     fluidRow(column(10,
                                     fluidRow(column(10,
                                                     HTML("<h4><b>Step 3.</b> Select an in-situ remediation source treatment  technologies(COCs)</h4>"),
@@ -65,22 +67,32 @@ PerformanceUI <- function(id, label = "04_Performance"){
                                                              
                                                              )
                                                     ),
-                                             column(2, align = "left", style = "padding:10px;",
-                                                    actionButton(ns("help2"), HTML("?"), style = button_style2)
-                                                    )
+                                             # column(2, align = "left", style = "padding:10px;",
+                                             #        actionButton(ns("help2"), HTML("?"), style = button_style2)
+                                             #        )
                                              ),br())
                              ),
                     fluidRow(column(10,
                                     fluidRow(column(10,
                                                     HTML("<h4><b>Step 4.</b> Input Cleanup Goal (ug/L) </h4>"),
                                                     numericInput(ns("Conc_goal"), NULL, value = 5, min = 0, step = 0.1)
-                                                    )),br())
+                                                    ),
+                                             column(2, align = "left", style = "padding:10px;",
+                                                    actionButton(ns("help2"), HTML("?"), style = button_style2)
+                                                    )
+                                             
+                                             ),br(),
+                                    )
                              ),
                     fluidRow(column(10,
                                     fluidRow(column(10,
                                                     HTML("<h4><b>Step 5.</b> Input Concentration at the Site (ug/L) </h4>"),
                                                     numericInput(ns("Conc_site"), NULL, value = 20, min = 0, step = 1)
-                                    )),br())
+                                                    ),
+                                             column(2, align = "left", style = "padding:10px;",
+                                            actionButton(ns("help2"), HTML("?"), style = button_style2)
+                                            )
+                                            ),br())
                     ),
                     ),
                     
@@ -414,9 +426,9 @@ PerformanceServer <- function(id) {
       # Data -------------------
       output$Rem_data <- renderRHandsontable({
         validate(
-          need(df_tool4, "Please Do Not Remove Remediation Database."))
+          need(df_filter, "Please Do Not Remove Remediation Database."))
         
-        rhandsontable(df_tool4, readOnly = T, rowHeaders = NULL, width = 1200, height = 600) %>%
+        rhandsontable(df_filter, readOnly = T, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE)
       })
       

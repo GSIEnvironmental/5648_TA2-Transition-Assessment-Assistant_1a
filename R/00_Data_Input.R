@@ -20,7 +20,7 @@ Data_Input_UI <- function(id, label = "Data_Input"){
                              # actionButton(ns("instr_data"),
                              #              HTML("Additional Instructions"), style = button_style),
                              downloadButton(ns("save_data"),
-                                          HTML("Save Time Series Data"), style = button_style4)),
+                                          HTML("Save Data"), style = button_style4)),
                       # column(1, align = "right",
                       #        # actionButton(ns("instr_data"),
                       #        #              HTML("Additional Instructions"), style = button_style),

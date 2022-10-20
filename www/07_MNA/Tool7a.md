@@ -4,7 +4,7 @@
 <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'>At some sites, Monitored Natural Attenuation (MNA) might be sufficient to manage the plume by itself. &nbsp; But in other cases, some additional remediation measures may be required to meet site objectives (e.g., limit future plume growth, keep with certain concentration goals at a point of compliance). &nbsp; For these Transition Assessments, Enhance Attenuation (EA) approaches may serve as a &ldquo;bridge&rdquo; between intensive source treatments for mass removal and MNA as shown in Figure 1:</p>
 
 <p style="text-align: center;"> 
-<img src="06_MNA/FIG/Tool6_Fig.png" width= 468 height=271 class="center">
+<img src="07_MNA/FIG/Tool7_Fig.png" width= 468 height=271 class="center">
 </p>
 
 <br>

@@ -281,11 +281,14 @@ source("./R/03_CleanupGoals_tab.R")
 #
 source("./R/04_Performance.R")
 #
-# source("./R/05_MatrixDiffusion.R")
+source("./R/05_PlumeZone.R")
+
+source("./R/06_MatrixDiffusion.R")
+source("./R/07_EnhanceMNA.R")
 #
- source("./R/07_Heterogeneity.R")
+#source("./R/08_Heterogeneity.R")
 #
-source("./R/08_PlumeZone.R")
+
 #
 # source("./R/10_Summary.R")
 

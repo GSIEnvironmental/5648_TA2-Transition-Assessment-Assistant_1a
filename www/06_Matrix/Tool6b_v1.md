@@ -34,9 +34,9 @@
 
 <div class="col-md-6" style = "text-align: center;">
 
-  <img src="05_Matrix/FIG/Tool5b_fig1.png" width= 600 height=743 class="center">
+  <img src="06_Matrix/FIG/Tool6b_fig1.png" width= 600 height=743 class="center">
 
-  <img src="05_Matrix/FIG/Tool5b_fig2.png" width= 600 height=570 class="center">
+  <img src="06_Matrix/FIG/Tool6b_fig2.png" width= 600 height=570 class="center">
 
 </div>            
           
@@ -54,7 +54,7 @@
              
 <!-- Add image inside the body of modal -->
 <div class="modal-body" style = "text-align: center;">
-    <img id="image" src="05_Matrix/FIG/Tool5b_fig3.png" alt="See moder P&T wells from this site" width= 500 height=674 class="center"/>
+    <img id="image" src="06_Matrix/FIG/Tool6b_fig3.png" alt="See moder P&T wells from this site" width= 500 height=674 class="center"/>
 </div>
      
   <div class="modal-footer">
@@ -79,7 +79,7 @@
              
 <!-- Add image inside the body of modal -->
 <div class="modal-body" style = "text-align: center;">
-    <img id="image" src="05_Matrix/FIG/Tool5b_fig4.png" alt="See moder P&T wells from other sites" width= 500 height=677 class="center"/>
+    <img id="image" src="06_Matrix/FIG/Tool6b_fig4.png" alt="See moder P&T wells from other sites" width= 500 height=677 class="center"/>
 </div>
      
   <div class="modal-footer">

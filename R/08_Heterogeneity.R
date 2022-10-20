@@ -1,13 +1,13 @@
 ## Heterogeneity Modules -----------------------------
 
 ## UI -------------------------------------------
-HeterogeneityUI <- function(id, label = "07_Heterogeneity"){
+HeterogeneityUI <- function(id, label = "08_Heterogeneity"){
   ns <- NS(id)
   
-  tabPanel("7. Heterogeneity",
+  tabPanel("8. Heterogeneity",
            
            fluidRow(style='border-bottom: 5px solid black',
-                    HTML("<h1><b>Tool 7. Understand how much geologic heterogeneity there is at a site.</h1></b>"),
+                    HTML("<h1><b>Tool 8. Understand how much geologic heterogeneity there is at a site.</h1></b>"),
                     #HTML("<h3><p style='color:red;'>This tool is currently under development.</h3></p>"),
                     column(6,
                            HTML("<h3><b>What Does this Tool Do?</b></h3>
@@ -61,7 +61,7 @@ HeterogeneityUI <- function(id, label = "07_Heterogeneity"){
                                                       br(),
                                                       br(),
                                                       br(),
-                                                      fluidRow(img(src = "./07_Heterogeneity/FIG/Tool7_fig2.png",
+                                                      fluidRow(img(src = "./08_Heterogeneity/FIG/Tool8_fig2.png",
                                                                    width = "1000px", height = "452px"))
                                       )# fluid row
                                       )#column
@@ -118,7 +118,7 @@ HeterogeneityUI <- function(id, label = "07_Heterogeneity"){
                            )#tabsetpanel
                            ),# column
                     column(5,
-                           fluidRow(align="left", style='padding-left:50px;',
+                           fluidRow(align="left", style='padding-left:10px;',
                                     tags$style(HTML(".shiny-output-error-validation {
                              color: #ff0000;
                              font-weight: bold;
@@ -327,7 +327,7 @@ HeterogeneityServer <- function(id) {
       })
       #----- help function 
       observeEvent(input$Detailed_Explanation,
-                   {Helpboxfunction('FIG/Tool7_fig3.png','"./07_Heterogeneity/',619,693)}
+                   {Helpboxfunction('FIG/Tool8_fig3.png','"./08_Heterogeneity/',619,693)}
                    )
       
 

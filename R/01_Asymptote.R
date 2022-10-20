@@ -26,8 +26,9 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
              column(3,
                     fluidRow(column(10, 
                                     HTML("<h4><b>Step 1.</b> Enter Data. See 'Data Input' tab for more information</h4>")),
-                             column(2, align = "left", style = "padding:10px;",
-                                    actionButton(ns("help1"), HTML("?"), style = button_style2))), br(),
+                             # column(2, align = "left", style = "padding:10px;",
+                             #        actionButton(ns("help1"), HTML("?"), style = button_style2))
+                             ), br(),
                     fluidRow(column(10,
                                     HTML("<h4><b>Step 2.</b> Select Wells to be included in analysis.</h4>"),
                                     fluidRow(align = "center",
@@ -41,8 +42,9 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                                                          selected = "PW-1",
                                                          options = list(`live-search`=TRUE,
                                                                         `none-selected-text` = "Select Wells")))),
-                             column(2, align = "left", style = "padding:10px;",
-                                    actionButton(ns("help2"), HTML("?"), style = button_style2))), br(),
+                             # column(2, align = "left", style = "padding:10px;",
+                             #        actionButton(ns("help2"), HTML("?"), style = button_style2))
+                             ), br(),
                     fluidRow(column(10,
                                     HTML("<h4><b>Step 3.</b> Select method for combining data collected on the same day.</h4>"),
                                     fluidRow(align = "center",
@@ -50,8 +52,9 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                                                           choices = c("Geomean", "Mean"),
                                                           selected = "Geomean",
                                                           inline = T))),
-                             column(2, align = "left", style = "padding:10px;",
-                                    actionButton(ns("help3"), HTML("?"), style = button_style2))), br(),
+                             # column(2, align = "left", style = "padding:10px;",
+                             #        actionButton(ns("help3"), HTML("?"), style = button_style2))
+                             ), br(),
                     fluidRow(column(10,
                                     HTML("<h4><b>Step 4.</b> Select the concentration goal.</h4>"),
                                     fluidRow(
@@ -81,8 +84,9 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                     fluidRow(column(10,
                                     HTML("<h4><b>Step 7.</b> Select breakpoint between two different time periods.</h4>"),
                                     HTML("<p><i>Beakpoint is indicated on plot with a dotted line. To manually select a breakpoint click data point on plot.To deselect double click the figure where no data point.</i></p>")),
-                             column(2, align = "left", style = "padding:10px;",
-                                    actionButton(ns("help5"), HTML("?"), style = button_style2))),
+                             # column(2, align = "left", style = "padding:10px;",
+                             #        actionButton(ns("help5"), HTML("?"), style = button_style2))
+                             ),
                     HTML("<hr class='featurette-divider'>"),
                     HTML("<h4><b>Key Assumptions</b></h4>
                          <ol>
@@ -120,7 +124,7 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                                           ) # end concentration and time table
                                ))), br(), br(),
            fluidRow(align = "center",
-                    actionButton(ns("save_data"),
+                    downloadButton(ns("save_data"),
                                  HTML("Save Data and Analysis"), style = button_style)), br())
            )
   ) # end tab panel
@@ -455,6 +459,81 @@ AsymptoteServer <- function(id, data_input, nav) {
         HTML(paste0("<h3><b style='color:", col["purple"],"'>", sum(results$Met,na.rm=TRUE), "</b> of the <b style='color:", col["purple"],"'>5</b> possible asymptotic conditions are present.</h3>"))
       })
       
+      # Save Dataframes --------------------
+      
+      output$save_data <- downloadHandler(
+        
+        filename = function() {
+          paste0("Asymptote_Results", ".xlsx")
+        },
+        content = function(file) {
+          
+          parameter_tbl<-data.frame(
+            'select_mw' = input$select_mw,
+            'select_group_type' = input$select_group_type,
+            'start' = input$date_range[1],
+            'end' = input$date_range[2],
+            'conc_goal' = input$conc_goal,
+            'group_method' = input$group_method,
+            'CI_input' = input$CI_input,
+            'unit' = unique(d_conc()$Units)
+            
+            
+          )
+          result = sen_table()%>%
+            mutate(rate_model = signif(rate_model,3),
+                   `Lower Bound Year` = ifelse(slope_LCL<0,year_LCL,'Increasing'),
+                   `Upper Bound Year` = ifelse(slope_UCL<0,year_UCL,'Increasing'),
+                   `Pearson's Correlation Coefficient (r)` = signif(pearson_model,3),
+                   `p-value` = signif(pvalue_model,3),
+                   `Correlation Strength` = case_when( pearson_model>=0.8|pearson_model<=-0.8&pvalue_model<0.05~ 'Very High Correlation, Statistically Significant',
+                                               (pearson_model<0.8& pearson_model>=0.6&pvalue_model<0.05)|(pearson_model<=-0.6& pearson_model>-0.8&pvalue_model<0.05) ~ 'High Correlation, Statistically Significant',
+                                               (pearson_model<0.6& pearson_model>=0.4&pvalue_model<0.05)|(pearson_model<=-0.4& pearson_model>-0.6&pvalue_model<0.05) ~ 'Moderate Correlation, Statistically Significant',
+                                               (pearson_model<0.4& pearson_model>=0.2&pvalue_model<0.05)|(pearson_model<=-0.2& pearson_model>-0.4&pvalue_model<0.05) ~ 'Low Correlation, Statistically Significant',
+                                               (pearson_model<0.2& pearson_model>=0&pvalue_model<0.05)|(pearson_model<=0& pearson_model>-0.2&pvalue_model<0.05) ~ 'Very Low Correlation, Statistically Significant',
+                                               pearson_model>=0.8|pearson_model<=-0.8&pvalue_model>=0.05~ 'Very High Correlation, Statistically Not Significant',
+                                               (pearson_model<0.8& pearson_model>=0.6&pvalue_model>=0.05)|(pearson_model<=-0.6& pearson_model>-0.8&pvalue_model>=0.05) ~ 'High Correlation Statistically Not Significant',
+                                               (pearson_model<0.6& pearson_model>=0.4&pvalue_model>=0.05)|(pearson_model<=-0.4& pearson_model>-0.6&pvalue_model>=0.05) ~ 'Moderate Correlation Statistically Not Significant',
+                                               (pearson_model<0.4& pearson_model>=0.2&pvalue_model>=0.05)|(pearson_model<=-0.2& pearson_model>-0.4&pvalue_model>=0.05) ~ 'Low Correlation Statistically Not Significant',
+                                               (pearson_model<0.2& pearson_model>=0&pvalue_model>=0.05)|(pearson_model<=0& pearson_model>-0.2&pvalue_model>=0.05) ~ 'Very Low Correlation Statistically Not Significant'
+                   )
+            )%>%
+            select(type, rate_model, `Lower Bound Year`, year_model, `Upper Bound Year`, 
+                   `Pearson's Correlation Coefficient (r)`, `p-value`,`Correlation Strength`)%>%
+            rename(`First Order Source Attenuation Rates (per year)` = rate_model,
+                   `Year` = year_model)
+          # result = rownames_to_column(as.data.frame(t(result)),"variable")
+          # colnames(result)<-result[1,]
+          # result <- result[2:nrow(result),]
+          
+          
+            list_of_datasets<-list(
+              "Ave Concentration" = as.data.frame(df()),
+              "Location" = data_input$d_loc()%>%filter(`Monitoring Wells`%in%input$select_mw),
+              "parameters" = parameter_tbl,
+              "Overall Results" = result,
+              "Asymptote Analysis" = as.data.frame(asy_results())
+              
+            )
+          
+          
+          write.xlsx(list_of_datasets, file)
+          
+          
+        }
+        
+      )
+      
+      #----- help function 
+      lapply(
+        X = 1:29,
+        FUN = function(i){
+          observeEvent(input[[paste0("help", i)]], {
+            flname <-as.character(figure_list[i])
+            Helpboxfunction(flname)
+          })
+        }
+      )
       
       # Data ----------------
       output$conc_time_data <- renderRHandsontable({

@@ -28,8 +28,9 @@ TrendUI <- function(id, label = "01_Trend"){
                     column(3,
                            fluidRow(column(10, 
                                            HTML("<h4><b>Step 1.</b> Enter Data. See 'Data Input' tab for more information</h4>")),
-                                    column(2, align = "left", style = "padding:10px;",
-                                           actionButton(ns("help1"), HTML("?"), style = button_style2))), br(),
+                                    # column(2, align = "left", style = "padding:10px;",
+                                    #        actionButton(ns("help1"), HTML("?"), style = button_style2))
+                                    ), br(),
                            fluidRow(column(10,
                                            HTML("<h4><b>Step 2.</b> Select data type to analyze.</h4>"),
                                            fluidRow(align = "center",
@@ -37,8 +38,9 @@ TrendUI <- function(id, label = "01_Trend"){
                                                                  choices = c("Concentration", "Mass"),
                                                                  selected = "Concentration",
                                                                  inline = T))),
-                                    column(2, align = "left", style = "padding:10px;",
-                                           actionButton(ns("help3"), HTML("?"), style = button_style2))),
+                                    # column(2, align = "left", style = "padding:10px;",
+                                    #        actionButton(ns("help3"), HTML("?"), style = button_style2))
+                                    ),
                            conditionalPanel(
                              condition = "input.type == 'Mass'", ns = ns,
                              fluidRow(column(10,
@@ -88,8 +90,9 @@ TrendUI <- function(id, label = "01_Trend"){
                                                                 multiple = F,
                                                                 options = list(`live-search`=TRUE,
                                                                                `none-selected-text` = "Select Well Groups")))),
-                                    column(2, align = "left", style = "padding:10px;",
-                                           actionButton(ns("help2"), HTML("?"), style = button_style2))), br(),
+                                    # column(2, align = "left", style = "padding:10px;",
+                                    #        actionButton(ns("help2"), HTML("?"), style = button_style2))
+                                    ), br(),
                            fluidRow(column(10,
                                            HTML("<h4><b>Step 4.</b> Select method for combining data.</h4>"),
                                            fluidRow(align = "center",
@@ -97,8 +100,9 @@ TrendUI <- function(id, label = "01_Trend"){
                                                                  choices = c("Geomean", "Mean"),
                                                                  selected = "Geomean",
                                                                  inline = T))),
-                                    column(2, align = "left", style = "padding:10px;",
-                                           actionButton(ns("help3"), HTML("?"), style = button_style2))), 
+                                    # column(2, align = "left", style = "padding:10px;",
+                                    #        actionButton(ns("help3"), HTML("?"), style = button_style2))
+                                    ), 
                            fluidRow(column(10,
                                            HTML("<h4><b>Step 5 (Optional).</b> Select the concentration goal.</h4>"),
                                            fluidRow(
@@ -178,7 +182,7 @@ TrendUI <- function(id, label = "01_Trend"){
                                         ) # end concentration and time table
                                       ))), br(), br(),
                            fluidRow(align = "center",
-                                    actionButton(ns("save_data"),
+                                    downloadButton(ns("save_data"),
                                                  HTML("Save Data and Analysis"), style = button_style))
                     ) # end results column
            ), br()
@@ -453,7 +457,7 @@ TrendServer <- function(id, data_input, nav) {
 
 
           cd <- df_mass_group()[["overall_tbl"]] 
-
+          
           t <- gt(cd) %>%
             tab_spanner(label = "Approximate Mass (kg)",
                         columns = ends_with("mass_kg"), gather = T) %>%
@@ -523,7 +527,7 @@ TrendServer <- function(id, data_input, nav) {
           cd <- MK_mass_group() %>%
             select(Group, Trend, MK.S, MK.p, MK.CV, S.Slope)%>%
             mutate(MK.p = ifelse(MK.p<0.05,'<0.05',as.character(signif(MK.p,3))))
-
+          
           t <- gt(cd) %>%
             fmt_number(columns = c("MK.CV", "S.Slope"),
                        n_sigfig = 3) %>%
@@ -618,12 +622,13 @@ TrendServer <- function(id, data_input, nav) {
                 summarise(Concentration = exp(mean(log(Concentration), na.rm=TRUE))) %>% ungroup()}
           }
         }
-
+        
         if(input$type == "Mass"){
           d <- df_mass_group()[["overall_tbl"]] %>% rename(Mass = total_mass_kg)
         }
 
         unit = unique(d_conc()$Units)
+       
         graph_vis(d, log_flag = input$log_linear, vis_flag = input$type,unit=unit)
 
       }) # end TS plot
@@ -642,7 +647,7 @@ TrendServer <- function(id, data_input, nav) {
         validate(
           need(dim(d_loc() %>% filter(!is.na(as.numeric(Latitude)) & !is.na(as.numeric(Longitude))))[1],
                "Please enter Latitude and Longitude information into the Monitoring Well Information in the Data Input tab (Step 1)."))
-
+        #browser()
         site_map %>%
           addLayersControl(baseGroups = c('Grey Base','Satellite (ESRI)','Satellite (Google)'),
                            overlayGroups = c("Well Labels"),
@@ -777,6 +782,85 @@ TrendServer <- function(id, data_input, nav) {
         screenshot(filename = "Expansion")
       })
 
+      # Save Dataframes --------------------
+      
+      output$save_data <- downloadHandler(
+        
+        filename = function() {
+          paste0("Expanding_Results", ".xlsx")
+        },
+        content = function(file) {
+          
+          if (input$type == 'Concentration'){
+            parameter_tbl<-data.frame(
+              'data type' = input$type,
+              'well grouping' = input$select_mw_group,
+              'average method' = input$group_method)
+            cdata = MK_conc_group()
+            
+            result2 = MK_conc_well() %>%
+              select(Group, Trend, MK.S, MK.p, MK.CV, S.Slope)%>%
+              mutate(MK.p = ifelse(MK.p<0.05,'<0.05',as.character(signif(MK.p,3))))%>%
+              filter(Group%in%unique(df_group()$WellID))
+          }else{
+            parameter_tbl<-data.frame(
+              'data type' = input$type,
+              'well grouping' = input$select_mw_group,
+              'average method' = input$group_method,
+              'plume_top' = input$plume_top,
+              'plume_bottom' = input$plume_bottom,
+              'HighK_porosity' = input$trans_porosity,
+              'LowK_porosity' = input$lowk_porosity,
+              'Plume Thickness Fraction' = input$fraction_trans
+            )
+            cdata = MK_mass_group()
+            result2 = df_mass_group()[["overall_tbl"]] 
+          }
+          
+          result =  cdata %>%
+            select(Group, Trend, MK.S, MK.p, MK.CV, S.Slope)%>%
+            mutate(MK.p = ifelse(MK.p<0.05,'<0.05',as.character(signif(MK.p,3))))
+          
+          result3 = cdata%>%
+                  mutate(expanding = ifelse(Trend %in% c("Decreasing", "Probably Decreasing", "Stable"), "No", "Yes")) %>%
+                  select(Group, expanding)
+          
+          if(input$select_mw_group!="All Monitoring Wells"){
+            location_tbl = data_input$d_loc()%>%filter(`Well Grouping`==input$select_mw_group)
+          }else{
+            location_tbl = data_input$d_loc()
+          }
+          
+          if (input$type == 'Concentration'){
+            list_of_datasets<-list(
+              "Ave Concentration" = as.data.frame(df_group()),
+              "Location" =location_tbl,
+              "parameters" = parameter_tbl,
+              "Overall MK Results" = result,
+              "MK Results by Well" = result2,
+              'Plume Expanding' = result3
+              
+            )
+          }else{
+            list_of_datasets<-list(
+              "Ave Concentration" = as.data.frame(df_group()),
+              "Location" =location_tbl,
+              "parameters" = parameter_tbl,
+              "Overall MK Results" = result,
+              "Estimate of Plume Mass" = result2,
+              'Plume Expanding' = result3
+              
+            )
+          }
+          
+          
+          
+          write.xlsx(list_of_datasets, file)
+          
+          
+        }
+        
+      )
       
       # Data ----------------
       output$conc_time_data <- renderRHandsontable({

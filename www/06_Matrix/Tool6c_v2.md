@@ -33,7 +33,7 @@ figcaption {
 <div class="col-md-4" style = "text-align: center;">
 <a href="#top" onclick="$('li:eq(5) a').tab('show');" role="button">
 <figure>
-  <img src="05_Matrix/FIG/Tool5c_fig1.png" width= 468 height=459 class="center">
+  <img src="06_Matrix/FIG/Tool6c_fig1.png" width= 468 height=459 class="center">
   <figcaption>Model 1</figcaption>
 </figure>
 </a>
@@ -42,7 +42,7 @@ figcaption {
 <div class="col-md-4" style = "text-align: center;">
 <a href="https://serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-201426/(language)/eng-US" target="_blank">
 <figure>
-  <img src="05_Matrix/FIG/Tool5c_fig2.png" width= 468 height=291 class="center">
+  <img src="06_Matrix/FIG/Tool6c_fig2.png" width= 468 height=291 class="center">
   <figcaption>Model 2</figcaption>
 </figure>
 </a>
@@ -51,7 +51,7 @@ figcaption {
 <div class="col-md-4" style = "text-align: center;">
 <a href="https://serdp-estcp.org/Tools-and-Training/Environmental-Restoration/Groundwater-Plume-Treatment/Matrix-Diffusion-Tool-Kit" target="_blank">
 <figure>
-  <img src="05_Matrix/FIG/Tool5c_fig3.png" width= 468 height=421 class="center">
+  <img src="06_Matrix/FIG/Tool6c_fig3.png" width= 468 height=421 class="center">
   <figcaption>Model 3</figcaption>
 </figure>
 </a>

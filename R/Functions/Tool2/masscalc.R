@@ -39,15 +39,15 @@ sp_interpolation<-function(df_MW_compiled,
       
       v <- voronoi(dsp)
       
-      convert_unit = case_when(tolower(unit)=='g/l',10^-3,
-                               tolower(unit)=='mg/l',10^-6,
-                               tolower(unit)=='ug/l',10^-9,
-                               tolower(unit)=='ng/l',10^-12
+      convert_unit = case_when(tolower(unit)=='g/l'~10^-3,
+                               tolower(unit)=='mg/l'~10^-6,
+                               tolower(unit)=='ug/l'~10^-9,
+                               tolower(unit)=='ng/l'~10^-12
                             )
       
       v@data <- v@data %>% 
         # calculate area
-        mutate(area = st_area(st_as_sf(v,'SpatialPolygonsDataFrame')), #unit is in meters
+        mutate(area = st_area(st_as_sf(v,'SpatialPolygonsDataFrame')), #unit is in sq meters
                # convert mass to be kg, separate calculation for high and low K
                massHK = as.numeric(area)*(Concentration/0.001)*porosityHK*(thicknessHK *0.3048)*convert_unit,
                massLK = as.numeric(area)*(Concentration/0.001)*porosityLK*(thicknessLK *0.3048)*convert_unit,
@@ -80,7 +80,7 @@ sp_interpolation<-function(df_MW_compiled,
   }
   
   inter_list[["overall_tbl"]] <- overall_tbl_full
-
+  
   return(inter_list)
   
   }

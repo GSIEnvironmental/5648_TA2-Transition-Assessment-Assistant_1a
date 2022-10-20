@@ -33,8 +33,8 @@ heterofunction<-function(df,TOP,Bottom,aquitard){
   N_layer = round(mean(rowSums(df[,c(2:5)]!="",na.rm=TRUE)))
   rowSums(df != "")
   # clip at two section
-  modelB<- read_rds('./R/Functions/Tool7/logfit_60to90transmissive.rds')
-  modelC<- read_rds('./R/Functions/Tool7/logfit_40to50transmissive.rds')
+  modelB<- read_rds('./R/Functions/Tool8/logfit_60to90transmissive.rds')
+  modelC<- read_rds('./R/Functions/Tool8/logfit_40to50transmissive.rds')
   
   if (Percent_B>=60){
     B = data.frame(B = Percent_B, N = N_layer)

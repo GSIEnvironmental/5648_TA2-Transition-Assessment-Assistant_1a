@@ -1,12 +1,12 @@
 # Asymptote Modules -----------------------------
 
 ## UI -----------------------------------------
-PlumeZoneUI <- function(id, label = "08_PlumeZone"){
+PlumeZoneUI <- function(id, label = "05_PlumeZone"){
   ns <- NS(id)
   
-  tabPanel("8. Plume Zone",
+  tabPanel("5. Plume Zone",
            fluidRow(style='border-bottom: 5px solid black',
-                    tags$h1(tags$b("Tool 8. Establish a Plume Assimilative Capacity Zone."))),
+                    tags$h1(tags$b("Tool 5. Establish a Plume Assimilative Capacity Zone."))),
            fluidRow(br(),
                     column(3,
                            fluidRow(column(10,
@@ -137,7 +137,7 @@ PlumeZoneUI <- function(id, label = "08_PlumeZone"){
                     column(9,
                            fluidRow(
                              HTML('<img style = "padding: 10px 50px 10px 10px;" 
-                                               src = "./08_GWModels/Fig/Tool8_Fig1.jpg" 
+                                               src = "./05_GWModels/Fig/Tool5_Fig1.jpg" 
                                                width = "100%"  
                                                height = "100%">')),
                            fluidRow(
@@ -184,7 +184,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       # update Units -------------------
       observe({
-        req(nav() == "8. Plume Zone")
+        req(nav() == "5. Plume Zone")
         req(d_conc())
         
         output$unit<- renderUI({
@@ -212,7 +212,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       # Well Selection Updates -----------------------
       observe({
-        req(nav() == "8. Plume Zone")
+        req(nav() == "5. Plume Zone")
         req(d_conc())
         choices <- sort(unique(d_conc()$WellID))
         
@@ -221,7 +221,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       # COC Selection Updates -----------------------
       observe({
-        req(nav() == "8. Plume Zone")
+        req(nav() == "5. Plume Zone")
         req(d_conc())
         
         choices <- sort(unique(d_conc()$COC))

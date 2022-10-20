@@ -12,7 +12,7 @@ graph_vis <-function(df_all, log_flag, vis_flag,unit){
   # # --- filter data either all or downgradient well to plot
   # df_all <- df_MW_compiled%>%filter(WellID==name)
 
-  
+ 
   # --- treatment of y axis label names
   tval <- sort(as.vector(sapply(seq(1,9), 
                                 function(x) 

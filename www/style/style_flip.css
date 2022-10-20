@@ -48,6 +48,23 @@
 
 .border {
     border-width: 25px;
-    border-color: rgb(5, 51, 86));   
+    border-color: rgb(5, 51, 86);   
     border-style: solid;
+}
+
+.doubleUnderline {
+  text-decoration:underline;
+  border-bottom: 1px solid white
+}
+
+.column-left{
+  width:30%
+}
+.column-right{
+  width:70%
+}
+
+.scrollpart{
+  overflow-x: hidden;
+  overflow-y: scroll;
 }

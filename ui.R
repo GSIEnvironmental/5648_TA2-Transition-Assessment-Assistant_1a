@@ -55,15 +55,16 @@ shinyUI <- navbarPage(theme="styles.css",
 
                    PerformanceUI("04_Performance"),
 
-                   MatrixDiffusionUI("05_MatrixDiffusion"),
+                   PlumeZoneUI("05_PlumeZone"),
 
-                   EnhanceMNAUI("06_EnhanceMNA"),
+                   MatrixDiffusionUI("06_MatrixDiffusion"),
 
-                   HeterogeneityUI("07_Heterogeneity"),
+                   EnhanceMNAUI("07_EnhanceMNA"),
 
-                   PlumeZoneUI("08_PlumeZone"),
+                   HeterogeneityUI("08_Heterogeneity"),
 
-                   SERDPUI("09_SERDP"),
+
+                   SERDPUI("09_OtherProject"),
 
 
                    SummaryUI("10_Summary"),

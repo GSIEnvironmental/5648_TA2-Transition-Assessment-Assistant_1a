@@ -1,7 +1,7 @@
 # Asymptote Modules -----------------------------
 
 ## UI -----------------------------------------
-SERDPUI <- function(id, label = "09_SERDP"){
+SERDPUI <- function(id, label = "09_OtherProject"){
   ns <- NS(id)
   
   tabPanel("9. Other Projects",
