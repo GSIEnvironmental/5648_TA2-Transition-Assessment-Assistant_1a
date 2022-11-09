@@ -8,7 +8,7 @@ SummaryUI <- function(id, label = "010_Summary"){
            tabsetPanel(
              
              tabPanel(HTML("10a Step-by-Step Guide"),
-                      fluidRow(style='border-bottom: 5px solid black',
+                      fluidRow(style='border-bottom: 5px solid black; text-align:justify;text-justify: inter-word;',
                                HTML("<H1> Tool 10a.  Step-by-Step Guide for an MNA Transition Assessment</H1>"),
                                includeCSS("./www/style/style_flip.css"),
                                column(5,
@@ -27,6 +27,7 @@ SummaryUI <- function(id, label = "010_Summary"){
                                ),
                       br(),
                       fluidRow(includeHTML('./www/10_Summary/Tool10a_v1.html'))
+                               
              ), 
              tabPanel(HTML("10b Persistence Index"),
                       HTML("<H1>Tool 10b.  Persistence Index</H1>"),
@@ -34,8 +35,9 @@ SummaryUI <- function(id, label = "010_Summary"){
                       #fluidRow(includeMarkdown('./www/06_Matrix/Tool6b_v1.md'))
              ), 
              tabPanel(HTML("10c Checklists"),
-                      HTML("<H1>Tool 10c.  Checklists</H1>"),
-                      includeCSS("./www/style/style_flip.css"),
+                      fluidRow(style='border-bottom: 5px solid black; text-align:justify;text-justify: inter-word;',
+                               HTML("<H1>Tool 10c.  Checklists</H1>"),
+                               includeCSS("./www/style/style_flip.css"),
                       column(5,
                              HTML("
                            <h4>The National Research Council (2012) describes the various elements that should be 
@@ -47,12 +49,27 @@ SummaryUI <- function(id, label = "010_Summary"){
                                   that the user has gathered the necessary information to support a technically rigorous 
                                   site-specific transition assessment.  It also maps out how each of the other tools in 
                                   this app can be used to assist in the overall assessment </h4>")),
-                      column(5,
-                             )
-             ),
+                      column(7,HTML("<img src = '10_Summary/Tool10a.png' width='100%' >")
+                             )),
+                      
                       br(),
-                      fluidRow(style='overflow-x: hidden;overflow-y: scroll;',
-                        column(12,includeHTML('./www/10_Summary/Tool10c_v1.html')))
+                      fluidRow(responsive=FALSE,
+                               column(10,includeHTML('./www/10_Summary/Tool10c_v1.html')),
+                               tags$style("input[type=checkbox] {
+                               transform: scale(2.5);
+                                          }"),
+                               tags$style(".shiny-input-container {margin-bottom: 0;margin-top:0;outline:0px}"),
+                               tags$style(".checkbox {margin-bottom: 0px;margin-top:4px;outline:0px}"),
+                               includeCSS("./www/style/style_flip.css"),
+                               checkseries(ns,button_style2),
+                               helpseries(ns,button_style2)
+                               ),
+                      br(),
+                      fluidRow(align = "center",
+                               downloadButton(ns("save_data"),
+                                              HTML("Save Check Box"), style = button_style))
+             ),
+                     
                                  
                       
              

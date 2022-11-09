@@ -1,26 +1,26 @@
 <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><strong><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Eight Ways to Simulate Matrix Diffusion and Remediation</span></strong></p>
 <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>As of 2022, there are eight general ways to model the impact of matrix diffusion on remediation for Transition Assessments (Table 1). Links to key resources (ESTCP project pages or key papers) are provided. A quick selection guide is provided below:</span></p>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>For a <strong>quick screening&nbsp;</strong>model approach:&nbsp;</span></p>
 <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>Use Model 1, SERDP Remediation Timeframe Tool in this web page (SERDP TA<sup>2</sup> Tool 3).</span></p>
-<ul style="list-style-type: undefined;margin-left:0in;">
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>For a <strong>quick screening&nbsp;</strong>model approach:&nbsp;</span></p>
+<ul>
     <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Key Application: How long does it take to reach cleanup goals after a source is completely removed?</span></li>
     <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Typical time required: 2-6 hours.</span></li>
     <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Advantages: Simplest, quickest model. Provides uncertainty limit.</span></li>
     <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Disadvantages: Only applicable to a subset of site data, cannot simulate partial source in-situ remediation projects*, assumes 1-D groundwater flow.</span></li>
 </ul>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>For a <strong>mid-level model,&nbsp;</strong>use Model 2, REMChlor-MD (Falta et al., 2018, Farhat et al., 2018). See the next tab for more detailed instructions on how to use REMChlor-MD for TAs.</span></p>
-<ul style="list-style-type: undefined;margin-left:0in;">
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>For a <strong>mid-level model:&nbsp;</strong>use Model 2, REMChlor-MD (Falta et al., 2018, Farhat et al., 2018). See the next tab for more detailed instructions on how to use REMChlor-MD for TAs.</span></p>
+<ul>
     <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Key Application: How long does it take to reach cleanup goals after a source and/or plume remediation project?</span></li>
     <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Typical time required: 2-4 days.</span></li>
-    <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Advantages: Detailed guidance, including the last tab in SERDP TA<sup>2</sup> Tool 5. Can simulate in-situ source remediation projects that typically don&rsquo;t remove all the mass.</span></li>
+    <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Advantages: Detailed guidance, including the last tab in SERDP TA<sup>2</sup> Tool 6. Can simulate in-situ source remediation projects that typically don&rsquo;t remove all the contaminant mass.</span></li>
     <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Disadvantages: Calibration can be time consuming. Assumes 1-D groundwater flow. Requires estimate of total contaminant mass released to the subsurface and initial source concentration when the release first started. Cannot simulate multiple source remediation projects.&nbsp;</span></li>
 </ul>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>For more <strong>complex modeling</strong>, use Model 3, MODFLOW 6 or MODFLOW-USG with the Matrix Diffusion Transport Package (MDT).</span></p>
-<ul style="list-style-type: undefined;margin-left:0in;">
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>For more <strong>complex modeling</strong>, use Model 3, MODFLOW 6 or MODFLOW-USG with the Matrix Diffusion Transport (MDT) Package.</span></p>
+<ul>
     <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Key Application: How long does it take to reach cleanup goals after a source and/or plume remediation project?</span></li>
     <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Typical time required: 2-4 weeks.</span></li>
     <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Advantages: Existing MODFLOW / MT3D datasets can be used and augmented with matrix diffusion model input. Can simulate in-situ source remediation projects that typically don&rsquo;t remove all the mass. Can handle 3-D groundwater flow patterns and pumping wells. Best tool for modeling pump and treat systems.</span></li>
-    <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Disadvantages: More complex model setup, calibration. Source concentration / mass flux input data often need to develop externally outside the model. Only a beta version available now with no document. Complete version likely not available until Fall 2022.&nbsp;</span></li>
+    <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Disadvantages: More complex model setup, calibration. Source concentration / mass flux input data often need to develop externally outside the model. Only a beta version available now with no document. Complete version likely not available until Fall 2023.&nbsp;</span></li>
 </ul>
 
 <style>
@@ -40,7 +40,7 @@ figcaption {
 </div>
 
 <div class="col-md-4" style = "text-align: center;">
-<a href="https://serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-201426/(language)/eng-US" target="_blank">
+<a href="https://serdp-estcp.org/projects/details/b4c68c7b-a43c-49e8-88be-7521863e2792" target="_blank">
 <figure>
   <img src="06_Matrix/FIG/Tool6c_fig2.png" width= 468 height=291 class="center">
   <figcaption>Model 2</figcaption>
@@ -49,7 +49,7 @@ figcaption {
 </div>
 
 <div class="col-md-4" style = "text-align: center;">
-<a href="https://serdp-estcp.org/Tools-and-Training/Environmental-Restoration/Groundwater-Plume-Treatment/Matrix-Diffusion-Tool-Kit" target="_blank">
+<a href="https://serdp-estcp.org/toolsandtraining/details/3982d464-3c0f-41fc-9e33-ff1b8d6352f4/matrix-diffusion-tool-kit" target="_blank">
 <figure>
   <img src="06_Matrix/FIG/Tool6c_fig3.png" width= 468 height=421 class="center">
   <figcaption>Model 3</figcaption>
@@ -62,7 +62,7 @@ figcaption {
 <div class="col-md-12" style = "text-align: justify;">
 
 <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:16px;line-height:107%;font-family:"Arial",sans-serif;'>The other five models have different strengths and applicability.&nbsp;</span></p>
-<ul style="list-style-type: undefined;margin-left:0in;">
+<ul>
     <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Model 4 (ESTCP Matrix Diffusion Toolkit) in Table 1 is a free ESTCP spreadsheet tool with two different matrix diffusion models are applicable to sites where a plume is in contact with a low-k aquitard overlying or underlying the plume. The &ldquo;Square Root Model&rdquo; in this toolkit is relatively easy to run.</span></li>
     <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Models 5, 6, and 7 in Table 1 are all &ldquo;fixes&rdquo; or &ldquo;hacks&rdquo; to use existing MODFlOW/MT3D type finite differences so that they can more accurately account for matrix diffusion. As described above, current finite difference groundwater transport models can have problems modeling matrix diffusion unless relatively thin vertical layers are used. Note that Model 3 (MODFLOW with the Matrix Diffusion Transport Package (MDT)) will likely supersede Models 5, 6, and 7 when it is completed in the Fall of 2022.</span></li>
     <li><span style='line-height:107%;font-family:"Arial",sans-serif;font-size:16px;'>Model 8 is a note on one of the first models that approximated matrix diffusion effects, the original REMChlor model. It has now been superseded by Model 2, REMChlor-MD.</span></li>
@@ -161,7 +161,7 @@ figcaption {
   <p class=MsoNormal><b><span style='color:white;mso-themecolor:background1'>2.
   ESTCP REMChlor-MD Model<br>
   </span></b><span style='color:black;mso-color-alt:windowtext'><a
-  href="https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER-201426" target="_blank"><b><span
+  href="https://serdp-estcp.org/projects/details/b4c68c7b-a43c-49e8-88be-7521863e2792" target="_blank"><b><span
   style='color:yellow'>(ESTCP Project ER-201426)</span></b></a></span><b><span
   style='color:yellow'> <br>
   (Falta et al., 2018; Farhat et al., 2018)</span></b><span style='color:white;
@@ -213,7 +213,7 @@ figcaption {
   <p class=MsoNormal><b><span style='color:white;mso-themecolor:background1'>3.
   MODFLOW with Matrix Diffusion Transport (MDT) Package <br>
   </span></b><span style='color:black;mso-color-alt:windowtext'><a
-  href="https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated-Groundwater/Persistent-Contamination/ER19-5028" target="_blank"><b><span
+  href="https://serdp-estcp.org/projects/details/5e8f8ffc-2804-4dae-b0c1-f958faba8db5" target="_blank"><b><span
   style='color:yellow'>(ESTCP ER-19-5028)</span></b></a></span><span
   style='color:white;mso-themecolor:background1'><o:p></o:p></span></p>
   <p class=MsoNormal><b><span style='color:white;mso-themecolor:background1'>&nbsp;</span></b><span
@@ -277,7 +277,7 @@ figcaption {
   mso-themecolor:background1'>4. ESCTP Matrix Diffusion Toolkit <o:p></o:p></span></b></p>
   <p class=MsoNormal style='margin-bottom:0in'><span style='color:black;
   mso-color-alt:windowtext'><a
-  href="https://www.serdp-estcp.org/Tools-and-Training/Environmental-Restoration/Groundwater-Plume-Treatment/Matrix-Diffusion-Tool-Kit" target="_blank"><b><span
+  href="https://serdp-estcp.org/toolsandtraining/details/3982d464-3c0f-41fc-9e33-ff1b8d6352f4/matrix-diffusion-tool-kit" target="_blank"><b><span
   style='color:yellow'>(Farhat et al., 2012)</span></b></a></span><span
   style='color:white;mso-themecolor:background1'><o:p></o:p></span></p>
   </td>

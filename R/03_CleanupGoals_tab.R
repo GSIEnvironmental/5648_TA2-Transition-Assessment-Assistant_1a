@@ -85,7 +85,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                                         actionButton(ns("help5"), HTML("?"), style = button_style2))),
                                         br(),
                                         fluidRow(column(6, align = "right", 
-                                                        HTML("Concentration of COC Before Source Removed (ug/L):")),
+                                                        HTML("Concentration of COC Before Source Removed at Monitoring Well (ug/L):")),
                                                  column(4, align = "center",
                                                         numericInput(ns("Concentration"), NULL, value = 10000, min = 0, step = 0.01)), #before 1,000
                                                  column(2, align = "left",
@@ -719,7 +719,8 @@ CleanupGoals_tabServer <- function(id,nav) {
         
         cd_1 <- data.frame(time = c(0,round((results_list[c(4:6,8)]),1)),
                            Concentration=c(input$Concentration,
-                                           (results_list[c(1:3,7)])))
+                                           (results_list[c(1:3,7)])),
+                           text = c('Initial','1 OoM','2 OoM','3 OoM','Target Clean-up Level'))
         cd_1_p10 <- data.frame(time = c(0,round((P10_list[c(4:6,8)]),1)),
                                Concentration=c(input$Concentration,
                                                (P10_list[c(1:3,7)])))
@@ -762,32 +763,36 @@ CleanupGoals_tabServer <- function(id,nav) {
         }else{
           shapeindex = "spline"
         }
+
         p <-plot_ly()%>%
           add_trace(data = cd_1, x= ~time+input$Year_Removed,
                     y = ~Concentration ,
                     name = 'Mean',
                     type = "scatter", line = list(shape = shapeindex,color='rgb(31,150,180)'),
                     mode = 'lines+markers',
-                    hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration: %{y} ug/L<br>')
+                    text = ~text,
+                    hovertemplate = paste('%{text}','<br>Year: %{x:.0f}', '<br>Concentration: %{y} ug/L<br>')
           )
         if (nrow(results())>=700){
           p<-p%>%
             add_trace(data = cd_1, x= ~p90range+input$Year_Removed,#90%
                     y = ~Concentration , 
-                    name = 'CI 90%',
+                    name = 'Confidence Interval 90%',
                     type = "scatter", line = list(shape = shapeindex,color='rgba(0,100,80,1)'),
                     mode = 'lines',
-                    hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration 90th %: %{y} ug/L<br>')
+                    text = ~text,
+                    hovertemplate = paste('%{text}','<br>Year: %{x:.0f}', '<br>Concentration 90th %: %{y} ug/L<br>')
           )%>%
             add_trace(data = cd_1, x= ~p10range+input$Year_Removed,#10%
                       y = ~Concentration , 
-                      name = 'CI 10%',
+                      name = 'Confidence Interval 10%',
                       type = "scatter", #line = list(shape = "spline",color='rgb(31,119,180)'),
                       mode = 'lines',
+                      text = ~text,
                       fill='tonexty',
                       fillcolor = 'rgba(0,100,80,0.2)',
                       line = list(shape = shapeindex,color='rgba(0,100,80,1)'),
-                      hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration 10th %: %{y} ug/L<br>')
+                      hovertemplate = paste('%{text}','<br>Year: %{x:.0f}', '<br>Concentration 10th %: %{y} ug/L<br>')
             )
         }
           p<-p%>%
@@ -807,7 +812,7 @@ CleanupGoals_tabServer <- function(id,nav) {
           #          mode = 'lines+markers')  %>%
           #add_trace(data = cd_2, x= ~date, y = ~results, color = ~Analyte_Units, type = "scatter", mode = 'lines+markers',
           #          symbol = ~I(fill), yaxis = "y2") %>%
-          plotly::layout(legend = list(orientation = 'h'),
+          plotly::layout(legend = list(orientation = 'h', y=-0.15),
                  shapes = list(hline(results_list[7])),
             xaxis = list(title="Year",
                          automargin = T,

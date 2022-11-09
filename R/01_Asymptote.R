@@ -412,9 +412,9 @@ AsymptoteServer <- function(id, data_input, nav) {
         results <- asy_results()
         
         cd <- data.frame(LOE = c("1. Are the two slopes for the two periods significantly different?",
-                                 "2. Is the rate for period 2 significantly different then 0?",
+                                 "2. Is the rate for period 2 significantly different than 0?",
                                  "3. Is the rate of the first period more than two times the second rate?",
-                                 "4. Is the concentration difference of the last points on the regression lines shown in the graph greater than one order of magnitude?",
+                                 "4. Is the the absolute difference of last points on each regression line is greater than 10?",
                                  "5. Is the period 2 rate less than 0.0693 per year (10 year half-life)?"),
                          Condition = 1:5)
         

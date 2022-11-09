@@ -20,13 +20,26 @@ sen_trend <- function(df_series){
 #----- INPUT
 # df_series: averaged/geomean data frame with columns 'Concentration' and 'Date'
 # Notes: Need at least 2 samples to run (more are recommended)
-sen_trend_distance <- function(df_series){
+sen_trend_distance <- function(df_series,COC){
   # Convert Date to numeric
-  Distance <- df_series$Distance
-  Concentration <- log10(df_series$Concentration)
-  
-  # Median based Linear Model
-  sen_lm <- mblm(Concentration ~ Distance)
+
+  count =1
+  for (i in unique(df_series$State)){
+    df_seriesA <-df_series%>%filter(COC%in%COC&State==i)
+    Distance <- df_seriesA$Distance
+    Concentration <- log10(df_seriesA$Concentration)
+    
+    # Median based Linear Model
+    
+    result <- mblm(Concentration ~ Distance)
+    
+    if (count ==1){
+      sen_lm <-result
+      count =2
+    }else{
+      sen_lm<-list(sen_lm,result)
+    }
+  }
   
   return(sen_lm)
 } # end sen_trend_distance

@@ -16,8 +16,8 @@ data_long <- function(d){
     }
       cd <- cd %>%
         select(where(~!all(is.na(.x)))) %>% # removing columns with no data
-        filter(!if_all(c(-"Event", -"Date", -"COC", -"Units"), ~is.na(.))) %>% #removing events with no concentration data
-        pivot_longer(cols = c(-"Event", -"Date", -"COC", -"Units"),
+        filter(!if_all(c(-"Event", -"Date", -"COC", -"Units",-"State"), ~is.na(.))) %>% #removing events with no concentration data
+        pivot_longer(cols = c(-"Event", -"Date", -"COC", -"Units",-"State"),
                      names_to = "WellID", values_to = "Concentration") %>%
         filter(!is.na(Concentration))
   

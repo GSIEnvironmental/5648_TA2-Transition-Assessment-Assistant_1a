@@ -82,6 +82,7 @@ ForecastResults<-function(df,Conc_goal=NULL,Conc_site){
   Result_table = list('Median_list' = Median_list,
                       'Low_list' = Low_list,
                       'High_list' = High_list)
+  
   return(Result_table)
 }
 

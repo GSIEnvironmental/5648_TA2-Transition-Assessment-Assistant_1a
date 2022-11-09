@@ -11,6 +11,7 @@
 
 Rem_Perf_fig<-function(df,linear_df,name,min_num,max_num,Conc_goal=NULL){
   
+  
   if (max_num==10000000){
     label_tx =c('0.1','1','10','100','1,000','10,000','100,000','1,000,000','10,000,000')
   }else{
@@ -50,11 +51,11 @@ Rem_Perf_fig<-function(df,linear_df,name,min_num,max_num,Conc_goal=NULL){
               size = 1,
               color='grey',
               show.legend = FALSE)+
-    geom_text(data =linear_df%>%filter(row_number() %% 2 == 0),
-              aes(x = Before,y = After,label = Label),
-              angle = 45,
-              hjust = 0,
-              size = 6)+
+    # geom_text(data =linear_df%>%filter(row_number() %% 2 == 0),
+    #           aes(x = Before,y = After,label = Label),
+    #           angle = 45,
+    #           hjust = 0,
+    #           size = 6)+
     scale_x_continuous(trans='log10',
                        limits = c(min_num,max_num),
                        # tickvals=tval,
@@ -71,7 +72,7 @@ Rem_Perf_fig<-function(df,linear_df,name,min_num,max_num,Conc_goal=NULL){
          y = 'Maximum Concentration After Treatment (ug/L)', 
          title = paste0("Remediation Performance: ",name,sep=''))+
     theme(legend.title = element_blank(), 
-          legend.position = c(0.2,0.85), 
+          legend.position = "bottom",# c(0.2,0.85), 
           legend.box = "horizontal",
           legend.text = element_text(color="black", size=12, hjust = 0.5), 
           legend.spacing.y = unit(0, "char"),
@@ -84,8 +85,27 @@ Rem_Perf_fig<-function(df,linear_df,name,min_num,max_num,Conc_goal=NULL){
     coord_cartesian(clip="off")
   
   p
+  label_df<-linear_df%>%filter(Before<1000000)
   # convert to plotly
-  #p<-ggplotly(p)
-
-  return(p)
+  p2<-ggplotly(p)
+  p2<-p2%>%layout(legend = list(orientation = 'h',title ='',y=-0.25),
+                  xaxis=list(tickangle=45))%>%
+    add_annotations(x = log10(label_df$Before),
+                    y = log10(label_df$After),
+                    text = label_df$Label,
+                    xref = "x",
+                    yref = "y",
+                    showarrow = TRUE,
+                    arrowhead = 4,
+                    arrowsize = .5,
+                    textangle=-35,
+                    #ax = 20,
+                    #ay = -40,
+                    # Styling annotations' text:
+                    font = list(color = 'black',
+                                size = 14))
+    
+  p2
+ 
+  return(p2)
 }

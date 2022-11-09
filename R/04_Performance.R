@@ -102,7 +102,7 @@ PerformanceUI <- function(id, label = "04_Performance"){
                                       column(12,
                                              fluidRow(column(8,# Overall Results
                                                              HTML("<h2><b>1. Remediation Chart</b></h2>"),
-                                                             plotOutput(ns('ts_plot1'), height = "800px")
+                                                             plotlyOutput(ns('ts_plot1'), height = "800px")
                                                              #HTML("<hr class='featurette-divider'>"),
                                                              #HTML("<h2><b>Overall Results</b></h2>"),
                                                              #gt_output(ns("rates_table"))
@@ -233,7 +233,7 @@ PerformanceServer <- function(id) {
         fig_tool4$Rem_Perf_fig_vis <-Rem_Perf_fig_vis
       })
       
-      output$ts_plot1 <- renderPlot({
+      output$ts_plot1 <- renderPlotly({
         validate(need(fig_tool4,FALSE))
         fig_tool4$Rem_Perf_fig_vis
         
@@ -254,7 +254,10 @@ PerformanceServer <- function(id) {
       })
       
       # Attenuation Rates Table -------------------------
-      observeEvent(filtered_table(),{
+      observeEvent({filtered_table()
+                   input$Conc_goal
+                   input$Conc_site},
+                   {
         
         validate(need(filtered_table(),FALSE))
         
@@ -263,11 +266,11 @@ PerformanceServer <- function(id) {
           assign(nam, (filtered_table()[[var]]))
         }
         
-        if(!'All Chlorinated Solvents'%in%input$COC&length(input$COC)==1|input$select_group_type=='B'){
-          Conc_goal = input$Conc_goal
-        }else{
-          Conc_goal = NULL
-        }
+        # if(!'All Chlorinated Solvents'%in%input$COC&length(input$COC)==1|input$select_group_type=='B'){
+        Conc_goal = input$Conc_goal
+        # }else{
+        #   Conc_goal = NULL
+        # }
         
         Conc_site = input$Conc_site
         

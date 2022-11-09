@@ -176,7 +176,6 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       # RV: Concentration and Time Data -----------
       d_conc <- reactiveVal(data_long(temp_data))
-      
       observeEvent(data_input$d_conc(),{
         d_conc(data_input$d_conc())
         #browser()
@@ -267,19 +266,20 @@ PlumeZoneServer <- function(id,data_input,nav) {
           df_MW <- d_mer() %>%
             filter(WellID %in% input$select_mw,
                    Date >= input$date_range[1],
-                   Date <= input$date_range[2]) 
-        
+                   Date <= input$date_range[2],
+                   COC %in% input$select_COC) 
+       
         # Apply Selected Avg. Method
         if (ave_switch == 'Mean'){
-          df_MW <- df_MW %>% group_by(WellID, COC) %>%
+          df_MW <- df_MW %>% group_by(WellID, COC,State) %>%
             summarise(Concentration = mean(Concentration, na.rm=TRUE),
                       Distance = mean(`Distance from Source (m)`,na.rm=TRUE))
         }
         
         if (ave_switch == 'Geomean'){
-          df_MW <- df_MW %>% group_by(WellID, COC) %>%
-            summarise(Concentration = exp(mean(log(Concentration), na.rm=TRUE)),
-                      Distance = exp(mean(log(`Distance from Source (m)`),na.rm=TRUE)))
+          df_MW <- df_MW %>% group_by(WellID, COC,State) %>%
+            summarise(Concentration = exp(mean(log10(Concentration), na.rm=TRUE)),
+                      Distance = exp(mean(log10(`Distance from Source (m)`),na.rm=TRUE)))
         }
         
         # # Add Period if breakpoint if available 
@@ -287,7 +287,15 @@ PlumeZoneServer <- function(id,data_input,nav) {
         #   df_MW <- df_MW %>%
         #     mutate(period = ifelse(Date <= bp()$x, "Period 1", "Period 2"))
         # }
-          
+        
+          # assign color
+          colpalette= brewer.pal(n = 8, name = "Dark2")
+          count = 1
+          df_MW$color <- colpalette[1]
+          for (j in unique(df_MW$State)){
+            df_MW$color = ifelse(df_MW$State==j,colpalette[count],df_MW$color)
+            count = count+1
+          }
         
         df(df_MW)
       }) # end df()
@@ -298,7 +306,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       observe({
         req(length(df()$Concentration) > 2)
-        sen_lm(sen_trend_distance(df()))
+        
+        sen_lm(sen_trend_distance(df(),input$select_COC))
       })
       
       # ## Render Text ------------------------
@@ -332,49 +341,48 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(df(),
             sen_lm())
         
+        
         # generate plots
         # create y axis as log
         tval <- sort(as.vector(sapply(seq(1,9), 
                                       function(x) 
-                                        x*(seq(floor(log(min(input$Conc_goal,min(df()$Concentration,na.rm=TRUE)))),
-                                               ceiling(log(max(df()$Concentration,na.rm=TRUE))))))))#generates a sequence of numbers in logarithmic divisions
+                                        x*(seq(floor(log10(min(input$Conc_goal,min(df()$Concentration,na.rm=TRUE)))),
+                                               ceiling(log10(max(df()$Concentration,na.rm=TRUE))))))))#generates a sequence of numbers in logarithmic divisions
         
         ttxt <- rep(" ",length(tval))  # no label at most of the ticks
         ttxt[seq(1,length(tval),9)] <- as.character(tval)[seq(1,length(tval),9)] # every 9th tick is labelled
         
-        
         # estimate the intercept at concentration goal
-        Cthreshold = exp(as.numeric(sen_lm()$coefficients[1])+as.numeric(sen_lm()$coefficients[2])*Distance_pump)
+        Cthreshold = exp(as.numeric(sen_lm()[[1]]$coefficients[[1]])+as.numeric(sen_lm()[[1]]$coefficients[2])*input$Lsource)
         
         C_goal = input$Conc_goal
         
-        Length = -log(C_goal/Cthreshold)/abs(as.numeric(sen_lm()$coefficients[2])) + input$Lsource
+        Length = -log10(C_goal/Cthreshold)/abs(as.numeric(sen_lm()[[1]]$coefficients[2])) + input$Lsource
         # convert concentration from natural log to raw
-        c_raw <- sort(exp(c(predict(sen_lm(),data.frame(Distance = 0)),
-                            fitted(sen_lm()),
-                            predict(sen_lm(),data.frame(Distance = input$Lsource)),
-                            predict(sen_lm(),data.frame(Distance = input$Lsource*2.9)),
-                            log(C_goal))))
-        
+        c_raw <- sort(exp(c(predict(sen_lm()[[1]],data.frame(Distance = 0)),
+                            fitted(sen_lm()[[1]]),
+                            predict(sen_lm()[[1]],data.frame(Distance = input$Lsource)),
+                            predict(sen_lm()[[1]],data.frame(Distance = input$Lsource*2.9)),
+                            log10(C_goal))))
         p <- plot_ly(source = 'ts_selected')%>%
-          add_segments(y = log(input$Conc_goal), yend = log(input$Conc_goal), 
+          add_segments(y = log10(input$Conc_goal), yend = log10(input$Conc_goal), 
                        x = 0, xend = input$Lsource *2.9,#max(df()$Distance,na.rm = TRUE)*1.1, 
                        line = list(dash = "dash",color='black'), showlegend=FALSE)%>%
-          add_segments(y = log(min(c_raw))-0.5, yend = max(sen_lm()$model$Concentration)+1, 
+          add_segments(y = min(c_raw)-0.5, yend = max(sen_lm()[[1]]$model$Concentration)+1, 
                        x = input$Lsource, xend = input$Lsource,#max(df()$Distance,na.rm = TRUE)*1.1, 
                        line = list(dash = "dash",color='red'), showlegend=FALSE)%>%
-          add_segments(y = log(min(c_raw))-0.5, yend = max(sen_lm()$model$Concentration)+1, 
+          add_segments(y = min(c_raw)-0.5, yend = max(sen_lm()[[1]]$model$Concentration)+1, 
                        x = input$Ltot+input$Lsource, xend = input$Ltot+input$Lsource,#max(df()$Distance,na.rm = TRUE)*1.1, 
                        line = list(dash = "dash",color='purple'), showlegend=FALSE)%>%
           add_trace(x= c(0,0),
-                    y = c(log(min(c_raw))-0.5, max(sen_lm()$model$Concentration)+1) , 
+                    y = c(min(c_raw)-0.5, max(sen_lm()[[1]]$model$Concentration)+1) , 
                     name = 'Start Line',
                     type = "scatter", line = list(shape = 'linear',color='rgba(255, 0, 0, 0.4)'),
                     mode = 'lines',
                     hovertemplate = 'Source'
           )%>%
           add_trace(x= c(input$Lsource,input$Lsource),
-                    y = c(log(min(c_raw))-0.5, max(sen_lm()$model$Concentration)+1) , 
+                    y = c(min(c_raw)-0.5, max(sen_lm()[[1]]$model$Concentration)+1) , 
                     name = ' ',
                     type = "scatter", line = list(shape = 'linear',color='rgba(255, 0, 0, 0.4)'),
                     mode = 'lines',
@@ -383,7 +391,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
                     hovertemplate = paste('<br>Pumping Well <br> Distance: %{x:.0f} m')
           )%>%
           add_trace(x= c(input$Ltot+input$Lsource,input$Ltot+input$Lsource),#10%
-                    y = c(log(min(c_raw))-0.5, max(sen_lm()$model$Concentration)+1) , 
+                    y = c(min(c_raw)-0.5, max(sen_lm()[[1]]$model$Concentration)+1) , 
                     name = ' ',
                     type = "scatter", #line = list(shape = "spline",color='rgb(31,119,180)'),
                     mode = 'lines',
@@ -392,29 +400,52 @@ PlumeZoneServer <- function(id,data_input,nav) {
                     line = list(shape = 'linear',color='rgba(185,103,239,0.8)'),
                     hovertemplate =  paste('<br>Point of Compliance <br> Distance: %{x} m')
                     #hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration 10th %: %{y} ug/L<br>')
-          )%>%
-          add_trace(data = df(),
+          )
+        
+        for (j in unique(df()$State)){
+          dd = df()%>%filter(State==j)
+          p<-p%>%add_trace(data = dd,
                     x= ~Distance,
-                    y = ~log(Concentration) ,
-                    name = ' ',
+                    y = ~log10(Concentration) ,
+                    name = ~State,#' ',
                     type = "scatter",
                     mode = 'markers',
                     text = ~Concentration,
-                    marker = marker_plotly(color='rgb(31,150,180)'),
+                    marker = marker_plotly(color=unique(dd$color)),#'rgb(31,150,180)'),
                     hovertemplate = paste('<br>Distance: %{x} m', '<br>Concentration: %{text:.2f} ug/L<br>'))
-
+        
+        }
+        
         p <- p%>%
-          add_lines(data = sen_lm(),
-                    x = sort(c(0, sen_lm()$model$Distance,input$Lsource,input$Lsource*2.9,Length),decreasing =TRUE), 
-                    y = sort(c(predict(sen_lm(),data.frame(Distance = 0)),
-                          fitted(sen_lm()),
-                          predict(sen_lm(),data.frame(Distance = input$Lsource)),
-                          predict(sen_lm(),data.frame(Distance = input$Lsource*2.9)),log(C_goal))),
+          add_lines(data = sen_lm()[[1]],
+                    x = sort(c(0, sen_lm()[[1]]$model$Distance,input$Lsource,input$Lsource*2.9,Length),decreasing =TRUE), 
+                    y = sort(c(predict(sen_lm()[[1]],data.frame(Distance = 0)),
+                          fitted(sen_lm()[[1]]),
+                          predict(sen_lm()[[1]],data.frame(Distance = input$Lsource)),
+                          predict(sen_lm()[[1]],data.frame(Distance = input$Lsource*2.9)),log10(C_goal))),
                     text = c_raw,
                     line = list(color = 'rgb(31,150,180)',shape='spline'),
-                    name = "Regression Line",
-                    hovertemplate = paste('<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ug/L<br>'))
-
+                    name = "Pre Remediation",
+                    hovertemplate = paste('<br>Pre Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ug/L<br>'))
+        
+        if (length(sen_lm())>1){
+          c_raw2 <- sort(exp(c(predict(sen_lm()[[2]],data.frame(Distance = 0)),
+                              fitted(sen_lm()[[2]]),
+                              predict(sen_lm()[[2]],data.frame(Distance = input$Lsource)),
+                              predict(sen_lm()[[2]],data.frame(Distance = input$Lsource*2.9)),
+                              log10(C_goal))))
+          p <- p%>%
+            add_lines(data = sen_lm()[[2]],
+                      x = sort(c(0, sen_lm()[[2]]$model$Distance,input$Lsource,input$Lsource*2.9,Length),decreasing =TRUE), 
+                      y = sort(c(predict(sen_lm()[[2]],data.frame(Distance = 0)),
+                                 fitted(sen_lm()[[2]]),
+                                 predict(sen_lm()[[2]],data.frame(Distance = input$Lsource)),
+                                 predict(sen_lm()[[2]],data.frame(Distance = input$Lsource*2.9)),log10(C_goal))),
+                      text = c_raw2,
+                      line = list(color = 'rgb(31,150,180)',shape='spline'),
+                      name = "Post Remediation",
+                      hovertemplate = paste('<br>Post Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ug/L<br>'))
+        }
         #browser()
         # format the figure
         p <- p %>%
@@ -428,14 +459,14 @@ PlumeZoneServer <- function(id,data_input,nav) {
           #              x = input$Ltot+input$Lsource, xend = input$Ltot+input$Lsource,#max(df()$Distance,na.rm = TRUE)*1.1,
           #              line = list(dash = "dash",color='purple'), showlegend=FALSE)%>%
           add_annotations(x = mean(df()$Distance*1.2,na.rm = TRUE),
-                          y = log(input$Conc_goal*1.3),
+                          y = log10(input$Conc_goal*1.3),
                           text = paste0("Concentration Goal (",input$Conc_goal," ug/L)"),
                           xref = "x",
                           yref = "y",
                           font=list(size=15, color="black"),
                           showarrow=F)%>%
           add_annotations(x = input$Lsource,
-                          y = max(sen_lm()$model$Concentration),
+                          y = max(sen_lm()[[1]]$model$Concentration),
                           text = paste0("Pumping Well <br> (active)"),
                           xref = "x",
                           yref = "y",
@@ -443,7 +474,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
                           font=list(size=15, color="red"),
                           showarrow=T)%>%
           add_annotations(x = input$Ltot+input$Lsource,
-                          y = max(sen_lm()$model$Concentration),
+                          y = max(sen_lm()[[1]]$model$Concentration),
                           text = paste0("Point of<br>Compilance"),
                           xref = "x",
                           yref = "y",
@@ -451,7 +482,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
                           font=list(size=15, color="purple"),
                           showarrow=T)%>%
           add_annotations(x = input$Lsource/2,
-                          y = log(min(c_raw)),
+                          y = log10(min(c_raw)),
                           text = paste0("CONTAINMENT ZONE"),
                           xref = "x",
                           yref = "y",
@@ -459,7 +490,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
                           font=list(size=15, color="red"),
                           showarrow=F)%>%
           add_annotations(x = (input$Ltot+input$Lsource*2)/2,
-                          y = log(min(c_raw)),
+                          y = log10(min(c_raw)),
                           text = paste0("PLUME ASSIMILATIVE <br> CAPACITY ZONE (L<sub>total</sub>)"),
                           xref = "x",
                           yref = "y",
@@ -476,7 +507,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
                          mirror = "ticks",
                          range = c(0,input$Lsource *2.9)),
             yaxis = list(title = "Ln [COC Concentration (ug/L)]",
-                         range=c(log(min(c_raw))-0.5, yend = max(sen_lm()$model$Concentration)+1),
+                         range=c(log10(min(c_raw))-0.5, yend = max(sen_lm()[[1]]$model$Concentration)+1),
                          linecolor = toRGB("black"),
                          linewidth = 2,
                          showline=T,
@@ -498,11 +529,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
             sen_lm())
         
         Distance_pump = input$Lsource
-        Cthreshold = exp(as.numeric(sen_lm()$coefficients[1])+as.numeric(sen_lm()$coefficients[2])*Distance_pump)
+        Cthreshold = exp(as.numeric(sen_lm()[[1]]$coefficients[1])+as.numeric(sen_lm()[[1]]$coefficients[2])*Distance_pump)
         
         C_goal = input$Conc_goal
         
-        Length = -log(C_goal/Cthreshold)/abs(as.numeric(sen_lm()$coefficients[2]))
+        Length = -log10(C_goal/Cthreshold)/abs(as.numeric(sen_lm()[[1]]$coefficients[2]))
         
         Ltotal = input$Ltot
         
