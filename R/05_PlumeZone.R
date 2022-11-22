@@ -72,7 +72,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                            fluidRow(align = "center",
                                                                     radioButtons(ns("group_method"), label = NULL,
                                                                  choices = c("Geomean", "Mean"),
-                                                                 selected = "Geomean",
+                                                                 selected = "Mean",
                                                                  inline = T)),
                                                            fluidRow(align = "center",
                                                                     dateRangeInput(ns("date_range"), label = NULL,
@@ -95,7 +95,20 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                            actionButton(ns("help3"), HTML("?"), style = button_style2))
                                                     ), br(),
                                            fluidRow(column(10,
-                                                           HTML("<h4><b>Step 8.</b> Choose COC.</h4>"),
+                                                           HTML("<h4><b>Step 8.</b> Select confidence interval for one sided test (max 0.99).</h4>"),
+                                                           fluidRow(align = "center",
+                                                                    column(6, align = "right", 
+                                                                           numericInput(ns("CIvalue"), label = NULL,
+                                                                                        value = 0.8, min = 0, step = 0.01,
+                                                                                        width = "80px")
+                                                                    ),
+                                                                    column(6, align = "left", 
+                                                                           HTML("<h4> </h4>")))),
+                                                    column(2, align = "left", style = "padding:10px;",
+                                                           actionButton(ns("help3"), HTML("?"), style = button_style2))
+                                           ), br(),
+                                           fluidRow(column(10,
+                                                           HTML("<h4><b>Step 9.</b> Choose COC.</h4>"),
                                                            fluidRow(align = "center",
                                                                     column(12, align = "right", 
                                                                            pickerInput(ns("select_COC"), label = NULL,
@@ -235,7 +248,9 @@ PlumeZoneServer <- function(id,data_input,nav) {
           need(data_input$d_conc(), "Please enter data into Data Input tab (Step 1)."))
         
         tbl_name <- data_input$d_conc()%>%
-          rename(`Date (Month/Day/Year)`=Date)
+          rename(`Date (Month/Day/Year)`=Date)%>%
+          filter(WellID%in%input$select_mw)%>%
+          filter(COC%in%input$select_COC)
         
         rhandsontable(tbl_name, readOnly = T, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE)
@@ -245,7 +260,15 @@ PlumeZoneServer <- function(id,data_input,nav) {
         validate(
           need(data_input$d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
         
-        rhandsontable(data_input$d_loc(), readOnly = T, rowHeaders = NULL, width = 1000, height = 600) %>%
+        tbl_name <- data_input$d_conc()%>%
+          rename(`Date (Month/Day/Year)`=Date)%>%
+          filter(WellID%in%input$select_mw)%>%
+          filter(COC%in%input$select_COC)
+       
+        loc_name<-data_input$d_loc()%>%
+          filter(`Monitoring Wells`%in%unique(tbl_name$WellID))
+        
+        rhandsontable(loc_name, readOnly = T, rowHeaders = NULL, width = 1000, height = 600) %>%
           hot_cols(columnSorting = TRUE)
 
       })
@@ -296,7 +319,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
             df_MW$color = ifelse(df_MW$State==j,colpalette[count],df_MW$color)
             count = count+1
           }
-        
+        #browser()
         df(df_MW)
       }) # end df()
       
@@ -307,7 +330,12 @@ PlumeZoneServer <- function(id,data_input,nav) {
       observe({
         req(length(df()$Concentration) > 2)
         
+        if(length(unique(df()$State))==1){
+        sen_lm(list(sen_trend_distance(df(),input$select_COC)))
+        }else{
         sen_lm(sen_trend_distance(df(),input$select_COC))
+        }
+        
       })
       
       # ## Render Text ------------------------
@@ -353,51 +381,55 @@ PlumeZoneServer <- function(id,data_input,nav) {
         ttxt[seq(1,length(tval),9)] <- as.character(tval)[seq(1,length(tval),9)] # every 9th tick is labelled
         
         # estimate the intercept at concentration goal
-        Cthreshold = exp(as.numeric(sen_lm()[[1]]$coefficients[[1]])+as.numeric(sen_lm()[[1]]$coefficients[2])*input$Lsource)
-        
         C_goal = input$Conc_goal
-        
+        Cthreshold = 10^(as.numeric(sen_lm()[[1]]$coefficients[[1]])+as.numeric(sen_lm()[[1]]$coefficients[2])*input$Lsource)
         Length = -log10(C_goal/Cthreshold)/abs(as.numeric(sen_lm()[[1]]$coefficients[2])) + input$Lsource
+
         # convert concentration from natural log to raw
-        c_raw <- sort(exp(c(predict(sen_lm()[[1]],data.frame(Distance = 0)),
+        c_raw <- sort(10^(c(predict(sen_lm()[[1]],data.frame(Distance = 0)),
                             fitted(sen_lm()[[1]]),
                             predict(sen_lm()[[1]],data.frame(Distance = input$Lsource)),
                             predict(sen_lm()[[1]],data.frame(Distance = input$Lsource*2.9)),
                             log10(C_goal))))
+        
+        pt_small <-log10(min(min(df()$Concentration,na.rm=TRUE),C_goal))
         p <- plot_ly(source = 'ts_selected')%>%
           add_segments(y = log10(input$Conc_goal), yend = log10(input$Conc_goal), 
                        x = 0, xend = input$Lsource *2.9,#max(df()$Distance,na.rm = TRUE)*1.1, 
                        line = list(dash = "dash",color='black'), showlegend=FALSE)%>%
-          add_segments(y = min(c_raw)-0.5, yend = max(sen_lm()[[1]]$model$Concentration)+1, 
+          add_segments(y = pt_small-2, yend = max(sen_lm()[[1]]$model$Concentration)+1, 
                        x = input$Lsource, xend = input$Lsource,#max(df()$Distance,na.rm = TRUE)*1.1, 
                        line = list(dash = "dash",color='red'), showlegend=FALSE)%>%
-          add_segments(y = min(c_raw)-0.5, yend = max(sen_lm()[[1]]$model$Concentration)+1, 
+          add_segments(y = pt_small-2, yend = max(sen_lm()[[1]]$model$Concentration)+1, 
                        x = input$Ltot+input$Lsource, xend = input$Ltot+input$Lsource,#max(df()$Distance,na.rm = TRUE)*1.1, 
                        line = list(dash = "dash",color='purple'), showlegend=FALSE)%>%
           add_trace(x= c(0,0),
-                    y = c(min(c_raw)-0.5, max(sen_lm()[[1]]$model$Concentration)+1) , 
-                    name = 'Start Line',
+                    y = c(pt_small-2, max(sen_lm()[[1]]$model$Concentration)+1) , 
+                    #name = 'Start Line',
                     type = "scatter", line = list(shape = 'linear',color='rgba(255, 0, 0, 0.4)'),
                     mode = 'lines',
-                    hovertemplate = 'Source'
+                    hovertemplate = 'Source',
+                    showlegend = F
           )%>%
           add_trace(x= c(input$Lsource,input$Lsource),
-                    y = c(min(c_raw)-0.5, max(sen_lm()[[1]]$model$Concentration)+1) , 
+                    y = c(pt_small-2, max(sen_lm()[[1]]$model$Concentration)+1) , 
                     name = ' ',
                     type = "scatter", line = list(shape = 'linear',color='rgba(255, 0, 0, 0.4)'),
                     mode = 'lines',
                     fill='tonexty',
                     fillcolor = 'rgba(255, 0, 0, 0.4)',
+                    showlegend = F,
                     hovertemplate = paste('<br>Pumping Well <br> Distance: %{x:.0f} m')
           )%>%
           add_trace(x= c(input$Ltot+input$Lsource,input$Ltot+input$Lsource),#10%
-                    y = c(min(c_raw)-0.5, max(sen_lm()[[1]]$model$Concentration)+1) , 
+                    y = c(pt_small-2, max(sen_lm()[[1]]$model$Concentration)+1) , 
                     name = ' ',
                     type = "scatter", #line = list(shape = "spline",color='rgb(31,119,180)'),
                     mode = 'lines',
                     fill='tonexty',
                     fillcolor = 'rgba(185,103,239,0.8)',
                     line = list(shape = 'linear',color='rgba(185,103,239,0.8)'),
+                    showlegend = F,
                     hovertemplate =  paste('<br>Point of Compliance <br> Distance: %{x} m')
                     #hovertemplate = paste('<br>Year: %{x:.0f}', '<br>Concentration 10th %: %{y} ug/L<br>')
           )
@@ -411,43 +443,103 @@ PlumeZoneServer <- function(id,data_input,nav) {
                     type = "scatter",
                     mode = 'markers',
                     text = ~Concentration,
-                    marker = marker_plotly(color=unique(dd$color)),#'rgb(31,150,180)'),
-                    hovertemplate = paste('<br>Distance: %{x} m', '<br>Concentration: %{text:.2f} ug/L<br>'))
+                    marker = marker_plotly(color=unique(dd$color)),
+                    hovertemplate = paste('<br>Distance: %{x} m',
+                                          '<br>Concentration: %{text:.2f} ug/L<br>'))
         
         }
         
-        p <- p%>%
-          add_lines(data = sen_lm()[[1]],
-                    x = sort(c(0, sen_lm()[[1]]$model$Distance,input$Lsource,input$Lsource*2.9,Length),decreasing =TRUE), 
-                    y = sort(c(predict(sen_lm()[[1]],data.frame(Distance = 0)),
-                          fitted(sen_lm()[[1]]),
-                          predict(sen_lm()[[1]],data.frame(Distance = input$Lsource)),
-                          predict(sen_lm()[[1]],data.frame(Distance = input$Lsource*2.9)),log10(C_goal))),
-                    text = c_raw,
-                    line = list(color = 'rgb(31,150,180)',shape='spline'),
-                    name = "Pre Remediation",
-                    hovertemplate = paste('<br>Pre Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ug/L<br>'))
         
-        if (length(sen_lm())>1){
-          c_raw2 <- sort(exp(c(predict(sen_lm()[[2]],data.frame(Distance = 0)),
-                              fitted(sen_lm()[[2]]),
-                              predict(sen_lm()[[2]],data.frame(Distance = input$Lsource)),
-                              predict(sen_lm()[[2]],data.frame(Distance = input$Lsource*2.9)),
-                              log10(C_goal))))
+        plot_df <-data.frame(x=c(0, 
+                                 sen_lm()[[1]]$model$Distance,
+                                 input$Lsource,
+                                 input$Lsource*2.9,
+                                 (log10(C_goal)-as.numeric(sen_lm()[[1]]$coefficients[1]))/as.numeric(sen_lm()[[1]]$coefficients[2])),
+                             y=c(predict(sen_lm()[[1]],data.frame(Distance = 0)),
+                                 fitted(sen_lm()[[1]]),
+                                 predict(sen_lm()[[1]],data.frame(Distance = input$Lsource)),
+                                 predict(sen_lm()[[1]],data.frame(Distance = input$Lsource*2.9)),log10(C_goal))
+                             )
+       plot_df<-plot_df%>%arrange(-x)
+       #browser()
+       p <- p%>%
+         add_lines(data = plot_df,
+                   x = ~x, 
+                   y = ~y,
+                   text = c_raw,
+                   line = list(color = 'rgb(31,150,180)',shape='spline'),
+                   name = paste0("Regression:",unique(df()$State)[1],"ediation"),
+                   hovertemplate = paste('<br>Pre Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ug/L<br>'))
+        
+       # add line for 80% confidence
+       p <- p%>%
+         add_lines(data = plot_df,
+                   x = ~x, 
+                   y = ~sen_lm()[[1]]$coefficients[1]+confint(sen_lm()[[1]],level=input$CIvalue)[[4]]*x,
+                   text = c_raw,
+                   line = list(color = 'rgb(31,150,180)',shape='spline',dash = 'dash'),
+                   name = paste0("Regression:",unique(df()$State)[1],"ediation with confidence"),
+                   hovertemplate = paste('<br>Pre Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ug/L<br>'))
+       
+       # add line for degradation
+       # p <- p%>%
+       #   add_lines(data = plot_df,
+       #             x = ~x, 
+       #             y = ~sen_lm()[[1]]$coefficients[1]-x*(0.2/365/60/60/24)/(input$gwv/100),
+       #             text = c_raw,
+       #             line = list(color = 'rgb(31,150,180)',shape='spline',dash = 'dot'),
+       #             name = "Regression: Pre Remediation Degradation Over Time",
+       #             hovertemplate = paste('<br>Pre Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ug/L<br>'))
+       # 
+       
+       
+       # p <- p%>%
+         #  add_lines(data = sen_lm()[[1]],
+         #            x = sort(c(0, sen_lm()[[1]]$model$Distance,input$Lsource,input$Lsource*2.9,Length),decreasing =TRUE), 
+         #            y = sort(c(predict(sen_lm()[[1]],data.frame(Distance = 0)),
+         #                  fitted(sen_lm()[[1]]),
+         #                  predict(sen_lm()[[1]],data.frame(Distance = input$Lsource)),
+         #                  predict(sen_lm()[[1]],data.frame(Distance = input$Lsource*2.9)),log10(C_goal))),
+         #            text = c_raw,
+         #            line = list(color = 'rgb(31,150,180)',shape='spline'),
+         #            name = "Pre Remediation",
+         #            hovertemplate = paste('<br>Pre Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ug/L<br>'))
+         # 
+        if (length(unique(df()$State))>1){
+          
+          plot_df2 <-data.frame(x=c(0, sen_lm()[[2]]$model$Distance,input$Lsource,input$Lsource*2.9,
+                                   (log10(C_goal)-as.numeric(sen_lm()[[2]]$coefficients[1]))/as.numeric(sen_lm()[[2]]$coefficients[2])),
+                               y=c(predict(sen_lm()[[2]],data.frame(Distance = 0)),
+                                   fitted(sen_lm()[[2]]),
+                                   predict(sen_lm()[[2]],data.frame(Distance = input$Lsource)),
+                                   predict(sen_lm()[[2]],data.frame(Distance = input$Lsource*2.9)),log10(C_goal)))
+          plot_df2<-plot_df2%>%arrange(-x)
+          
+          c_raw2 <- plot_df2$y
+          
           p <- p%>%
-            add_lines(data = sen_lm()[[2]],
-                      x = sort(c(0, sen_lm()[[2]]$model$Distance,input$Lsource,input$Lsource*2.9,Length),decreasing =TRUE), 
-                      y = sort(c(predict(sen_lm()[[2]],data.frame(Distance = 0)),
-                                 fitted(sen_lm()[[2]]),
-                                 predict(sen_lm()[[2]],data.frame(Distance = input$Lsource)),
-                                 predict(sen_lm()[[2]],data.frame(Distance = input$Lsource*2.9)),log10(C_goal))),
+            add_lines(data = plot_df2,
+                      x = ~x, 
+                      y = ~y,
                       text = c_raw2,
-                      line = list(color = 'rgb(31,150,180)',shape='spline'),
-                      name = "Post Remediation",
+                      line = list(color = unique(dd$color),shape='spline'),
+                      name = paste0("Regression:",unique(df()$State)[2],"ediation"),
                       hovertemplate = paste('<br>Post Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ug/L<br>'))
+          
+          # add line for 80% confidence
+          p <- p%>%
+            add_lines(data = plot_df2,
+                      x = ~x, 
+                      y = ~sen_lm()[[2]]$coefficients[1]+confint(sen_lm()[[2]],level=input$CIvalue)[[4]]*x,
+                      text = c_raw2,
+                      line = list(color = unique(dd$color),shape='spline',dash = 'dash'),
+                      name = paste0("Regression:",unique(df()$State)[2],"ediation with confidence"),
+                      hovertemplate = paste('<br>Pre Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ug/L<br>'))
+          
         }
         #browser()
         # format the figure
+      
         p <- p %>%
           # add_segments(y = log(input$Conc_goal), yend = log(input$Conc_goal),
           #              x = 0, xend = input$Lsource *2.9,#max(df()$Distance,na.rm = TRUE)*1.1,
@@ -506,8 +598,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
                          showline=T,
                          mirror = "ticks",
                          range = c(0,input$Lsource *2.9)),
-            yaxis = list(title = "Ln [COC Concentration (ug/L)]",
-                         range=c(log10(min(c_raw))-0.5, yend = max(sen_lm()[[1]]$model$Concentration)+1),
+            yaxis = list(title = "log10 [COC Concentration (ug/L)]",
+                         range=c(log10(min(df()$Concentration))-0.5, yend = max(sen_lm()[[1]]$model$Concentration)+1),
                          linecolor = toRGB("black"),
                          linewidth = 2,
                          showline=T,
@@ -515,7 +607,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
                          mirror = "ticks"
                          ), #type = "log",
             #tval = tval, ttxt = ttxt),
-            showlegend = FALSE,
+            showlegend = TRUE,
+            #legend = list(orientation = 'h',title ='',y=-0.25),
             margin = margin)
 
 
@@ -529,20 +622,33 @@ PlumeZoneServer <- function(id,data_input,nav) {
             sen_lm())
         
         Distance_pump = input$Lsource
-        Cthreshold = exp(as.numeric(sen_lm()[[1]]$coefficients[1])+as.numeric(sen_lm()[[1]]$coefficients[2])*Distance_pump)
-        
         C_goal = input$Conc_goal
-        
-        Length = -log10(C_goal/Cthreshold)/abs(as.numeric(sen_lm()[[1]]$coefficients[2]))
+
+        if (length(unique(df()$State))>1){
+          Cthreshold = 10^(as.numeric(sen_lm()[[2]]$coefficients[1])+as.numeric(sen_lm()[[2]]$coefficients[2])*Distance_pump) #conc at 850m
+          Length = log10(C_goal/Cthreshold)/(as.numeric(sen_lm()[[2]]$coefficients[2]))
+        }else{
+          Cthreshold = 10^(as.numeric(sen_lm()[[1]]$coefficients[1])+as.numeric(sen_lm()[[1]]$coefficients[2])*Distance_pump)
+          Length = -log10(C_goal/Cthreshold)/abs(as.numeric(sen_lm()[[1]]$coefficients[2]))
+        }
         
         Ltotal = input$Ltot
-        
-        if (Length<=Ltotal){
+      
+        if (Length<=Ltotal&Length>0){
+
           result =HTML(paste0('Estimated distance to reach concentration goal (',round(Length, digits = 0), ' m) is smaller than 
                               Plume Capacity Zone Length (', Ltotal, ' m), <font color="red"> Positive Line of Evidence for Transitioning to MNA. </font>'))
+        }else if(Length<=Ltotal&Length<0){
+          result =HTML(paste0('Concentration goal reach within the containment zone. Positive Line of Evidence for Transitioning to MNA. </font>'))
         }else{
-          result =HTML(paste0('Estimated distance to reach concentration goal (',round(Length, digits = 0), ' m) is greater than 
-                              Plume Capacity Zone Length (', Ltotal, ' m), <font color="red"> require further pumping.</font>'))
+          result =HTML(paste0('The apparent increasing trend in concentration vs. distance is observed during the post-remediation period.
+                              This trend could be caused by a variety of factors, including: 1) the plume has not yet reached steady state; 
+                              (2) treatment was implemented at one portion of the site (e.g., source area) but not across the whole site; 
+                              (3) there were recent changes to how the treatment system was operated.
+                              In these cases, it is not appropriate to try to project concentrations at the point of compliance using this post-remediation trend.
+                              It may be possible to use data from a portion of the plume to estimate the attenuation rate associated with that segment. 
+                              This could be used to transition portions of the site to MNA. 
+                              However, this approach would likely entail that plume migration in the remaining portions of the site would still need to be managed using approaches other than MNA.'))
         }
         
    

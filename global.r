@@ -37,7 +37,7 @@ library(shinycssloaders)
  library(leafem)
  library(deldir)
  library(rgeos)
- 
+ library(RColorBrewer)
  require(plotly)
  library(rsconnect)
  

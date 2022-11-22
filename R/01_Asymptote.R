@@ -46,7 +46,17 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                              #        actionButton(ns("help2"), HTML("?"), style = button_style2))
                              ), br(),
                     fluidRow(column(10,
-                                    HTML("<h4><b>Step 3.</b> Select method for combining data collected on the same day.</h4>"),
+                                    HTML("<h4><b>Step 3.</b> Choose COC.</h4>"),
+                                    fluidRow(align = "center",
+                                             column(12, align = "right", 
+                                                    pickerInput(ns("select_COC"), label = NULL,
+                                                                choices = c(),
+                                                                multiple = T,
+                                                                options = list(`live-search`=TRUE,
+                                                                               `none-selected-text` = "Select COCs")))))
+                             ), br(),
+                    fluidRow(column(10,
+                                    HTML("<h4><b>Step 4.</b> Select method for combining data collected on the same day.</h4>"),
                                     fluidRow(align = "center",
                                              radioButtons(ns("group_method"), label = NULL,
                                                           choices = c("Geomean", "Mean"),
@@ -56,7 +66,7 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                              #        actionButton(ns("help3"), HTML("?"), style = button_style2))
                              ), br(),
                     fluidRow(column(10,
-                                    HTML("<h4><b>Step 4.</b> Select the concentration goal.</h4>"),
+                                    HTML("<h4><b>Step 5.</b> Select the concentration goal.</h4>"),
                                     fluidRow(
                                       column(6, align = "right", 
                                              numericInput(ns("conc_goal"), label = NULL,
@@ -67,13 +77,13 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                              column(2, align = "left", style = "padding:10px;",
                                     actionButton(ns("help4"), HTML("?"), style = button_style2))), br(),
                     fluidRow(column(10,
-                                    HTML("<h4><b>Step 5.</b> Select date range for data.</h4>"),
+                                    HTML("<h4><b>Step 6.</b> Select date range for data.</h4>"),
                                     dateRangeInput(ns("date_range"), label = NULL,
                                                    start = "1900-01-01", end = Sys.Date())),
                              column(2, align = "left", style = "padding:10px;",
                                     actionButton(ns("help5"), HTML("?"), style = button_style2))),
                     fluidRow(column(10,
-                                    HTML("<h4><b>Step 6.</b> Select Confidence Inteval (max 0.99).</h4>"),
+                                    HTML("<h4><b>Step 7.</b> Select Confidence Inteval (max 0.99).</h4>"),
                                     fluidRow(
                                       column(6, align = "right", 
                                              numericInput(ns("CI_input"), label = NULL,
@@ -82,7 +92,7 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                              column(2, align = "left", style = "padding:10px;",
                                     actionButton(ns("help5"), HTML("?"), style = button_style2))), br(),
                     fluidRow(column(10,
-                                    HTML("<h4><b>Step 7.</b> Select breakpoint between two different time periods.</h4>"),
+                                    HTML("<h4><b>Step 8.</b> Select breakpoint between two different time periods.</h4>"),
                                     HTML("<p><i>Beakpoint is indicated on plot with a dotted line. To manually select a breakpoint click data point on plot.To deselect double click the figure where no data point.</i></p>")),
                              # column(2, align = "left", style = "padding:10px;",
                              #        actionButton(ns("help5"), HTML("?"), style = button_style2))
@@ -176,14 +186,16 @@ AsymptoteServer <- function(id, data_input, nav) {
           df_MW <- d_mer() %>%
             filter(WellID %in% input$select_mw,
                    Date >= input$date_range[1],
-                   Date <= input$date_range[2]) 
+                   Date <= input$date_range[2],
+                   COC%in%input$select_COC)
         }
         
         if(input$select_group_type == "groups"){
           df_MW <- d_mer() %>%
             filter(`Well Grouping` %in% input$select_mw,
                    Date >= input$date_range[1],
-                   Date <= input$date_range[2]) 
+                   Date <= input$date_range[2],
+                   COC%in%input$select_COC) 
         }
         
         # Apply Selected Avg. Method
@@ -316,6 +328,17 @@ AsymptoteServer <- function(id, data_input, nav) {
         })
       }) # end update well selection
       
+      # COC Selection Updates -----------------------
+      observe({
+        req(nav() == "1. Asymptote")
+        req(d_conc())
+        
+        choices <- sort(unique(d_conc()$COC))
+        
+        updatePickerInput(session, "select_COC", choices = choices)
+        
+      }) # end update well selection
+      
       p = plot_ly(source = 'ts_selected')
       
       # Plot 1 ------------------
@@ -388,6 +411,8 @@ AsymptoteServer <- function(id, data_input, nav) {
       output$LOE_Table <- render_gt({
         req(input$select_mw)
         # calculate binary segmentation
+        #browser()
+        validate(need(length(df()$Concentration)>1,paste0("The selected well/s have no time series data.")))
         fit_changepoint = cpt.mean(df()$Concentration,method='BinSeg',Q=1)
         # Return estimates
         fitcp_tbl = c(ints = param.est(fit_changepoint)$mean,

@@ -32,7 +32,17 @@ TrendUI <- function(id, label = "01_Trend"){
                                     #        actionButton(ns("help1"), HTML("?"), style = button_style2))
                                     ), br(),
                            fluidRow(column(10,
-                                           HTML("<h4><b>Step 2.</b> Select data type to analyze.</h4>"),
+                                           HTML("<h4><b>Step 2.</b> Choose COC.</h4>"),
+                                           fluidRow(align = "center",
+                                                    column(12, align = "right", 
+                                                           pickerInput(ns("select_COC"), label = NULL,
+                                                                       choices = c(),
+                                                                       multiple = T,
+                                                                       options = list(`live-search`=TRUE,
+                                                                                      `none-selected-text` = "Select COCs")))))
+                           ),br(),
+                           fluidRow(column(10,
+                                           HTML("<h4><b>Step 3.</b> Select data type to analyze.</h4>"),
                                            fluidRow(align = "center",
                                                     radioButtons(ns("type"), label = NULL,
                                                                  choices = c("Concentration", "Mass"),
@@ -40,7 +50,7 @@ TrendUI <- function(id, label = "01_Trend"){
                                                                  inline = T))),
                                     # column(2, align = "left", style = "padding:10px;",
                                     #        actionButton(ns("help3"), HTML("?"), style = button_style2))
-                                    ),
+                                    ), 
                            conditionalPanel(
                              condition = "input.type == 'Mass'", ns = ns,
                              fluidRow(column(10,
@@ -82,7 +92,7 @@ TrendUI <- function(id, label = "01_Trend"){
                                              actionButton(ns("help4"), HTML("?"), style = button_style2)))
                              ), # end conditional Panel
                            fluidRow(column(10,
-                                           HTML("<h4><b>Step 3.</b> Select Well Groupings to be included in analysis.</h4>"),
+                                           HTML("<h4><b>Step 4.</b> Select Well Groupings to be included in analysis.</h4>"),
                                            fluidRow(align = "center",
                                                     pickerInput(ns("select_mw_group"), label = NULL,
                                                                 choices = c("All Monitoring Wells", "Recent Sample Above Concentration Goal"),
@@ -94,7 +104,7 @@ TrendUI <- function(id, label = "01_Trend"){
                                     #        actionButton(ns("help2"), HTML("?"), style = button_style2))
                                     ), br(),
                            fluidRow(column(10,
-                                           HTML("<h4><b>Step 4.</b> Select method for combining data.</h4>"),
+                                           HTML("<h4><b>Step 5.</b> Select method for combining data.</h4>"),
                                            fluidRow(align = "center",
                                                     radioButtons(ns("group_method"), label = NULL,
                                                                  choices = c("Geomean", "Mean"),
@@ -104,7 +114,7 @@ TrendUI <- function(id, label = "01_Trend"){
                                     #        actionButton(ns("help3"), HTML("?"), style = button_style2))
                                     ), 
                            fluidRow(column(10,
-                                           HTML("<h4><b>Step 5 (Optional).</b> Select the concentration goal.</h4>"),
+                                           HTML("<h4><b>Step 6 (Optional).</b> Select the concentration goal.</h4>"),
                                            fluidRow(
                                              column(6, align = "right", 
                                                     numericInput(ns("conc_goal"), label = NULL,
@@ -226,14 +236,17 @@ TrendServer <- function(id, data_input, nav) {
 
       observe({
         req(d_conc(),
-            input$group_method)
+            input$group_method,
+            input$select_COC)
+        
+        validate(need(!is.na(input$select_COC),"Please choose  (Step 2)."))
 
         if (input$group_method == 'Mean'){
-          df_MW <- d_conc() %>% group_by(WellID, Date) %>%
+          df_MW <- d_conc() %>% filter(COC%in%input$select_COC)%>%group_by(WellID, Date) %>%
             summarise(Concentration = mean(Concentration, na.rm=TRUE)) %>% ungroup()}
 
         if (input$group_method == 'Geomean'){
-          df_MW <- d_conc() %>% group_by(WellID, Date) %>%
+          df_MW <- d_conc() %>% filter(COC%in%input$select_COC)%>%group_by(WellID, Date) %>%
             summarise(Concentration = exp(mean(log(Concentration), na.rm=TRUE))) %>% ungroup()}
 
         df_MW <- df_MW %>% select(Date, Concentration, WellID)
@@ -272,7 +285,6 @@ TrendServer <- function(id, data_input, nav) {
         if (sum(unique(d_loc()$`Well Grouping`) %in% input$select_mw_group) > 0){
           req(d_loc(),
               length(unique(d_loc()$`Well Grouping`)) > 0)
-
           x <- data_merge(df(), d_loc()) %>%
             filter(`Well Grouping` %in% input$select_mw_group) %>%
             select(WellID, Date, Concentration, Group = `Well Grouping`)
@@ -291,7 +303,6 @@ TrendServer <- function(id, data_input, nav) {
             input$type == "Concentration")
 
         df_MW <- df() %>% rename(Group = WellID, Value = Concentration)
-        
         MK_conc_well(MannKendall_MAROS(d = df_MW))
       })
 
@@ -399,18 +410,29 @@ TrendServer <- function(id, data_input, nav) {
                           #selected = "All Monitoring Wells")
       }) # end update well grouping selection
 
-
+      # COC Selection Updates -----------------------
+      observe({
+        req(nav() == "2. Expansion")
+        req(d_conc())
+        
+        choices <- sort(unique(d_conc()$COC))
+        
+        updatePickerInput(session, "select_COC", choices = choices)
+        
+      }) # end update well selection
+      
       # Results Table 1 -------------------------
       output$results_table_1 <- render_gt({
         validate(
           need(d_conc(), "Please enter data into Data Input tab (Step 1)."),
-          need(input$select_mw_group, "Please select well groupings (Step 2)."))
+          need(input$select_COC, "Please select COC (Step 2)."),
+          need(input$select_mw_group, "Please select well groupings (Step 4)."))
 
 
         if(input$type == "Concentration"){
           validate(
             need(ifelse(sum("Recent Sample Above Concentration Goal" %in% input$select_mw_group) > 0, !is.na(input$conc_goal), T),
-                 "Please enter concentration goal (Step 5)."))
+                 "Please enter concentration goal (Step 6)."))
 
           req(MK_conc_group())
 
@@ -486,7 +508,7 @@ TrendServer <- function(id, data_input, nav) {
       # Results Table 2 -------------------------
       output$results_table_2 <- render_gt({
         req(d_conc())
-
+        validate(need(unique(MK_conc_well()$enough_data)!='FALSE','The individual wells have no time series data.'))
         if(input$type == "Concentration"){
           req(MK_conc_well())
           cd <- MK_conc_well() %>%
@@ -494,7 +516,7 @@ TrendServer <- function(id, data_input, nav) {
             mutate(MK.p = ifelse(MK.p<0.05,'<0.05',as.character(signif(MK.p,3))))%>%
             filter(Group%in%unique(df_group()$WellID))
 
-          
+          browser()
           t <- gt(cd) %>%
             fmt_number(columns = c("MK.CV", "S.Slope"),
                        n_sigfig = 3) %>%
@@ -600,7 +622,7 @@ TrendServer <- function(id, data_input, nav) {
         validate(
           need(d_conc(), "Please enter data into Data Input tab (Step 1)."),
           need(ifelse(input$select_plot_group == "Grouped Wells",
-                      !is.null(input$select_mw_group), T), "Please select well groupings (Step 2)."))
+                      !is.null(input$select_mw_group), T), "Please select well groupings (Step 4)."))
 
         if(input$type == "Concentration"){
 
@@ -826,7 +848,8 @@ TrendServer <- function(id, data_input, nav) {
                   select(Group, expanding)
           
           if(input$select_mw_group!="All Monitoring Wells"){
-            location_tbl = data_input$d_loc()%>%filter(`Well Grouping`==input$select_mw_group)
+            location_tbl = data_input$d_loc()%>%filter(`Well Grouping`==input$select_mw_group,
+                                                       COC%in%input$select_COC)
           }else{
             location_tbl = data_input$d_loc()
           }
@@ -869,7 +892,8 @@ TrendServer <- function(id, data_input, nav) {
         
         tbl_name <- data_input$d_conc()%>%
           rename(`Date (Month/Day/Year)`=Date)%>%
-          filter(WellID%in%unique(df_group()$WellID))
+          filter(WellID%in%unique(df_group()$WellID),
+                 COC%in%input$select_COC)
         
         rhandsontable(tbl_name, readOnly = T, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE)
