@@ -169,7 +169,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                     )
                    
            #HTML("<h3><p style='color:red;'>This tool is currently under development.</h3></p>")
-  )
+  
   } # end Asymptote UI         
 
 
@@ -614,7 +614,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         FUN = function(i){
           observeEvent(input[[paste0("help5_", i)]], {
             flname <-as.character(figure_list_5[i])
-            Helpboxfunction(flname)
+            Helpboxfunction(flname,Y='"./05_GWModels/')
           })
         }
       )

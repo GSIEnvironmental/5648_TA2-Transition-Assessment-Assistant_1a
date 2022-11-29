@@ -555,7 +555,7 @@ AsymptoteServer <- function(id, data_input, nav) {
         FUN = function(i){
           observeEvent(input[[paste0("help1_", i)]], {
             flname <-as.character(figure_list_1[i])
-            Helpboxfunction(flname)
+            Helpboxfunction(flname,Y='"./01_Asymptote/')
           })
         }
       )

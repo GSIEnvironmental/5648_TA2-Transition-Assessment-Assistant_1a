@@ -432,7 +432,7 @@ PerformanceServer <- function(id) {
         FUN = function(i){
           observeEvent(input[[paste0("help4_", i)]], {
             flname <-as.character(figure_list_4[i])
-            Helpboxfunction(flname)
+            Helpboxfunction(flname,Y='"./04_Performance/')
           })
         }
       )

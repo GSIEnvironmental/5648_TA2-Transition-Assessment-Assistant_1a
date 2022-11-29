@@ -891,7 +891,7 @@ TrendServer <- function(id, data_input, nav) {
         FUN = function(i){
           observeEvent(input[[paste0("help2_", i)]], {
             flname <-as.character(figure_list_2[i])
-            Helpboxfunction(flname)
+            Helpboxfunction(flname,Y='"./02_Trend/')
           })
         }
       )
