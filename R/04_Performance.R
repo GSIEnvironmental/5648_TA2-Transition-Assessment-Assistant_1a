@@ -78,7 +78,7 @@ PerformanceUI <- function(id, label = "04_Performance"){
                                                     numericInput(ns("Conc_goal"), NULL, value = 5, min = 0, step = 0.1)
                                                     ),
                                              column(2, align = "left", style = "padding:10px;",
-                                                    actionButton(ns("help2"), HTML("?"), style = button_style2)
+                                                    actionButton(ns("help4_1"), HTML("?"), style = button_style2)
                                                     )
                                              
                                              ),br(),
@@ -90,7 +90,7 @@ PerformanceUI <- function(id, label = "04_Performance"){
                                                     numericInput(ns("Conc_site"), NULL, value = 20, min = 0, step = 1)
                                                     ),
                                              column(2, align = "left", style = "padding:10px;",
-                                            actionButton(ns("help2"), HTML("?"), style = button_style2)
+                                            actionButton(ns("help4_2"), HTML("?"), style = button_style2)
                                             )
                                             ),br())
                     ),
@@ -425,6 +425,17 @@ PerformanceServer <- function(id) {
           
         }
       )# end model_results
+      
+      #----- help function 
+      lapply(
+        X = 1:2,
+        FUN = function(i){
+          observeEvent(input[[paste0("help4_", i)]], {
+            flname <-as.character(figure_list_4[i])
+            Helpboxfunction(flname)
+          })
+        }
+      )
       
       # Data -------------------
       output$Rem_data <- renderRHandsontable({

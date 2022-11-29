@@ -11,9 +11,8 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                     column(3,
                            fluidRow(column(10,
                                            fluidRow(column(10, 
-                                                           HTML("<h4><b>Step 1.</b> Enter Data. See 'Data Input' tab for more information</h4>")),
-                                                    column(2, align = "left", style = "padding:10px;",
-                                                           actionButton(ns("help1"), HTML("?"), style = button_style2))
+                                                           HTML("<h4><b>Step 1.</b> Enter Data. See 'Data Input' tab for more information</h4>"))
+                                                    )
                                            ), br(),
                                            fluidRow(column(10,
                                                            HTML("<h4><b>Step 2.</b> Estimate the total length of plume assimilative Capacity Zone</h4>"),
@@ -28,7 +27,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                                     )
                                                            ),
                                                     column(2, align = "left", style = "padding:10px;",
-                                                                              actionButton(ns("help1"), HTML("?"), style = button_style2)
+                                                                              actionButton(ns("help5_1"), HTML("?"), style = button_style2)
                                                            )
                                                     ), br(),
                                            fluidRow(column(10,
@@ -42,7 +41,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                                     column(6, align = "left", 
                                                                            htmlOutput(ns("unit"))),br())),
                                                     column(2, align = "left", style = "padding:10px;",
-                                                           actionButton(ns("help1"), HTML("?"), style = button_style2))), 
+                                                           actionButton(ns("help5_2"), HTML("?"), style = button_style2))), 
                                            br(),
                                            fluidRow(column(10,
                                                            HTML("<h4><b>Step 4.</b> Estimate seepage velocity</h4>"),
@@ -54,7 +53,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                                     column(6, align = "left", 
                                                                            HTML("<h4>cm/s</h4>")),br())),
                                                     column(2, align = "left", style = "padding:10px;",
-                                                           actionButton(ns("help1"), HTML("?"), style = button_style2))),
+                                                           actionButton(ns("help5_3"), HTML("?"), style = button_style2))),
                                            br(),
                                            fluidRow(column(10,
                                                            HTML("<h4><b>Step 5.</b> Select Wells to be included in analysis.</h4>"),
@@ -63,9 +62,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                                 choices = c(),
                                                                 multiple = T,
                                                                 options = list(`live-search`=TRUE,
-                                                                               `none-selected-text` = "Select Wells")))),
-                                                    column(2, align = "left", style = "padding:10px;",
-                                                           actionButton(ns("help2"), HTML("?"), style = button_style2))), 
+                                                                               `none-selected-text` = "Select Wells"))))), 
                                            br(),
                                            fluidRow(column(10,
                                                            HTML("<h4><b>Step 6.</b> Select method and time range for combining time series data.</h4>"),
@@ -77,9 +74,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                            fluidRow(align = "center",
                                                                     dateRangeInput(ns("date_range"), label = NULL,
                                                                    start = min(temp_data$Date,na.rm = TRUE), 
-                                                                   end = Sys.Date()))),
-                                                    column(2, align = "left", style = "padding:10px;",
-                                                           actionButton(ns("help3"), HTML("?"), style = button_style2))
+                                                                   end = Sys.Date())))
                                                     ), br(),
                                            fluidRow(column(10,
                                                            HTML("<h4><b>Step 7.</b> Input distance from source to pumping well.</h4>"),
@@ -90,22 +85,20 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                                                         width = "80px")
                                                                     ),
                                                                     column(6, align = "left", 
-                                                                           HTML("<h4>m</h4>")))),
-                                                    column(2, align = "left", style = "padding:10px;",
-                                                           actionButton(ns("help3"), HTML("?"), style = button_style2))
+                                                                           HTML("<h4>m</h4>"))))
                                                     ), br(),
                                            fluidRow(column(10,
                                                            HTML("<h4><b>Step 8.</b> Select confidence interval for one sided test (max 0.99).</h4>"),
                                                            fluidRow(align = "center",
                                                                     column(6, align = "right", 
                                                                            numericInput(ns("CIvalue"), label = NULL,
-                                                                                        value = 0.8, min = 0, step = 0.01,
+                                                                                        value = 0.9, min = 0, step = 0.01,
                                                                                         width = "80px")
                                                                     ),
                                                                     column(6, align = "left", 
                                                                            HTML("<h4> </h4>")))),
                                                     column(2, align = "left", style = "padding:10px;",
-                                                           actionButton(ns("help3"), HTML("?"), style = button_style2))
+                                                           actionButton(ns("help5_4"), HTML("?"), style = button_style2))
                                            ), br(),
                                            fluidRow(column(10,
                                                            HTML("<h4><b>Step 9.</b> Choose COC.</h4>"),
@@ -475,7 +468,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
        p <- p%>%
          add_lines(data = plot_df,
                    x = ~x, 
-                   y = ~sen_lm()[[1]]$coefficients[1]+confint(sen_lm()[[1]],level=input$CIvalue)[[4]]*x,
+                   y = ~sen_lm()[[1]]$coefficients[1]+confint(sen_lm()[[1]],level=input$CIvalue*2-1)[[4]]*x,
                    text = c_raw,
                    line = list(color = 'rgb(31,150,180)',shape='spline',dash = 'dash'),
                    name = paste0("Regression:",unique(df()$State)[1],"ediation with confidence"),
@@ -530,7 +523,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
           p <- p%>%
             add_lines(data = plot_df2,
                       x = ~x, 
-                      y = ~sen_lm()[[2]]$coefficients[1]+confint(sen_lm()[[2]],level=input$CIvalue)[[4]]*x,
+                      y = ~sen_lm()[[2]]$coefficients[1]+confint(sen_lm()[[2]],level=input$CIvalue*2-1)[[4]]*x,
                       text = c_raw2,
                       line = list(color = unique(dd$color),shape='spline',dash = 'dash'),
                       name = paste0("Regression:",unique(df()$State)[2],"ediation with confidence"),
@@ -615,6 +608,16 @@ PlumeZoneServer <- function(id,data_input,nav) {
         p
       })
       
+      #----- help function 
+      lapply(
+        X = 1:4,
+        FUN = function(i){
+          observeEvent(input[[paste0("help5_", i)]], {
+            flname <-as.character(figure_list_5[i])
+            Helpboxfunction(flname)
+          })
+        }
+      )
       
       # Summary Text ------------------
       output$asy_summary <- renderUI({

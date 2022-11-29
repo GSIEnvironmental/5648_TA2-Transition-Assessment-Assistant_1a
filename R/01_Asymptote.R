@@ -75,13 +75,13 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                                       column(6, align = "left", 
                                              htmlOutput(ns("unit"))))),
                              column(2, align = "left", style = "padding:10px;",
-                                    actionButton(ns("help4"), HTML("?"), style = button_style2))), br(),
+                                    actionButton(ns("help1_1"), HTML("?"), style = button_style2))), br(),
                     fluidRow(column(10,
                                     HTML("<h4><b>Step 6.</b> Select date range for data.</h4>"),
                                     dateRangeInput(ns("date_range"), label = NULL,
                                                    start = "1900-01-01", end = Sys.Date())),
                              column(2, align = "left", style = "padding:10px;",
-                                    actionButton(ns("help5"), HTML("?"), style = button_style2))),
+                                    actionButton(ns("help1_2"), HTML("?"), style = button_style2))),
                     fluidRow(column(10,
                                     HTML("<h4><b>Step 7.</b> Select Confidence Inteval (max 0.99).</h4>"),
                                     fluidRow(
@@ -90,7 +90,7 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                                                           value = 0.95, min = 0, step = 0.01,
                                                           width = "80px")))),
                              column(2, align = "left", style = "padding:10px;",
-                                    actionButton(ns("help5"), HTML("?"), style = button_style2))), br(),
+                                    actionButton(ns("help1_3"), HTML("?"), style = button_style2))), br(),
                     fluidRow(column(10,
                                     HTML("<h4><b>Step 8.</b> Select breakpoint between two different time periods.</h4>"),
                                     HTML("<p><i>Beakpoint is indicated on plot with a dotted line. To manually select a breakpoint click data point on plot.To deselect double click the figure where no data point.</i></p>")),
@@ -551,10 +551,10 @@ AsymptoteServer <- function(id, data_input, nav) {
       
       #----- help function 
       lapply(
-        X = 1:29,
+        X = 1:3,
         FUN = function(i){
-          observeEvent(input[[paste0("help", i)]], {
-            flname <-as.character(figure_list[i])
+          observeEvent(input[[paste0("help1_", i)]], {
+            flname <-as.character(figure_list_1[i])
             Helpboxfunction(flname)
           })
         }

@@ -132,7 +132,7 @@ forecasted_clean <-function(fit, C_goal,CI){
 # regression_fitness: output results from regression_fitness function
 
 
-Asymptote_Analysis <- function(df_series, sen,CI){
+Asymptote_Analysis <- function(df_series, sen,CIlevel){
   
   cd <- data.frame(LOE = 1:5,
                    Met = NA)
@@ -151,9 +151,9 @@ Asymptote_Analysis <- function(df_series, sen,CI){
   
   # 1. Are the slopes significantly different
   sens_list_1 <-sens.slope(c(df_series%>%filter(period=='Period 1')%>%select(Concentration))$Concentration,
-                           conf.level = CI)
+                           conf.level = CIlevel)
   sens_list_2 <-sens.slope(c(df_series%>%filter(period=='Period 2')%>%select(Concentration))$Concentration,
-                           conf.level = CI)
+                           conf.level = CIlevel)
   
   
   Asymptotic_1 <- ifelse(sens_list_2$conf.int[1]>sens_list_2$conf.int[1]&
@@ -163,7 +163,7 @@ Asymptote_Analysis <- function(df_series, sen,CI){
                          ) # need to decide on test
   
   # 2. Is the slope of period 2 0? 
-  CI <- as.data.frame(t(confint.mblm(sen[["Period 2"]], 'Date', level=0.9)))
+  CI <- as.data.frame(t(confint.mblm(sen[["Period 2"]], 'Date', level=CIlevel)))
 
   Asymptotic_2 <- ifelse((CI[1, "Date"] <= 0 & 
                             CI[2, "Date"] >= 0 & 

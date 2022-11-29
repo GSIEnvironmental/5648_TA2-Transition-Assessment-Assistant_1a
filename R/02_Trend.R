@@ -61,35 +61,35 @@ TrendUI <- function(id, label = "01_Trend"){
                                              numericInput(ns("plume_top"), label = NULL,
                                                           value = NA, width = '100px')),
                                       column(2, align = "left", style = "padding:10px;",
-                                             actionButton(ns("help4"), HTML("?"), style = button_style2))),
+                                             actionButton(ns("help2_2"), HTML("?"), style = button_style2))),
                              fluidRow(column(6, align = "right", 
                                              HTML("<h5>Plume Buttom (ft bgs)</h5>")),
                                       column(4, align = "left", style = "padding:10px;",
                                              numericInput(ns("plume_bottom"), label = NULL,
                                                           value = NA, width = '100px')),
                                       column(2, align = "left", style = "padding:10px;",
-                                             actionButton(ns("help4"), HTML("?"), style = button_style2))),
+                                             actionButton(ns("help2_3"), HTML("?"), style = button_style2))),
                              fluidRow(column(6, align = "right",
                                              HTML("<h5>Total Porosity of Transmissive Media</h5>")),
                                       column(4, align = "left", style = "padding:10px;",
                                              numericInput(ns("trans_porosity"), label = NULL,
                                                           value = NA, width = '100px')),
                                       column(2, align = "left", style = "padding:10px;",
-                                             actionButton(ns("help4"), HTML("?"), style = button_style2))),
+                                             actionButton(ns("help2_4"), HTML("?"), style = button_style2))),
                              fluidRow(column(6, align = "right",
                                              HTML("<h5>Total Porosity of Low-K Zone</h5>")),
                                       column(4, align = "left", style = "padding:10px;",
                                              numericInput(ns("lowk_porosity"), label = NULL,
                                                           value = NA, width = '100px')),
                                       column(2, align = "left", style = "padding:10px;",
-                                             actionButton(ns("help4"), HTML("?"), style = button_style2))),
+                                             actionButton(ns("help2_5"), HTML("?"), style = button_style2))),
                              fluidRow(column(6, align = "right",
                                              HTML("<h5>Fraction of Plume Thickness with Transmissive Geologic Media</h5>")),
                                       column(4, align = "left", style = "padding:10px;",
                                              numericInput(ns("fraction_trans"), label = NULL,
                                                           value = NA, width = '100px')),
                                       column(2, align = "left", style = "padding:10px;",
-                                             actionButton(ns("help4"), HTML("?"), style = button_style2)))
+                                             actionButton(ns("help2_6"), HTML("?"), style = button_style2)))
                              ), # end conditional Panel
                            fluidRow(column(10,
                                            HTML("<h4><b>Step 4.</b> Select Well Groupings to be included in analysis.</h4>"),
@@ -123,7 +123,7 @@ TrendUI <- function(id, label = "01_Trend"){
                                              column(6, align = "left", 
                                                     htmlOutput(ns("unit"))))),
                                     column(2, align = "left", style = "padding:10px;",
-                                           actionButton(ns("help4"), HTML("?"), style = button_style2)))#,
+                                           actionButton(ns("help2_1"), HTML("?"), style = button_style2)))#,
                            # HTML("<hr class='featurette-divider'>"),
                            # HTML("<h4><b>Data Handling</b></h4>"),
                            # HTML("<hr class='featurette-divider'>"),
@@ -516,7 +516,7 @@ TrendServer <- function(id, data_input, nav) {
             mutate(MK.p = ifelse(MK.p<0.05,'<0.05',as.character(signif(MK.p,3))))%>%
             filter(Group%in%unique(df_group()$WellID))
 
-          browser()
+
           t <- gt(cd) %>%
             fmt_number(columns = c("MK.CV", "S.Slope"),
                        n_sigfig = 3) %>%
@@ -883,6 +883,17 @@ TrendServer <- function(id, data_input, nav) {
           
         }
         
+      )
+      
+      #----- help function 
+      lapply(
+        X = 1:6,
+        FUN = function(i){
+          observeEvent(input[[paste0("help2_", i)]], {
+            flname <-as.character(figure_list_2[i])
+            Helpboxfunction(flname)
+          })
+        }
       )
       
       # Data ----------------

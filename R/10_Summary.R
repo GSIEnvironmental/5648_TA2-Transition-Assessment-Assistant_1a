@@ -53,10 +53,37 @@ SummaryUI <- function(id, label = "010_Summary"){
                              )),
                       
                       br(),
+                      fluidRow(column(4,
+                                      HTML("Choose Input File"),
+                                      fileInput(ns("file_Tool10"), label = "",
+                                                multiple = F,
+                                                accept = c("text/xlsx",
+                                                           "text/comma-separated-values,text/plain",
+                                                           ".xlsx"), 
+                                                width = "200px")),
+                               br(),
+                               column(4, align = "center",
+                                      fluidRow(actionButton(ns("update_inputs_Tool10"), 
+                                                            HTML("Update Input Values<br>from Input File"), style = button_style)))),
+                      br(),
+                      br(),
                       fluidRow(responsive=FALSE,
-                               column(10,includeHTML('./www/10_Summary/Tool10c_v1.html')),
+                               column(10,includeHTML('./www/10_Summary/Tool10c_v1.html')),#
                                tags$style("input[type=checkbox] {
-                               transform: scale(2.5);
+                                          white-space: normal;
+                                          position: fixed;
+                                          right:0;
+                                          bottom:0;
+                                          top:-0.1;
+                                          left:0;
+                                          background-color:#eee;
+                                          border-radius: 4px;
+                                          text-align:center;
+                                          height:34px;
+                                          width:34px;
+                                          font-size: 14px;
+                                          padding: 0px 0;
+                                          margin:0px;
                                           }"),
                                tags$style(".shiny-input-container {margin-bottom: 0;margin-top:0;outline:0px}"),
                                tags$style(".checkbox {margin-bottom: 0px;margin-top:4px;outline:0px}"),
@@ -66,7 +93,7 @@ SummaryUI <- function(id, label = "010_Summary"){
                                ),
                       br(),
                       fluidRow(align = "center",
-                               downloadButton(ns("save_data"),
+                               downloadButton(ns("checked_results"),
                                               HTML("Save Check Box"), style = button_style))
              ),
                      
@@ -86,6 +113,103 @@ SummaryServer <- function(id) {
     id,
     
     function(input, output, session) {
+     
+      
+      # Export Model Results and Input Values  ---------------------------
+      output$checked_results <- downloadHandler(
+        filename = function(){
+          paste("Tool10_Checked","xlsx",sep=".")
+        },
+        
+        content = function(con){
+          
+          # Create empty excel file
+          wb <- createWorkbook()
+          
+          # Add Results Tab
+          addWorksheet(wb, "Tool10_Checked")
+         
+          # insertImage(wb, "Borden_Tool_Results", paste0("./plot.png"),
+          #             startRow = 9, startCol = 2, heigh = 864, width = 1618, units = "px")
+          
+          #----- help function 
+         
+          # Add Parameters Tab
+          x <- data.frame(Q1_1 =input$`1_1`,
+                          Q1_2 =input$`1_2`,
+                          Q1_3 =input$`1_3`,
+                          Q1_4 =input$`1_4`,
+                          Q1_5 =input$`1_5`,
+                          Q1_6 =input$`1_6`,
+                          Q2_1 =input$`2_1`,
+                          Q2_2 =input$`2_2`,
+                          Q2_3 =input$`2_3`,
+                          Q2_4 =input$`2_4`,
+                          Q2_5 =input$`2_5`,
+                          Q2_6 =input$`2_6`,
+                          Q3_1a =input$`3_1a`,
+                          Q3_2a =input$`3_2a`,
+                          Q3_3a =input$`3_3a`,
+                          Q3_4a =input$`3_4a`,
+                          Q3_5a =input$`3_5a`,
+                          Q3_6a =input$`3_6a`,
+                          Q3_7a =input$`3_7a`,
+                          Q3_1b =input$`3_1b`,
+                          Q3_2b =input$`3_2b`,
+                          Q3_3b =input$`3_3b`,
+                          Q3_4b =input$`3_4b`,
+                          Q3_5b =input$`3_5b`,
+                          Q3_6b =input$`3_6b`,
+                          Q3_7b =input$`3_7b`,
+                          Q3_8b =input$`3_8b`,
+                          Q3_9b =input$`3_9b`,
+                          Q3_1c =input$`3_1c`,
+                          Q3_2c =input$`3_2c`,
+                          Q3_3c =input$`3_3c`,
+                          Q3_4c =input$`3_4c`,
+                          Q4_1a =input$`4_1a`,
+                          Q4_2a =input$`4_2a`,
+                          Q4_3a =input$`4_3a`,
+                          Q4_4a =input$`4_4a`,
+                          Q4_1b =input$`4_1b`,
+                          Q4_2b =input$`4_2b`,
+                          Q4_3b =input$`4_3b`,
+                          Q4_4b =input$`4_4b`,
+                          Q5_1 =input$`5_1`,
+                          Q5_2 =input$`5_2`,
+                          Q5_3 =input$`5_3`,
+                          Q5_4 =input$`5_4`,
+                          Q5_5 =input$`5_5`,
+                          Q6_1 =input$`6_1`,
+                          Q6_2 =input$`6_2`,
+                          Q6_3 =input$`6_3`,
+                          Q6_4 =input$`6_4`
+          )
+          
+          writeData(wb, sheet = "Tool10_Checked", x = x, startCol = 1, startRow = 1, colNames = T)
+          
+          saveWorkbook(wb, con)
+          #saveRDS( reactiveValuesToList(input) , file = 'inputs.RDS')
+        }
+      )# end model_results
+      
+      # Update Values Based on Input Files, if given ---------------------------
+      observeEvent(input$update_inputs_Tool10,{
+        # If no file is loaded nothing happens 
+        if(!is.null(input$file_Tool10)){
+          file <- input$file_Tool10
+          
+          # Organize Parameters
+          par_tool10 <- read_xlsx(file$datapath, sheet = "Tool10_Checked")
+
+          count = 1
+          for (j in str_replace(colnames(par_tool10),'Q','')){
+            updateCheckboxInput(session,j,value = par_tool10[[count]])
+            count = count + 1
+          }
+          
+        }
+      }) # end update_inputs button
       
     }
   )
