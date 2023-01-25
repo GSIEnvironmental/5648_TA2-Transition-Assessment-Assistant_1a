@@ -32,6 +32,7 @@ SummaryUI <- function(id, label = "010_Summary"){
              tabPanel(HTML("10b Persistence Index"),
                       HTML("<H1>Tool 10b.  Persistence Index</H1>"),
                       br(),
+                      gt_output(ns("Table_B"))
                       #fluidRow(includeMarkdown('./www/06_Matrix/Tool6b_v1.md'))
              ), 
              tabPanel(HTML("10c Checklists"),
@@ -108,12 +109,51 @@ SummaryUI <- function(id, label = "010_Summary"){
 
 
 ## Server Module -----------------------------------------
-SummaryServer <- function(id) {
+SummaryServer <- function(id,LOE_asymp, MKresult, 
+                          Cleantime, Presult) {
   moduleServer(
     id,
     
     function(input, output, session) {
      
+      
+      # Export Summary Table in Tab 10b  -------------------------
+      output$Table_B <- render_gt({
+        #req(LOE_asymp(), MKresult(), 
+        #    Cleantime(), Presult())
+        
+        browser()
+        
+        gt(cd) %>%
+          cols_label(RTAI1 = "Poor Candidate (RTAI = 1)",
+                     RATI2 = "Fair Candidate (RTAI = 2)",
+                     RATI3 = "Typical Candidate (RTAI = 3)",
+                     RATI4 = "Good Candidate (RTAI = 4)",
+                     RATI5 = "Strong Candidate (RTAI = 5)") %>%
+          cols_width(LOE ~ px(250)) %>%
+          tab_style(style = style_body(),
+                    locations = cells_body(columns = Met)) %>%
+          tab_style(style = list(cell_text(weight = "bold",
+                                           color = "white"),
+                                 cell_fill(color = col["purple"])),
+                    locations = cells_body(columns = Met,
+                                           rows = Met == "YES")) %>%
+          tab_style(style = style_body("left"),
+                    locations = cells_body(columns = LOE)) %>%
+          tab_style(style = style_col_labels(),
+                    locations = cells_column_labels()) %>%
+          opt_table_outline() %>%
+          # GT bug fix
+          tab_options(table.additional_css = "th, td {padding: 5px 10px !important;	border: 1px solid white;}" )%>%
+          tab_source_note()# can add drop down notes under the table, you may write in html
+        # https://themockup.blog/posts/2020-10-31-embedding-custom-features-in-gt-tables/
+        # https://shiny.rstudio.com/articles/action-buttons.html
+        
+        
+      })
+      
+      
+      
       
       # Export Model Results and Input Values  ---------------------------
       output$checked_results <- downloadHandler(
@@ -132,8 +172,8 @@ SummaryServer <- function(id) {
           # insertImage(wb, "Borden_Tool_Results", paste0("./plot.png"),
           #             startRow = 9, startCol = 2, heigh = 864, width = 1618, units = "px")
           
-          #----- help function 
-         
+          #----- help function
+
           # Add Parameters Tab
           x <- data.frame(Q1_1 =input$`1_1`,
                           Q1_2 =input$`1_2`,

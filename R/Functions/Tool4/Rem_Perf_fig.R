@@ -85,7 +85,14 @@ Rem_Perf_fig<-function(df,linear_df,name,min_num,max_num,Conc_goal=NULL){
     coord_cartesian(clip="off")
   
   p
-  label_df<-linear_df%>%filter(Before<1000000)
+  if (max(linear_df$Before)==1000){
+    label_df<-linear_df%>%filter(Before==1000)
+  }else{
+    label_df<-linear_df%>%filter(Before==1000000)
+  }
+  
+  
+  
   # convert to plotly
   p2<-ggplotly(p)
   p2<-p2%>%layout(legend = list(orientation = 'h',title ='',y=-0.25),

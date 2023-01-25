@@ -124,7 +124,10 @@ PerformanceUI <- function(id, label = "04_Performance"){
                              tabPanel("Data",br(),
                                       HTML("TA2 ESTCP Remediation Performance Database"), br(),
                                       rHandsontableOutput(ns("Rem_data"))
-                                      )
+                                      ),
+                             tabPanel("Potential Remedy",
+                                      
+                                      fluidRow(rHandsontableOutput(ns("Evaluation"))))
                              ),
                            fluidRow(align = "center",
                                     downloadButton(ns("save_results"),HTML("Save Data and Analysis"), style = button_style),
@@ -177,7 +180,6 @@ PerformanceServer <- function(id) {
         
         validate(need(df_tool4,'Data was unable to read in.'))
         filtered_table <- summary_table(df_tool4,BorC,COC_flag,Con_flag,Tech_flag)
-        
         filtered_table(filtered_table)
       }) # end df()
       # #generate filtered table
@@ -254,6 +256,7 @@ PerformanceServer <- function(id) {
       })
       
       # Attenuation Rates Table -------------------------
+      results_table <- reactiveVal()
       observeEvent({filtered_table()
                    input$Conc_goal
                    input$Conc_site},
@@ -346,6 +349,7 @@ PerformanceServer <- function(id) {
             tab_options(table.font.size = 12)
           
           fig_tool4$Result_table<-Result_table
+          results_table(Result_table)
         }
         
       })
@@ -441,12 +445,28 @@ PerformanceServer <- function(id) {
       output$Rem_data <- renderRHandsontable({
         validate(
           need(df_filter, "Please Do Not Remove Remediation Database."))
-        
+        for (var in 1:length(names(filtered_table()))){
+          nam<-names(filtered_table())[var]
+          assign(nam, (filtered_table()[[var]]))
+        }
         rhandsontable(df_filter, readOnly = T, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE)
       })
       
+      # Table of Evaluation Criteria -------------------
+      output$Evaluation <- renderRHandsontable({
+        rhandsontable(RemPotential,rowHeaders = NULL, width = 1200, height = 600) %>%
+          hot_cols(columnSorting = TRUE) %>%
+          hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
+      })
       
+      # Return Dataframes ------------------
+      
+      return(list(
+        results_table = reactive({
+          req(results_table())
+          results_table()})
+      ))
       
       }
   )

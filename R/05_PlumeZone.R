@@ -135,12 +135,12 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                            #                           column(6, align = "center", numericInput(ns("Rvalue_2"), NULL, value = NULL, min = 0))),
                                                            #                  fluidRow(column(6, align = "left", uiOutput(ns("R_3"))),
                                                            #                           column(6, align = "center", numericInput(ns("Rvalue_3"), NULL, value = NULL, min = 0))))
-                                                           )#column
+                                                           #)#column
                                                     # column(2, align = "left", style = "padding:10px;",
                                                     #        actionButton(ns("help3"), HTML("?"), style = button_style2))
                                            ), br()
                                            ),
-                    column(9,
+           column(9,
                            fluidRow(
                              HTML('<img style = "padding: 10px 50px 10px 10px;" 
                                                src = "./05_GWModels/Fig/Tool5_Fig1.jpg" 
@@ -164,7 +164,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                           )
                                         )
                                )
-                             )
+                             ))
                            )
                     )
                    

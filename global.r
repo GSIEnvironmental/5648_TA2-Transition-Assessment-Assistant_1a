@@ -57,6 +57,8 @@ library(scales)
 library(changepoint)
 library(htmlwidgets)
 library(webshot2)
+library(DT)
+library(shiny)
 
 # Plot Parameters -------------
 # Colors
@@ -115,6 +117,9 @@ temp_mw_info <- read.xlsx("./data/data_template.xlsx", sheet = "Monitoring_Well_
                        check.names = F, sep.names = " ")
 
 temp_boring <- read.xlsx("./data/5648_Dummy_Borling.xlsx")
+
+Table7_EA <- read_excel("./data/Table7_EA.xlsx")
+
 
 # Map -----------------------------
 site_map <- leaflet() %>%
@@ -189,6 +194,12 @@ BRemlist<- c(df_tool4%>%filter(`Parent CVOC`=='Benzene')%>%
 CRemlist<- c(df_tool4%>%filter(`Parent CVOC`!='Benzene')%>%
            select(Technology)%>%
            distinct())$Technology
+
+
+RemPotential <- read_excel("data/Table4_Rem_Potential.xlsx")
+RemPotential$High = FALSE
+RemPotential$Moderate = FALSE
+RemPotential$Low = FALSE
 
 
 # # Functions -----------------

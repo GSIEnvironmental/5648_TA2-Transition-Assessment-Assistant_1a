@@ -8,13 +8,13 @@ shinyServer(function(input, output, session) {
   
   data_input <- Data_Input_Server("Data_Input")
   
-  AsymptoteServer("01_Asymptote", data_input = data_input, nav = nav)
+  LOE_asymp <- AsymptoteServer("01_Asymptote", data_input = data_input, nav = nav)
 
-  TrendServer("02_Trend", data_input = data_input, nav = nav)
+  MKresult <- TrendServer("02_Trend", data_input = data_input, nav = nav)
 
-   CleanupGoals_tabServer("03_CleanupGoals_tab", nav = nav)
+  Cleantime <- CleanupGoals_tabServer("03_CleanupGoals_tab", nav = nav)
  
-   PerformanceServer("04_Performance")
+  Presult <- PerformanceServer("04_Performance")
   
    PlumeZoneServer("05_PlumeZone", data_input = data_input, nav = nav)
   
@@ -22,6 +22,7 @@ shinyServer(function(input, output, session) {
   
    HeterogeneityServer("08_Heterogeneity")
 
-  SummaryServer("10_Summary")
+  SummaryServer("10_Summary",LOE_asymp = LOE_asymp, MKresult=MKresult, 
+                Cleantime = Cleantime, Presult = Presult)
 
 })

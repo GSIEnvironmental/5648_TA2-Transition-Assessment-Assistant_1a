@@ -901,10 +901,26 @@ TrendServer <- function(id, data_input, nav) {
         validate(
           need(data_input$d_conc(), "Please enter data into Data Input tab (Step 1)."))
         
-        tbl_name <- data_input$d_conc()%>%
-          rename(`Date (Month/Day/Year)`=Date)%>%
-          filter(WellID%in%unique(df_group()$WellID),
-                 COC%in%input$select_COC)
+        
+        x <- df() %>% group_by(WellID) %>%
+          mutate(Group = ifelse(Concentration[which.max(Date)] > input$conc_goal,
+                                "Wells with Recent Samples Above Concentration Goal",
+                                "Wells with Recent Samples Below Concentration Goal")) %>% 
+          filter(Group=="Wells with Recent Samples Above Concentration Goal")
+        
+        if (input$select_mw_group%in%c("Recent Sample Above Concentration Goal")){
+          tbl_name <- data_input$d_conc()%>%
+            rename(`Date (Month/Day/Year)`=Date)%>%
+            filter(WellID%in%x$WellID,
+                   COC%in%input$select_COC)
+        }else{
+          tbl_name <- data_input$d_conc()%>%
+            rename(`Date (Month/Day/Year)`=Date)%>%
+            filter(WellID%in%unique(df_group()$WellID),
+                   COC%in%input$select_COC)
+        }
+        
+        
         
         rhandsontable(tbl_name, readOnly = T, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE)
@@ -914,13 +930,40 @@ TrendServer <- function(id, data_input, nav) {
         validate(
           need(data_input$d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
 
-        loc_name<-data_input$d_loc()%>%
+        x <- df() %>% group_by(WellID) %>%
+          mutate(Group = ifelse(Concentration[which.max(Date)] > input$conc_goal,
+                                "Wells with Recent Samples Above Concentration Goal",
+                                "Wells with Recent Samples Below Concentration Goal")) %>% 
+          filter(Group=="Wells with Recent Samples Above Concentration Goal")
+        
+        if (input$select_mw_group%in%c("Recent Sample Above Concentration Goal")){
+          loc_name<-data_input$d_loc()%>%
+            filter(`Monitoring Wells`%in%unique(x$WellID))
+        }
+        else{
+          loc_name<-data_input$d_loc()%>%
           filter(`Monitoring Wells`%in%unique(df_group()$WellID))
+        }
+        
+        
         
         rhandsontable(loc_name, readOnly = T, rowHeaders = NULL, width = 1000, height = 600) %>%
           hot_cols(columnSorting = TRUE)
       })
-
+      
+      
+      # Return Dataframes ------------------
+      
+      return(list(
+        MK_conc_well = reactive({
+          req(MK_conc_well())
+          MK_conc_well()}),
+        MK_mass_group = reactive({
+          req(MK_mass_group())
+          MK_mass_group()})
+      ))
+      
+      
     }
   )
 } # end Trend Server  

@@ -1301,7 +1301,15 @@ CleanupGoals_tabServer <- function(id,nav) {
           HTML(paste0("<h4><b>", formatC(Seep_V, digits=2,format="fg", flag="#",drop0trailing = TRUE), "</b></h4>"))
         }
       })
-    
+      
+      # Return Dataframes ------------------
+      
+      return(list(
+        cleantime = reactive({
+          req(results())
+          results()})
+      ))
+      
     }
   )
   end.time <- Sys.time()

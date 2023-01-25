@@ -65,16 +65,16 @@ Data_Input_Server <- function(id) {
         if(!is.null(input$input_file)){
          
           file <- input$input_file
-          temp_data <- read.xlsx(file$datapath, sheet = "Concentration", startRow = 1,
+          temp_data <- read.xlsx(file$datapath, sheet = "Concentration_Time_Data", startRow = 2,
                                  check.names = F,detectDates=T)
           
           temp_data<-temp_data%>%
             mutate(Event = as.integer(Event))%>%
-            rename(Date = `Date.(Month/Day/Year)`)%>%
+            #rename(Date = `Date.(Month/Day/Year)`)%>%
             mutate(Date = as.Date(temp_data$Date,origin="1900-01-01",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y")))
             
           
-          temp_mw_info <- read.xlsx(file$datapath, sheet = "Location", startRow = 1,
+          temp_mw_info <- read.xlsx(file$datapath, sheet = "Monitoring_Well_Information", startRow = 2,
                                     check.names = F, sep.names = " ")
           
           d_conc <- reactiveVal(temp_data)
@@ -140,12 +140,12 @@ Data_Input_Server <- function(id) {
           
           if (is.null(input$mw_data)){
             list_of_datasets<-list(
-            "Concentration" = hot_to_r(input$conc_time_data),
+            "Concentration_Time_Data" = hot_to_r(input$conc_time_data),
             "Location" = temp_mw_info
           )
           }else{
             list_of_datasets<-list(
-              "Concentration" = hot_to_r(input$conc_time_data),
+              "Concentration_Time_Data" = hot_to_r(input$conc_time_data),
               "Location" = input$mw_data
             )
           }

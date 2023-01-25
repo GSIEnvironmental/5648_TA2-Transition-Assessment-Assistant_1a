@@ -333,8 +333,12 @@ AsymptoteServer <- function(id, data_input, nav) {
         req(nav() == "1. Asymptote")
         req(d_conc())
         
-        choices <- sort(unique(d_conc()$COC))
-        
+        if (input$select_group_type=='groups'){
+          COC_unique<-d_conc()%>%filter(State%in%input$select_mw)
+        }else{
+          COC_unique<-d_conc()%>%filter(WellID%in%input$select_mw)
+        }
+        choices <- sort(unique(COC_unique$COC))
         updatePickerInput(session, "select_COC", choices = choices)
         
       }) # end update well selection
@@ -564,10 +568,13 @@ AsymptoteServer <- function(id, data_input, nav) {
       output$conc_time_data <- renderRHandsontable({
         validate(
           need(data_input$d_conc(), "Please enter data into Data Input tab (Step 1)."))
+  
+        loc_name<-data_input$d_loc()%>%
+          filter(`Monitoring Wells`%in%input$select_mw|`Well Grouping`%in%input$select_mw)
         
         tbl_name <- data_input$d_conc()%>%
           rename(`Date (Month/Day/Year)`=Date)%>%
-          filter(WellID%in%input$select_mw)
+          filter(WellID%in%loc_name$`Monitoring Wells`&COC%in%input$select_COC)
        
         rhandsontable(tbl_name, readOnly = T, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE)
@@ -578,12 +585,22 @@ AsymptoteServer <- function(id, data_input, nav) {
           need(data_input$d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
         
         loc_name<-data_input$d_loc()%>%
-          filter(`Monitoring Wells`%in%input$select_mw)
+          filter(`Monitoring Wells`%in%input$select_mw|`Well Grouping`%in%input$select_mw)
         
         rhandsontable(loc_name, readOnly = T, rowHeaders = NULL, width = 1000, height = 600) %>%
           hot_cols(columnSorting = TRUE)
       })
 
+      
+      # Return Dataframes ------------------
+      
+      return(list(
+        LOE_asymp = reactive({
+          req(asy_results())
+          results = asy_results() %>% 
+            mutate(Met = (Met == "YES"))})
+        ))
+      
     }
   )
 } # end Asymptote Server  
