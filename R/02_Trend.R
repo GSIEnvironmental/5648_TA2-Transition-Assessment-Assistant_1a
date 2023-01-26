@@ -957,10 +957,10 @@ TrendServer <- function(id, data_input, nav) {
       return(list(
         MK_conc_well = reactive({
           req(MK_conc_well())
-          MK_conc_well()}),
+          MK_conc_group()}),
         MK_mass_group = reactive({
           req(MK_mass_group())
-          MK_mass_group()})
+          MK_mass_group() })
       ))
       
       

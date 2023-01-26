@@ -31,9 +31,9 @@ EnhanceMNAUI <- function(id, label = "07_EnhanceMNA"){
              tabPanel(HTML("7e EA Decision Chart"),
                       HTML("<H2>Tool 7e. EA Decision Chart</H2>"),
                       br(),
-                      fluidRow(rHandsontableOutput(ns("Evaluation")))
-                      # DT::dataTableOutput(ns("my_data_table")),
-                      #   textOutput(ns("myText"))  
+                      DT::dataTableOutput(ns("my_data_table")),
+                      br(),
+                      textOutput(ns("myText"))  
                       
              )
              
@@ -42,7 +42,7 @@ EnhanceMNAUI <- function(id, label = "07_EnhanceMNA"){
 
 
 ## Server Module -----------------------------------------
-MatrixDiffusionServer <- function(id) {
+EnhanceMNAServer <- function(id, data_input, nav) {
   moduleServer(
     id,
     
@@ -56,7 +56,7 @@ MatrixDiffusionServer <- function(id) {
       })
       
       # return RTAI value
-      myValue <- reactiveValues(check = '')
+      myValue <- reactiveValues()
       
       # function for shinyInput
       shinyInput <- function(FUN, len, row, id, label,...) {
@@ -100,7 +100,6 @@ MatrixDiffusionServer <- function(id) {
         selectedRow <- as.numeric(strsplit(input$select_button, "_")[[1]][2])
         selectedcol <- as.numeric(strsplit(input$select_button, "_")[[1]][3])
         RTAI = strsplit(my_data_table()[selectedRow,selectedcol][[1]],"[</>]")[[1]][3]
-        browser()
         myValue$check <<- paste('click on ',RTAI)
         
       })
@@ -109,6 +108,14 @@ MatrixDiffusionServer <- function(id) {
       output$myText <- renderText({
         myValue$check
       })
+      
+      # Return Dataframes ------------------
+      
+      return(list(
+        RTAI_EA = reactive({
+          req(myValue$check)
+          myValue$check})
+      ))
       
     }
   )

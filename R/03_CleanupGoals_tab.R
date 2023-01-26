@@ -1312,6 +1312,6 @@ CleanupGoals_tabServer <- function(id,nav) {
       
     }
   )
-  end.time <- Sys.time()
-  print(end.time-beginning)
+  #end.time <- Sys.time()
+  #print(end.time-beginning)
 } # end Cleanup Goals Server 

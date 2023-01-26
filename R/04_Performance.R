@@ -455,6 +455,7 @@ PerformanceServer <- function(id) {
       
       # Table of Evaluation Criteria -------------------
       output$Evaluation <- renderRHandsontable({
+
         rhandsontable(RemPotential,rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE) %>%
           hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)

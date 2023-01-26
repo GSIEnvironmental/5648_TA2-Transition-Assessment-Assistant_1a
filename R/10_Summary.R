@@ -29,10 +29,11 @@ SummaryUI <- function(id, label = "010_Summary"){
                       fluidRow(includeHTML('./www/10_Summary/Tool10a_v1.html'))
                                
              ), 
-             tabPanel(HTML("10b Persistence Index"),
-                      HTML("<H1>Tool 10b.  Persistence Index</H1>"),
+             tabPanel(HTML("10b RTAI"),
+                      HTML("<H1>Tool 10b. Design of Remediation Assessment Index (RTAI)</H1>"),
                       br(),
-                      gt_output(ns("Table_B"))
+                      gt_output(ns("Table_B")),
+                      br()
                       #fluidRow(includeMarkdown('./www/06_Matrix/Tool6b_v1.md'))
              ), 
              tabPanel(HTML("10c Checklists"),
@@ -110,42 +111,83 @@ SummaryUI <- function(id, label = "010_Summary"){
 
 ## Server Module -----------------------------------------
 SummaryServer <- function(id,LOE_asymp, MKresult, 
-                          Cleantime, Presult) {
+                          Cleantime, Presult, RTAI_EA) {
   moduleServer(
     id,
     
     function(input, output, session) {
      
-      
+      dummy1 = '5'
+      dummy2 = 'I'
+      dummy3 = '<0.5'
+      dummy4 = 'High'
+      dummy5 = '<5'
+      dummy6 = "checkmark"
       # Export Summary Table in Tab 10b  -------------------------
       output$Table_B <- render_gt({
         #req(LOE_asymp(), MKresult(), 
         #    Cleantime(), Presult())
-        
+
         browser()
+        validate(need(LOE_asymp$LOE_asymp(), "Go to Tool 1 to get RTAI"))
+        validate(need(MKresult$MK_conc_well(), "Go to Tool 2 to get RTAI"))
+        validate(need(Cleantime, "Go to Tool 3 to get RTAI"))
+        validate(need(Presult$results_table(), "Go to Tool 4 to get RTAI"))
+        validate(need(RTAI_EA$RTAI_EA(), "Go to Tool 7 to get RTAI"))
         
-        gt(cd) %>%
-          cols_label(RTAI1 = "Poor Candidate (RTAI = 1)",
-                     RATI2 = "Fair Candidate (RTAI = 2)",
-                     RATI3 = "Typical Candidate (RTAI = 3)",
-                     RATI4 = "Good Candidate (RTAI = 4)",
-                     RATI5 = "Strong Candidate (RTAI = 5)") %>%
-          cols_width(LOE ~ px(250)) %>%
-          tab_style(style = style_body(),
-                    locations = cells_body(columns = Met)) %>%
-          tab_style(style = list(cell_text(weight = "bold",
-                                           color = "white"),
-                                 cell_fill(color = col["purple"])),
-                    locations = cells_body(columns = Met,
-                                           rows = Met == "YES")) %>%
-          tab_style(style = style_body("left"),
-                    locations = cells_body(columns = LOE)) %>%
+        RTAI1 = LOE_asymp$LOE_asymp()
+        RTAI1 = length(RTAI1$Met[RTAI1$Met=='TRUE'])
+        
+        RTAI2 = MKresult$MK_conc_well()$MapFlag
+        
+        RTAI3 = ifelse(Cleantime$cleantime()$Time_Cleanup[1]<5, '<5',
+                       ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=5&Cleantime$cleantime()$Time_Cleanup[1]<10,'5 to <10',
+                              ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=10&Cleantime$cleantime()$Time_Cleanup[1]<25,'10 to <25',
+                                    ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=25&Cleantime$cleantime()$Time_Cleanup[1]<50,'25 to <50',
+                                          ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=50,'50≥')))))
+        
+        RTAI_tbl<-Table10%>%
+          mutate("Poor Candidate RTAI = 1" = map(rank_chg(Table10$`Poor Candidate RTAI = 1`,
+                                                          RTAI1,RTAI2,RTAI3,RTAI4,RTAI5,RTAI6),gt::html),
+                 "Fair Candidate RTAI = 2" = map(rank_chg(Table10$`Fair Candidate RTAI = 2`,
+                                                          RTAI1,RTAI2,RTAI3,RTAI4,RTAI5,RTAI6),gt::html),
+                 "Typical Candidate RTAI = 3" = map(rank_chg(Table10$`Typical Candidate RTAI = 3`,
+                                                             RTAI1,RTAI2,RTAI3,RTAI4,RTAI5,RTAI6),gt::html),
+                 "Good Candidate RTAI = 4" = map(rank_chg(Table10$`Good Candidate RTAI = 4`,
+                                                          RTAI1,RTAI2,RTAI3,RTAI4,RTAI5,RTAI6),gt::html),
+                 "Strong Candidate RTAI = 5" = map(rank_chg(Table10$`Strong Candidate RTAI = 5`,
+                                                            RTAI1,RTAI2,RTAI3,RTAI4,RTAI5,RTAI6),gt::html))
+        
+        
+        RTAI_tbl%>%
+          gt()%>%
+          cols_width(
+            starts_with("Rational") ~ px(400),
+            starts_with("Tool") ~ px(220),
+            everything() ~ px(125),
+            
+          )%>%
+          sub_missing(columns = everything(),
+                      rows = everything(),
+                      missing_text = '')%>%
+          tab_spanner(
+            label = "RTAI",
+            columns = colnames(Table10)[2:6]
+          )%>%
+          tab_style(style = style_body_tool10(),
+                    locations = cells_body()) %>%
+          tab_style(style = style_body_tool10_middle(),
+                    locations = cells_body(columns=colnames(Table10)[2:6])) %>%
+          tab_style(style = style_col_labels(),
+                    locations = cells_column_spanners()) %>%
           tab_style(style = style_col_labels(),
                     locations = cells_column_labels()) %>%
           opt_table_outline() %>%
           # GT bug fix
-          tab_options(table.additional_css = "th, td {padding: 5px 10px !important;	border: 1px solid white;}" )%>%
-          tab_source_note()# can add drop down notes under the table, you may write in html
+          tab_options(table.additional_css = "th, td {padding: 5px 10px !important;	border: 1px solid white;}" )
+        
+        
+        
         # https://themockup.blog/posts/2020-10-31-embedding-custom-features-in-gt-tables/
         # https://shiny.rstudio.com/articles/action-buttons.html
         

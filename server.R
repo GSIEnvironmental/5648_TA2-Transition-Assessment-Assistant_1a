@@ -19,10 +19,12 @@ shinyServer(function(input, output, session) {
    PlumeZoneServer("05_PlumeZone", data_input = data_input, nav = nav)
   
    MatrixDiffusionServer("06_MatrixDiffusion")
-  
+   
+  RTAI_EA<- EnhanceMNAServer("07_EnhanceMNA", data_input = data_input, nav = nav)
+   
    HeterogeneityServer("08_Heterogeneity")
 
   SummaryServer("10_Summary",LOE_asymp = LOE_asymp, MKresult=MKresult, 
-                Cleantime = Cleantime, Presult = Presult)
+                Cleantime = Cleantime, Presult = Presult, RTAI_EA = RTAI_EA)
 
 })

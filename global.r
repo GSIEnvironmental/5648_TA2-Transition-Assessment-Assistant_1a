@@ -120,6 +120,7 @@ temp_boring <- read.xlsx("./data/5648_Dummy_Borling.xlsx")
 
 Table7_EA <- read_excel("./data/Table7_EA.xlsx")
 
+Table10 <- read_excel("./data/Table10_summary.xlsx")
 
 # Map -----------------------------
 site_map <- leaflet() %>%
