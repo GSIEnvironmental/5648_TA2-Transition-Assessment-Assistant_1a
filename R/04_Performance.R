@@ -123,11 +123,11 @@ PerformanceUI <- function(id, label = "04_Performance"){
                                       ),
                              tabPanel("Data",br(),
                                       HTML("TA2 ESTCP Remediation Performance Database"), br(),
-                                      rHandsontableOutput(ns("Rem_data"))
+                                      rHandsontableOutput(ns("Rem_data"),width = 550, height = 300)
                                       ),
                              tabPanel("Potential Remedy",
                                       
-                                      fluidRow(rHandsontableOutput(ns("Evaluation"))))
+                                      fluidRow(rHandsontableOutput(ns("Evaluation"), width = 550, height = 300)))
                              ),
                            fluidRow(align = "center",
                                     downloadButton(ns("save_results"),HTML("Save Data and Analysis"), style = button_style),
@@ -455,7 +455,6 @@ PerformanceServer <- function(id) {
       
       # Table of Evaluation Criteria -------------------
       output$Evaluation <- renderRHandsontable({
-
         rhandsontable(RemPotential,rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE) %>%
           hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)

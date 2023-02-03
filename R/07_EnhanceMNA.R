@@ -60,7 +60,7 @@ EnhanceMNAServer <- function(id, data_input, nav) {
       
       # function for shinyInput
       shinyInput <- function(FUN, len, row, id, label,...) {
-        #browser()
+        browser()
         inputs <- character(len)
         for (i in seq_len(len)) {
           
@@ -97,6 +97,7 @@ EnhanceMNAServer <- function(id, data_input, nav) {
       
       # extract RTAI from select button
       observeEvent(input$select_button, {
+        browser()
         selectedRow <- as.numeric(strsplit(input$select_button, "_")[[1]][2])
         selectedcol <- as.numeric(strsplit(input$select_button, "_")[[1]][3])
         RTAI = strsplit(my_data_table()[selectedRow,selectedcol][[1]],"[</>]")[[1]][3]

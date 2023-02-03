@@ -117,12 +117,12 @@ SummaryServer <- function(id,LOE_asymp, MKresult,
     
     function(input, output, session) {
      
-      dummy1 = '5'
-      dummy2 = 'I'
-      dummy3 = '<0.5'
-      dummy4 = 'High'
-      dummy5 = '<5'
-      dummy6 = "checkmark"
+      RTAI1 = '5'
+      RTAI2 = 'I'
+      RTAI3 = '<0.5'
+      RTAI4 = 'High'
+      RTAI5 = '<5'
+      RTAI6 = "checkmark"
       # Export Summary Table in Tab 10b  -------------------------
       output$Table_B <- render_gt({
         #req(LOE_asymp(), MKresult(), 
@@ -140,11 +140,21 @@ SummaryServer <- function(id,LOE_asymp, MKresult,
         
         RTAI2 = MKresult$MK_conc_well()$MapFlag
         
-        RTAI3 = ifelse(Cleantime$cleantime()$Time_Cleanup[1]<5, '<5',
+        RTAI5 = ifelse(Cleantime$cleantime()$Time_Cleanup[1]<5, '<5',
                        ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=5&Cleantime$cleantime()$Time_Cleanup[1]<10,'5 to <10',
                               ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=10&Cleantime$cleantime()$Time_Cleanup[1]<25,'10 to <25',
                                     ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=25&Cleantime$cleantime()$Time_Cleanup[1]<50,'25 to <50',
                                           ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=50,'50≥')))))
+        
+        RTAI4 = Presult$results_table()
+        
+        RTAI3 = ifelse(Presult$results_table()$Time_Cleanup[1]<0.5, '<0.5',
+                       ifelse(Presult$results_table()$Time_Cleanup[1]>=0.5&Cleantime$cleantime()$Time_Cleanup[1]<0.75,'0.5 to <0.75',
+                              ifelse(Presult$results_table()$Time_Cleanup[1]>=0.75&Cleantime$cleantime()$Time_Cleanup[1]<1.25,'0.75 to <1.25',
+                                     ifelse(Presult$results_table()$Time_Cleanup[1]>=1.25&Cleantime$cleantime()$Time_Cleanup[1]<2,'1.25 to <2',
+                                            ifelse(Presult$results_table()$Time_Cleanup[1]>=2,'2≥')))))
+        
+        RTAI6 = RTAI_EA$RTAI_EA()
         
         RTAI_tbl<-Table10%>%
           mutate("Poor Candidate RTAI = 1" = map(rank_chg(Table10$`Poor Candidate RTAI = 1`,
