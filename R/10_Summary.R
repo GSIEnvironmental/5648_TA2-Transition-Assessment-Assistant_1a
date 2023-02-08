@@ -72,21 +72,23 @@ SummaryUI <- function(id, label = "010_Summary"){
                       fluidRow(responsive=FALSE,
                                column(10,includeHTML('./www/10_Summary/Tool10c_v1.html')),#
                                tags$style("input[type=checkbox] {
-                                          white-space: normal;
-                                          position: fixed;
-                                          right:0;
-                                          bottom:0;
-                                          top:-0.1;
-                                          left:0;
-                                          background-color:#eee;
-                                          border-radius: 4px;
-                                          text-align:center;
                                           height:34px;
-                                          width:34px;
-                                          font-size: 14px;
-                                          padding: 0px 0;
-                                          margin:0px;
-                                          }"),
+                                          width:34px;}"),
+                               #            white-space: normal;
+                               #            position: fixed;
+                               #            right:0;
+                               #            bottom:0;
+                               #            top:-0.1;
+                               #            left:0;
+                               #            background-color:#eee;
+                               #            border-radius: 4px;
+                               #            text-align:center;
+                               #            height:34px;
+                               #            width:34px;
+                               #            font-size: 14px;
+                               #            padding: 0px 0;
+                               #            margin:0px;
+                               #            }"),
                                tags$style(".shiny-input-container {margin-bottom: 0;margin-top:0;outline:0px}"),
                                tags$style(".checkbox {margin-bottom: 0px;margin-top:4px;outline:0px}"),
                                includeCSS("./www/style/style_flip.css"),
@@ -117,44 +119,63 @@ SummaryServer <- function(id,LOE_asymp, MKresult,
     
     function(input, output, session) {
      
-      RTAI1 = '5'
-      RTAI2 = 'I'
-      RTAI3 = '<0.5'
-      RTAI4 = 'High'
-      RTAI5 = '<5'
-      RTAI6 = "checkmark"
       # Export Summary Table in Tab 10b  -------------------------
       output$Table_B <- render_gt({
-        #req(LOE_asymp(), MKresult(), 
-        #    Cleantime(), Presult())
 
-        browser()
-        validate(need(LOE_asymp$LOE_asymp(), "Go to Tool 1 to get RTAI"))
-        validate(need(MKresult$MK_conc_well(), "Go to Tool 2 to get RTAI"))
-        validate(need(Cleantime, "Go to Tool 3 to get RTAI"))
-        validate(need(Presult$results_table(), "Go to Tool 4 to get RTAI"))
-        validate(need(RTAI_EA$RTAI_EA(), "Go to Tool 7 to get RTAI"))
+        
+        
+        RTAI1 = checksilenterror(LOE_asymp$LOE_asymp())
+        RTAI2 = checksilenterror(MKresult$MK_conc_well())
+        RTAI3 = checksilenterror(Presult$results_table())
+        RTAI4 = checksilenterror(Presult$EvalITRC())
+        RTAI5 = checksilenterror(Cleantime$cleantime())
+        RTAI6 = checksilenterror(RTAI_EA$RTAI_EA())
+
+        validate(need(RTAI1!='error', "Go to Tool 1 to run the analysis"))
+        validate(need(RTAI2!='error', "Go to Tool 2 to run the analysis"))
+        validate(need(RTAI3!='error', "Go to Tool 4 to run the analysis"))
+        validate(need(RTAI4!='error', "Go to Tool 4 third tab to put checkmarks"))
+        validate(need(RTAI5!='error', "Go to Tool 3 to run the analysis"))
+        validate(need(RTAI6!='error', "Go to Tool 7 fifth tab to check the relevant cell"))
+        
         
         RTAI1 = LOE_asymp$LOE_asymp()
-        RTAI1 = length(RTAI1$Met[RTAI1$Met=='TRUE'])
+        RTAI1 = as.character(length(RTAI1$Met[RTAI1$Met=='TRUE']))
         
-        RTAI2 = MKresult$MK_conc_well()$MapFlag
+        RTAI2 = as.character(MKresult$MK_conc_well()$MapFlag)
         
-        RTAI5 = ifelse(Cleantime$cleantime()$Time_Cleanup[1]<5, '<5',
+        RTAI5 = as.character(ifelse(Cleantime$cleantime()$Time_Cleanup[1]<5, '<5',
                        ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=5&Cleantime$cleantime()$Time_Cleanup[1]<10,'5 to <10',
                               ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=10&Cleantime$cleantime()$Time_Cleanup[1]<25,'10 to <25',
                                     ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=25&Cleantime$cleantime()$Time_Cleanup[1]<50,'25 to <50',
-                                          ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=50,'50≥')))))
+                                          ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=50,'≥50'))))))
         
-        RTAI4 = Presult$results_table()
+        RTAI4 = Presult$EvalITRC()
+        RTAI4_H = nrow(RTAI4[RTAI4$High=='TRUE',])
+        RTAI4_M = nrow(RTAI4[RTAI4$Moderate=='TRUE',])
+        RTAI4_L = nrow(RTAI4[RTAI4$Low=='TRUE',])
         
-        RTAI3 = ifelse(Presult$results_table()$Time_Cleanup[1]<0.5, '<0.5',
-                       ifelse(Presult$results_table()$Time_Cleanup[1]>=0.5&Cleantime$cleantime()$Time_Cleanup[1]<0.75,'0.5 to <0.75',
-                              ifelse(Presult$results_table()$Time_Cleanup[1]>=0.75&Cleantime$cleantime()$Time_Cleanup[1]<1.25,'0.75 to <1.25',
-                                     ifelse(Presult$results_table()$Time_Cleanup[1]>=1.25&Cleantime$cleantime()$Time_Cleanup[1]<2,'1.25 to <2',
-                                            ifelse(Presult$results_table()$Time_Cleanup[1]>=2,'2≥')))))
+        RTAI4 <- case_when(RTAI4_H>RTAI4_M&RTAI4_H>RTAI4_L ~ 'High',
+                           RTAI4_H==RTAI4_M&RTAI4_H>RTAI4_L ~ 'High-Mod',
+                           RTAI4_H<RTAI4_M&RTAI4_M>RTAI4_L ~ 'Moderate',
+                           RTAI4_L==RTAI4_M&RTAI4_H<RTAI4_L ~ 'Mod-Low',
+                           RTAI4_L>RTAI4_M&RTAI4_L>RTAI4_M ~ 'Low')
+        requiredOoMs = log10(Presult$Tool4_Conc_site() - Presult$Tool4_Conc_goal())
+        expectedOoMs = as.numeric(Presult$results_table()$Median_list[2])
+
         
+        RTAI3 = ifelse(requiredOoMs/expectedOoMs<0.5, '<0.5',
+                       ifelse(requiredOoMs/expectedOoMs>=0.5&requiredOoMs/expectedOoMs<0.75,'0.5 to <0.75',
+                              ifelse(requiredOoMs/expectedOoMs>=0.75&requiredOoMs/expectedOoMs<1.25,'0.75 to <1.25',
+                                     ifelse(requiredOoMs/expectedOoMs>=1.25&requiredOoMs/expectedOoMs<2,'1.25 to <2',
+                                            ifelse(requiredOoMs/expectedOoMs>=2,'≥2')))))
+        
+        # update table with checkmark
         RTAI6 = RTAI_EA$RTAI_EA()
+        RTAI6_ind = grep(RTAI6, colnames(Table10))
+        Table10[6,RTAI6_ind] = 'checkmark'
+        RTAI6 = 'checkmark'
+
         
         RTAI_tbl<-Table10%>%
           mutate("Poor Candidate RTAI = 1" = map(rank_chg(Table10$`Poor Candidate RTAI = 1`,
@@ -168,7 +189,7 @@ SummaryServer <- function(id,LOE_asymp, MKresult,
                  "Strong Candidate RTAI = 5" = map(rank_chg(Table10$`Strong Candidate RTAI = 5`,
                                                             RTAI1,RTAI2,RTAI3,RTAI4,RTAI5,RTAI6),gt::html))
         
-        
+   
         RTAI_tbl%>%
           gt()%>%
           cols_width(

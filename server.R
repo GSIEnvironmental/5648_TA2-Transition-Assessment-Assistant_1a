@@ -14,7 +14,7 @@ shinyServer(function(input, output, session) {
 
   Cleantime <- CleanupGoals_tabServer("03_CleanupGoals_tab", nav = nav)
  
-  Presult <- PerformanceServer("04_Performance")
+  Presult <- PerformanceServer("04_Performance", nav = nav)
   
    PlumeZoneServer("05_PlumeZone", data_input = data_input, nav = nav)
   

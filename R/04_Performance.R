@@ -142,7 +142,7 @@ PerformanceUI <- function(id, label = "04_Performance"){
 
 
 ## Server Module -----------------------------------------
-PerformanceServer <- function(id) {
+PerformanceServer <- function(id,nav) {
   moduleServer(
     id,
     
@@ -280,7 +280,7 @@ PerformanceServer <- function(id) {
         #generate the list of data middle range, low range, and high range
         # c(% reduction, OoM reduction, after remediation forecast % reduction, OoM, % to reach)
         Result_table <- ForecastResults(df_filter,Conc_goal,Conc_site)
-        
+
         if (!is.null(Conc_goal)){
           Result_table <-as.data.frame(Result_table)%>%
           mutate(Info = c('% reduction', 
@@ -298,7 +298,7 @@ PerformanceServer <- function(id) {
         
         #validate(need(length(df()$Concentration) > 2, "Insufficent data to calculate rate. Make sure at least 2 data points are present."))
         #validate(need(input$conc_goal > 0, "Please select a valid concentration goal (Step 4)"))
-        
+        results_table(Result_table)
         Result_table<-Result_table%>%
           gt(rowname_col="Info",
              groupname_col = 'group')%>%
@@ -318,6 +318,7 @@ PerformanceServer <- function(id) {
           tab_options(table.font.size = 12)
         
         fig_tool4$Result_table<-Result_table
+        
         }else{
           Result_table <-as.data.frame(Result_table)%>%
             mutate(Info = c('% reduction', 
@@ -329,7 +330,7 @@ PerformanceServer <- function(id) {
           
           #validate(need(length(df()$Concentration) > 2, "Insufficent data to calculate rate. Make sure at least 2 data points are present."))
           #validate(need(input$conc_goal > 0, "Please select a valid concentration goal (Step 4)"))
-          
+          results_table(Result_table)
           Result_table<-Result_table%>%
             gt(rowname_col="Info",
                groupname_col = 'group')%>%
@@ -349,7 +350,8 @@ PerformanceServer <- function(id) {
             tab_options(table.font.size = 12)
           
           fig_tool4$Result_table<-Result_table
-          results_table(Result_table)
+          
+          
         }
         
       })
@@ -449,15 +451,25 @@ PerformanceServer <- function(id) {
           nam<-names(filtered_table())[var]
           assign(nam, (filtered_table()[[var]]))
         }
-        rhandsontable(df_filter, readOnly = T, rowHeaders = NULL, width = 1200, height = 600) %>%
+        rhandsontable(df_filter, readOnly = T, rowHeaders = NULL, width = 2000, height = 600) %>%
           hot_cols(columnSorting = TRUE)
       })
       
       # Table of Evaluation Criteria -------------------
       output$Evaluation <- renderRHandsontable({
-        rhandsontable(RemPotential,rowHeaders = NULL, width = 1200, height = 600) %>%
-          hot_cols(columnSorting = TRUE) %>%
-          hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
+      rhandsontable(RemPotential,rowHeaders=NULL,width = 1200, height = 600)%>%
+        hot_cols(columnSorting = TRUE) %>%
+          hot_col(2,valign='htCenter')%>%
+          hot_col(3,valign='htCenter')%>%
+          hot_col(4,valign='htCenter')%>%
+        hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
+      })
+      
+      EvalITRC <- reactiveVal()
+      
+      observeEvent(input$Evaluation,{
+        EvalITRC<- hot_to_r(input$Evaluation)
+        EvalITRC(EvalITRC)
       })
       
       # Return Dataframes ------------------
@@ -465,7 +477,14 @@ PerformanceServer <- function(id) {
       return(list(
         results_table = reactive({
           req(results_table())
-          results_table()})
+          results_table()}),
+        EvalITRC = reactive({
+          req(EvalITRC())
+          EvalITRC()}),
+        Tool4_Conc_goal = reactive({
+          input$Conc_goal}),
+        Tool4_Conc_site = reactive({
+          input$Conc_site})
       ))
       
       }

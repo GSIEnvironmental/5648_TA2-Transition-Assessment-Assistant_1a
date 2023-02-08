@@ -413,9 +413,18 @@ TrendServer <- function(id, data_input, nav) {
       # COC Selection Updates -----------------------
       observe({
         req(nav() == "2. Expansion")
-        req(d_conc())
+        req(d_loc(),
+            d_conc())
+      
+        if (input$select_mw_group=="All Monitoring Wells"){
+          COC_unique<-d_loc()
+          COC_unique<-d_conc()%>%filter(WellID%in%COC_unique$`Monitoring Wells`)
+        }else{
+          COC_unique<-d_loc()%>%filter(`Well Grouping`%in%input$select_mw_group)
+          COC_unique<-d_conc()%>%filter(WellID%in%COC_unique$`Monitoring Wells`)
+        }
         
-        choices <- sort(unique(d_conc()$COC))
+        choices <- sort(unique(COC_unique$COC))
         
         updatePickerInput(session, "select_COC", choices = choices)
         

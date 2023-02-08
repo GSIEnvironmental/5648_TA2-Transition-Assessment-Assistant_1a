@@ -47,7 +47,7 @@ EnhanceMNAServer <- function(id, data_input, nav) {
     id,
     
     function(input, output, session) {
-      
+      ns <-NS(id)
       # Table of Evaluation Criteria -------------------
       browser
       output$Evaluation <- renderRHandsontable({
@@ -60,7 +60,6 @@ EnhanceMNAServer <- function(id, data_input, nav) {
       
       # function for shinyInput
       shinyInput <- function(FUN, len, row, id, label,...) {
-        browser()
         inputs <- character(len)
         for (i in seq_len(len)) {
           
@@ -75,15 +74,15 @@ EnhanceMNAServer <- function(id, data_input, nav) {
           `<30 ft` = shinyInput(actionButton, 3, 1,
                                 'button_',
                                 label =  Table7_EA$`<30 ft`,#"Fire",
-                                onclick = paste0('Shiny.onInputChange( \"select_button\" , this.id)')) ,
+                                onclick = paste0('Shiny.onInputChange( \"',ns('select_button'),'\" , this.id)')) ,
           `30-60 ft` = shinyInput(actionButton, 3, 2,
                                   'button_',
                                   label =  Table7_EA$`30-60 ft`,#"Fire",
-                                  onclick = paste0('Shiny.onInputChange( \"select_button\" , this.id)')) ,
+                                  onclick = paste0('Shiny.onInputChange( \"',ns('select_button'),'\" , this.id)'))  ,
           `>60 ft` = shinyInput(actionButton, 3, 3,
                                 'button_',
                                 label =  Table7_EA$`>60 ft`,#"Fire",
-                                onclick = paste0('Shiny.onInputChange( \"select_button\" , this.id)')
+                                onclick = paste0('Shiny.onInputChange( \"',ns('select_button'),'\" , this.id)')
           ),
           rowname = Table7_EA$...1
         )
@@ -97,11 +96,11 @@ EnhanceMNAServer <- function(id, data_input, nav) {
       
       # extract RTAI from select button
       observeEvent(input$select_button, {
-        browser()
+       
         selectedRow <- as.numeric(strsplit(input$select_button, "_")[[1]][2])
         selectedcol <- as.numeric(strsplit(input$select_button, "_")[[1]][3])
         RTAI = strsplit(my_data_table()[selectedRow,selectedcol][[1]],"[</>]")[[1]][3]
-        myValue$check <<- paste('click on ',RTAI)
+        myValue$check <- RTAI
         
       })
       
