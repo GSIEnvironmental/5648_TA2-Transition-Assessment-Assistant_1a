@@ -37,10 +37,18 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                                                     "text/comma-separated-values,text/plain",
                                                                     ".xlsx"), 
                                                          width = "200px")),
-                                        column(6, align = "center",
+                                        column(6,align = "center",
                                                fluidRow(actionButton(ns("update_inputs"), 
                                                               HTML("Update Input Values<br>from Input File"), style = button_style)),
                                                fluidRow(HTML("<i>Will reset all input values.</i>")))),
+                               fluidRow(column(12,align = "center",
+                                               fluidRow(br(),
+                                                        br(),
+                                                        actionButton(ns("gobutton"),HTML('Run!'),
+                                                                     style = button_style_big)
+                                                        )
+                                               )
+                                        ),
                                # Parameter Inputs
                                fluidRow(style="display: inline-block;vertical-align:top;", br(),
                                         fluidRow(column(6, align = "right",
@@ -62,7 +70,8 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                                  column(4, align = "center",
                                                         selectInput(ns("COC"),label = NULL,
                                                                     choices = Constituents_order,#c(sort(unique(Constituents$`Constituents Name`))),
-                                                                    selected = "TCE", multiple = F, selectize = FALSE)),
+                                                                    selected = "TCE", 
+                                                                    multiple = F, selectize = FALSE)),
                                                  column(2, align = "left", 
                                                         actionButton(ns("help3"), HTML("?"), style = button_style2))), 
                                         br(), 
@@ -583,7 +592,7 @@ CleanupGoals_tabServer <- function(id,nav) {
       results <- reactiveVal()
       error <- reactiveVal()
       
-      observe({
+      observeEvent({input$gobutton},{
         # error("Check Inputs")
         req(input$X_LL < input$X & input$X_UL > input$X,
             input$Year_Started_LL < input$Year_Removed,

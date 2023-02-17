@@ -23,7 +23,7 @@ ValidateRangeFunction<-function(error,results,input){
          "Percentage of Transmissive Zone is outside model range (10-90%)."),
     need(input$HalfLife>=1&input$HalfLife<=1000,
          "Half-life outside model range (1-1,000 years)."),
-    need(error != "Check Inputs", "Please Check Input Values."),
+    need(error != "Check Inputs", "Please Hit Run Or Check Input Values."),
     need(nrow(results) >= 700, 
          paste("Too many realizations being outside of the Borden's Tool range \n or choose parameters at the boundary, cannot generate rectagular distribution.")),
     need(input$N>=1&input$N<=4,

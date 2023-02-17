@@ -251,6 +251,7 @@ button_style2 <- "white-space: normal;
                         padding: 0px 0;
                         margin:0px;"
 
+
 button_style3 <- "white-space: normal;
                         background-color:#eee;
                         text-align:center;
@@ -265,7 +266,8 @@ button_style_big <- "white-space: normal;
                         text-align:center;
                         height:100px;
                         width:300px;
-                        font-size: 18px;"
+                        font-size: 18px;
+                        background-color:#FFDF00"
 
 button_style4 <- "white-space: normal;
                         background-color:#eee;

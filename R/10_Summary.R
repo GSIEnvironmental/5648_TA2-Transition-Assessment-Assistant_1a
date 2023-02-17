@@ -131,52 +131,70 @@ SummaryServer <- function(id,LOE_asymp, MKresult,
         RTAI5 = checksilenterror(Cleantime$cleantime())
         RTAI6 = checksilenterror(RTAI_EA$RTAI_EA())
 
-        validate(need(RTAI1!='error', "Go to Tool 1 to run the analysis"))
-        validate(need(RTAI2!='error', "Go to Tool 2 to run the analysis"))
-        validate(need(RTAI3!='error', "Go to Tool 4 to run the analysis"))
-        validate(need(RTAI4!='error', "Go to Tool 4 third tab to put checkmarks"))
-        validate(need(RTAI5!='error', "Go to Tool 3 to run the analysis"))
-        validate(need(RTAI6!='error', "Go to Tool 7 fifth tab to check the relevant cell"))
+        #validate(need(RTAI1!='error', "Go to Tool 1 to run the analysis"))
+        #validate(need(RTAI2!='error', "Go to Tool 2 to run the analysis"))
+        #validate(need(RTAI3!='error', "Go to Tool 4 to run the analysis"))
+        #validate(need(RTAI4!='error', "Go to Tool 4 third tab to put checkmarks"))
+        #validate(need(RTAI5!='error', "Go to Tool 3 to run the analysis"))
+        #validate(need(RTAI6!='error', "Go to Tool 7 fifth tab to check the relevant cell"))
         
+        if (RTAI1!='error'){
+          RTAI1 = LOE_asymp$LOE_asymp()
+          RTAI1 = as.character(length(RTAI1$Met[RTAI1$Met=='TRUE']))
+        }else{
+          RTAI1 = 'NA'
+        }
+          
+        if (RTAI2!='error'){
+          RTAI2 = as.character(MKresult$MK_conc_well()$MapFlag)
+        }else{
+          RTAI2 = 'NA'
+        }
         
-        RTAI1 = LOE_asymp$LOE_asymp()
-        RTAI1 = as.character(length(RTAI1$Met[RTAI1$Met=='TRUE']))
+        if (RTAI5!='error'){
+          RTAI5 = as.character(ifelse(Cleantime$cleantime()$Time_Cleanup[1]<5, '<5',
+                                      ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=5&Cleantime$cleantime()$Time_Cleanup[1]<10,'5 to <10',
+                                             ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=10&Cleantime$cleantime()$Time_Cleanup[1]<25,'10 to <25',
+                                                    ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=25&Cleantime$cleantime()$Time_Cleanup[1]<50,'25 to <50',
+                                                           ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=50,'≥50'))))))
+        }else{
+          RTAI5 = 'NA'
+        }
         
-        RTAI2 = as.character(MKresult$MK_conc_well()$MapFlag)
+        if (RTAI4!='error'){
+          RTAI4 = Presult$EvalITRC()
+          RTAI4_H = nrow(RTAI4[RTAI4$High=='TRUE',])
+          RTAI4_M = nrow(RTAI4[RTAI4$Moderate=='TRUE',])
+          RTAI4_L = nrow(RTAI4[RTAI4$Low=='TRUE',])
+          
+          RTAI4 <- case_when(RTAI4_H>RTAI4_M&RTAI4_H>RTAI4_L ~ 'High',
+                             RTAI4_H==RTAI4_M&RTAI4_H>RTAI4_L ~ 'High-Mod',
+                             RTAI4_H<RTAI4_M&RTAI4_M>RTAI4_L ~ 'Moderate',
+                             RTAI4_L==RTAI4_M&RTAI4_H<RTAI4_L ~ 'Mod-Low',
+                             RTAI4_L>RTAI4_M&RTAI4_L>RTAI4_M ~ 'Low')
+          requiredOoMs = log10(Presult$Tool4_Conc_site() - Presult$Tool4_Conc_goal())
+          expectedOoMs = as.numeric(Presult$results_table()$Median_list[2])
+          RTAI3 = ifelse(requiredOoMs/expectedOoMs<0.5, '<0.5',
+                         ifelse(requiredOoMs/expectedOoMs>=0.5&requiredOoMs/expectedOoMs<0.75,'0.5 to <0.75',
+                                ifelse(requiredOoMs/expectedOoMs>=0.75&requiredOoMs/expectedOoMs<1.25,'0.75 to <1.25',
+                                       ifelse(requiredOoMs/expectedOoMs>=1.25&requiredOoMs/expectedOoMs<2,'1.25 to <2',
+                                              ifelse(requiredOoMs/expectedOoMs>=2,'≥2')))))
+        }else{
+          RTAI4 = 'NA'
+          RTAI3 = 'NA'
+        }
         
-        RTAI5 = as.character(ifelse(Cleantime$cleantime()$Time_Cleanup[1]<5, '<5',
-                       ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=5&Cleantime$cleantime()$Time_Cleanup[1]<10,'5 to <10',
-                              ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=10&Cleantime$cleantime()$Time_Cleanup[1]<25,'10 to <25',
-                                    ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=25&Cleantime$cleantime()$Time_Cleanup[1]<50,'25 to <50',
-                                          ifelse(Cleantime$cleantime()$Time_Cleanup[1]>=50,'≥50'))))))
+        if (RTAI6!='error'){
+          # update table with checkmark
+          RTAI6 = RTAI_EA$RTAI_EA()
+          RTAI6_ind = grep(RTAI6, colnames(Table10))
+          Table10[6,RTAI6_ind] = 'checkmark'
+          RTAI6 = 'checkmark'
+        }else{
+          RTAI6 = 'NA'
+        }
         
-        RTAI4 = Presult$EvalITRC()
-        RTAI4_H = nrow(RTAI4[RTAI4$High=='TRUE',])
-        RTAI4_M = nrow(RTAI4[RTAI4$Moderate=='TRUE',])
-        RTAI4_L = nrow(RTAI4[RTAI4$Low=='TRUE',])
-        
-        RTAI4 <- case_when(RTAI4_H>RTAI4_M&RTAI4_H>RTAI4_L ~ 'High',
-                           RTAI4_H==RTAI4_M&RTAI4_H>RTAI4_L ~ 'High-Mod',
-                           RTAI4_H<RTAI4_M&RTAI4_M>RTAI4_L ~ 'Moderate',
-                           RTAI4_L==RTAI4_M&RTAI4_H<RTAI4_L ~ 'Mod-Low',
-                           RTAI4_L>RTAI4_M&RTAI4_L>RTAI4_M ~ 'Low')
-        requiredOoMs = log10(Presult$Tool4_Conc_site() - Presult$Tool4_Conc_goal())
-        expectedOoMs = as.numeric(Presult$results_table()$Median_list[2])
-
-        
-        RTAI3 = ifelse(requiredOoMs/expectedOoMs<0.5, '<0.5',
-                       ifelse(requiredOoMs/expectedOoMs>=0.5&requiredOoMs/expectedOoMs<0.75,'0.5 to <0.75',
-                              ifelse(requiredOoMs/expectedOoMs>=0.75&requiredOoMs/expectedOoMs<1.25,'0.75 to <1.25',
-                                     ifelse(requiredOoMs/expectedOoMs>=1.25&requiredOoMs/expectedOoMs<2,'1.25 to <2',
-                                            ifelse(requiredOoMs/expectedOoMs>=2,'≥2')))))
-        
-        # update table with checkmark
-        RTAI6 = RTAI_EA$RTAI_EA()
-        RTAI6_ind = grep(RTAI6, colnames(Table10))
-        Table10[6,RTAI6_ind] = 'checkmark'
-        RTAI6 = 'checkmark'
-
-        
+  
         RTAI_tbl<-Table10%>%
           mutate("Poor Candidate RTAI = 1" = map(rank_chg(Table10$`Poor Candidate RTAI = 1`,
                                                           RTAI1,RTAI2,RTAI3,RTAI4,RTAI5,RTAI6),gt::html),
@@ -189,12 +207,17 @@ SummaryServer <- function(id,LOE_asymp, MKresult,
                  "Strong Candidate RTAI = 5" = map(rank_chg(Table10$`Strong Candidate RTAI = 5`,
                                                             RTAI1,RTAI2,RTAI3,RTAI4,RTAI5,RTAI6),gt::html))
         
-   
+        countlargest = c(as.numeric(gsub(pattern = "<.*?>", replacement = "", x = RTAI_tbl[7,2][[1]][[1]])),
+                         as.numeric(gsub(pattern = "<.*?>", replacement = "", x = RTAI_tbl[7,3][[1]][[1]])),
+                         as.numeric(gsub(pattern = "<.*?>", replacement = "", x = RTAI_tbl[7,4][[1]][[1]])),
+                         as.numeric(gsub(pattern = "<.*?>", replacement = "", x = RTAI_tbl[7,5][[1]][[1]])),
+                         as.numeric(gsub(pattern = "<.*?>", replacement = "", x = RTAI_tbl[7,6][[1]][[1]])))
+
         RTAI_tbl%>%
           gt()%>%
           cols_width(
             starts_with("Rational") ~ px(400),
-            starts_with("Tool") ~ px(220),
+            starts_with("Tool") ~ px(280),
             everything() ~ px(125),
             
           )%>%
@@ -213,16 +236,71 @@ SummaryServer <- function(id,LOE_asymp, MKresult,
                     locations = cells_column_spanners()) %>%
           tab_style(style = style_col_labels(),
                     locations = cells_column_labels()) %>%
+          tab_style(
+            style = list(
+              cell_fill(color = "#FFFF99"),
+              cell_text(weight = "bold")
+            ),
+            locations = cells_body(
+              columns = `Poor Candidate RTAI = 1`,
+              rows =  str_detect(`Poor Candidate RTAI = 1`,'red')|
+                (str_detect(`Poor Candidate RTAI = 1`,as.character(max(countlargest)))&
+                              str_detect(`Poor Candidate RTAI = 1`,'bold'))
+            )
+          ) %>%
+          tab_style(
+            style = list(
+              cell_fill(color = "#FFFF99"),
+              cell_text(weight = "bold")
+            ),
+            locations = cells_body(
+              columns = `Fair Candidate RTAI = 2`,
+              rows =  str_detect(`Fair Candidate RTAI = 2`,'red')|
+                (str_detect(`Fair Candidate RTAI = 2`,as.character(max(countlargest)))&
+                             str_detect(`Fair Candidate RTAI = 2`,'bold'))
+            )
+          ) %>%
+          tab_style(
+            style = list(
+              cell_fill(color = "#FFFF99"),
+              cell_text(weight = "bold")
+            ),
+            locations = cells_body(
+              columns = `Typical Candidate RTAI = 3`,
+              rows =  str_detect(`Typical Candidate RTAI = 3`,'red')|
+                (str_detect(`Typical Candidate RTAI = 3`,as.character(max(countlargest)))&
+                             str_detect(`Typical Candidate RTAI = 3`,'bold'))
+            )
+          ) %>%
+          tab_style(
+            style = list(
+              cell_fill(color = "#FFFF99"),
+              cell_text(weight = "bold")
+            ),
+            locations = cells_body(
+              columns = `Good Candidate RTAI = 4`,
+              rows =  str_detect(`Good Candidate RTAI = 4`,'red')|
+                (str_detect(`Good Candidate RTAI = 4`,as.character(max(countlargest)))&
+                             str_detect(`Good Candidate RTAI = 4`,'bold'))
+            )
+          ) %>%
+          tab_style(
+            style = list(
+              cell_fill(color = "#FFFF99"),
+              cell_text(weight = "bold")
+            ),
+            locations = cells_body(
+              columns = `Strong Candidate RTAI = 5`,
+              rows =  str_detect(`Strong Candidate RTAI = 5`,'red')|
+                (str_detect(`Strong Candidate RTAI = 5`,as.character(max(countlargest)))&
+                             str_detect(`Strong Candidate RTAI = 5`,'bold'))
+            )
+          ) %>%
           opt_table_outline() %>%
           # GT bug fix
           tab_options(table.additional_css = "th, td {padding: 5px 10px !important;	border: 1px solid white;}" )
-        
-        
-        
-        # https://themockup.blog/posts/2020-10-31-embedding-custom-features-in-gt-tables/
-        # https://shiny.rstudio.com/articles/action-buttons.html
-        
-        
+
+         
       })
       
       
