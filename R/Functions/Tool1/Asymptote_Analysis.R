@@ -24,7 +24,7 @@ sen_trend_distance <- function(df_series,COC){
   # Convert Date to numeric
 
   count =1
-  for (i in unique(df_series$State)){
+  for (i in unique(na.omit(df_series$State))){
     df_seriesA <-df_series%>%filter(COC%in%COC&State==i)
     Distance <- df_seriesA$Distance
     Concentration <- log10(df_seriesA$Concentration)

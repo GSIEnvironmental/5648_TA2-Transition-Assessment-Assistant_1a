@@ -59,6 +59,8 @@ library(htmlwidgets)
 library(webshot2)
 library(DT)
 library(shiny)
+library(shinydashboard)
+
 
 # Plot Parameters -------------
 # Colors
