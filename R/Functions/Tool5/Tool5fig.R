@@ -27,7 +27,10 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,group_method1,
       # generate point of compliance and cleanup goal line
       p <- plot_ly(source = 'ts_selected')%>%
         add_segments(y = log10(C_goal), yend = log10(C_goal),
-                     x = 0, xend = max(sen$model$Distance,df_series$Distance,Ltot,rm.na=TRUE),
+                     x = 0, xend = max(sen$model$Distance,df_series$Distance,Ltot,
+                                       0, sen$model$Distance,Ltot,Ltot*2.9,
+                                         (log10(C_goal)-as.numeric(sen$coefficients[1]))/as.numeric(sen$coefficients[2]),
+                                       rm.na=TRUE),
                      line = list(dash = "dash",color='black'), showlegend=FALSE)%>% #  CONCENTRATION GOAL
         add_trace(x= c(Ltot,Ltot),#10%
                   y = c(log10(min(df_series$Concentration,na.rm = TRUE))-0.5, 
@@ -182,7 +185,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,group_method1,
     #browser()
       if (State=='Lab-Based'){
         p <- p %>%
-          add_annotations(x = mean(Ltot,na.rm = TRUE),
+          add_annotations(x = mean(Ltot*0.5,na.rm = TRUE),
                           y = log10(C_goal*1.3),
                           text = paste0("Cleanup Goal (",C_goal," ug/L)"),
                           xref = "x",
@@ -217,7 +220,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,group_method1,
                          zeroline = FALSE,
                          mirror = "ticks"),
             showlegend = TRUE,
-            legend = list(orientation = 'h',title ='',y=-0.25,font = list(size = 18)),
+            legend = list(orientation = 'h',title ='',y=-0.25,font = list(size = 18),itemwidth=100),
             margin = margin
             )
       }else{
@@ -260,7 +263,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,group_method1,
                          mirror = "ticks"
             ), 
             showlegend = TRUE,
-            legend = list(orientation = 'h',title ='',y=-0.25,font = list(size = 18)),
+            legend = list(orientation = 'h',title ='',y=-0.25,font = list(size = 18),itemwidth=100),
             margin = margin
           )
       }

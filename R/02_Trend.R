@@ -22,7 +22,8 @@ TrendUI <- function(id, label = "01_Trend"){
                            <h4><ol>
                            <li> Enter your monitoring well’s concentration vs. time data under the 'Data Input' tab.</li> 
                            <li> Go through Steps 1-4 to get the trends and determine if your plume is still expanding.</li>
-                                </ol></h4>"))), # end Page Title
+                                </ol></h4>"))
+                    ), # end Page Title
            fluidRow(br(),
                     # Instructions and General Inputs --------------
                     column(3,

@@ -60,6 +60,7 @@ library(webshot2)
 library(DT)
 library(shiny)
 library(shinydashboard)
+library(htmltools)
 
 
 # Plot Parameters -------------
@@ -118,7 +119,8 @@ temp_data <- read.xlsx("./data/data_template.xlsx", sheet = "Concentration_Time_
 temp_mw_info <- read.xlsx("./data/data_template.xlsx", sheet = "Monitoring_Well_Information", startRow = 1,
                        check.names = F, sep.names = " ")
 
-temp_boring <- read.xlsx("./data/5648_Dummy_Borling.xlsx")
+temp_boring <- read_excel("./data/5648_Dummy_Borling.xlsx")
+
 
 Table7_EA <- read_excel("./data/Table7_EA.xlsx")
 
@@ -203,7 +205,64 @@ RemPotential <- read_excel("data/Table4_Rem_Potential.xlsx")
 RemPotential$High = FALSE
 RemPotential$Moderate = FALSE
 RemPotential$Low = FALSE
-
+RemPotential$Help = c(
+  as.character(
+    span(
+      `data-toggle` = "tooltip", `data-placement` = "right",
+      title = "Sites that have physical or administrative barriers to access have a lower likelihood of achieving remediation objectives.  This could include the presence of buildings or other infrastructure that limit access and/or the ability to deliver remedial amendments, as well as property rights and other administrative factors.  See Section 3.3.1 of ITRC 2017 for more information.",
+      icon("fa-solid fa-circle-question fa-2xl")
+    )
+  ),
+  as.character(
+    span(
+      `data-toggle` = "tooltip", `data-placement` = "right",
+      title = "Sites where drilling has the potential to be slow and/or resource intensive have a lower likelihood of achieving remediation objectives because these limitations may hinder the use of many common remediation techniques.  Sites with shallow contamination in unconsolidated formations have a greater flexibility in terms of drilling or excavation options.  See Section 3.3.2 of ITRC 2017 for more information.",
+      icon("fa-solid fa-circle-question fa-2xl")
+    )
+  ),
+  as.character(
+    span(
+      `data-toggle` = "tooltip", `data-placement` = "right",
+      title = "Sites where the size of the source zone and the size of the plume are large have a lower likelihood of achieving remediation objectives because it may be impractical to use standard remediation methods.  See Section 3.3.2 of ITRC 2017 for more information. ",
+      icon("fa-solid fa-circle-question fa-2xl")
+    )
+  ),
+  as.character(
+    span(
+      `data-toggle` = "tooltip", `data-placement` = "right",
+      title = "Sites that require concentrations to be reduced by two or more orders of magnitude in order to meet closure criteria have a lower likelihood of achieving remediation objectives.  This is because currently available remediation technologies can typically achieve an order of magnitude concentration reduction but infrequently achieve a concentration reduction of two or more orders of magnitude.  See the 'Results' tab of Tool 4 for more information, as well as Section 3.3.4 of ITRC 2017.",
+      icon("fa-solid fa-circle-question fa-2xl")
+    )
+  ),
+  as.character(
+    span(
+      `data-toggle` = "tooltip", `data-placement` = "right",
+      title = "Sites where the contaminants do not readily attenuate relative to the travel time to downgradient receptors have a lower likelihood of achieving remediation objectives.  This may because degradation rates are limited by geochemical conditions, a lack of carbon or other substrates, and other factors that contribute to low concentrations of key microorganisms or reactive minerals.  It may also occur when groundwater velocity is fast or the source concentration is high, such that rates are insufficient to reduce concentrations to the cleanup goal by the time contaminants reach the downgradient receptor.  See Tool 5 for more help in estimating attenuation rate constants and projecting concentrations vs distance from a source.  See also Section 3.3.5 of ITRC 217 for more information.",
+      icon("fa-solid fa-circle-question fa-2xl")
+    )
+  ),
+  as.character(
+    span(
+      `data-toggle` = "tooltip", `data-placement` = "right",
+      title = "Sites where a significant portion of the mass is associated with NAPL or is present in lower-permeability zones have a lower likelihood of achieving remediation objectives.  The release of contaminant mass into aquifers at these sites may occur slowly and serve as a long-term persistent source, which can increase the remediation timeframe.  In addition, it may be difficult for most technologies to treat mass that is present in low-permeability zones or as NAPL.  See Tool 6 for more information on how the process of matrix diffusion influences contaminant behavior and Tool 7 for more information on geological heterogeneity.  See also Section 3.3.6 of ITRC 2017.",
+      icon("fa-solid fa-circle-question fa-2xl")
+    )
+  ),
+  as.character(
+    span(
+      `data-toggle` = "tooltip", `data-placement` = "right",
+      title = "Sites where remediation has already been implemented (or evaluated through treatability or pilot testing) but was unable to achieve the necessary concentration reductions have a lower likelihood of achieving remediation objectives.  The actual performance of a remediation technology can be coupled with an understanding of the potential performance of other technologies under consideration (see the 'Results' tab of Tool 4) to get a more complete picture.  See Section 3.3.7 of ITRC 2017 for more information.",
+      icon("fa-solid fa-circle-question fa-2xl")
+    )
+  ),
+  as.character(
+    span(
+      `data-toggle` = "tooltip", `data-placement` = "right",
+      title = "Sites with a long projected remediation timeframe have a have a lower likelihood of achieving remediation objectives.  Determining what constitutes a reasonable timeframe is a site-specific decision, and it may rely on establishing interim objectives over a timeframe of 20 years or less (ITRC 2017).  The remediation timeframe can be estimated in a number of ways, typically using a combination of field data, statistical projections, and modeling.  This includes the approaches described in Tool 1, Tool 3, and Tool 6 of the TA2 Tool.  See Section 3.3.8 of ITRC 2017 for more information.",
+      icon("fa-solid fa-circle-question fa-2xl")
+    )
+  )
+)
 
 # # Functions -----------------
 # #Convert lat/long
@@ -235,6 +294,7 @@ RemPotential$Low = FALSE
 # Formatting --------------------------
 ##Set styles for buttons --------------
 
+
 button_style <- "white-space: normal;
                         background-color:#eee;
                         text-align:center;
@@ -243,6 +303,15 @@ button_style <- "white-space: normal;
                         font-size: 14px;
                         padding: 10px 0;
                         margin:5px;"
+
+button_style_v8_3 <- "white-space: normal;
+                        background-color:#eee;
+                        text-align:center;
+                        height:865px;
+                        width:1423px;
+                        font-size: 20px;
+                        padding: 0px 0;
+                        margin:0px;"
 
 button_style2 <- "white-space: normal;
                         background-color:#eee;

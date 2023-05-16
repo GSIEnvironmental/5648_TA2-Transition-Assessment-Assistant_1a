@@ -55,6 +55,8 @@ heterofunction<-function(df,TOP,Bottom,aquitard){
   
   if ('High'%in%c(Impact_diffusion,Impact_diffusion2)){
     Overall = 'High'
+  }else if ('Very high'%in%c(Impact_diffusion,Impact_diffusion2)){
+    Overall = 'High'
   }else if ('Moderate'%in%c(Impact_diffusion,Impact_diffusion2)){
     Overall = 'Moderate'
   }else{

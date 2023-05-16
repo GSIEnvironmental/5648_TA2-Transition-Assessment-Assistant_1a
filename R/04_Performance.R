@@ -6,12 +6,25 @@ PerformanceUI <- function(id, label = "04_Performance"){
   
   tabPanel("4. Performance",
            fluidRow(style='border-bottom: 5px solid black',
-                    HTML("<h1><b>Tool 4. What level of performance can I expect from an in-situ source remediation projects?</h1></b>"),
-                     column(10,
-                     HTML("<h4>The extensive ESTCP investment in understanding what has happened at remediation sites 
-                  can be transformed into a semi-quantitative forecasting tool that includes key variables such as the 
-                  contaminant type, the remediation technology, contaminant type, and starting concentration</h4>")
-                               )),
+                    HTML("<h1><b>Tool 4. What level of performance can I expect from an in-situ source remediation project?</h1></b>"),
+                    column(6,
+                           HTML("<h3><b>What Does this Tool Do?</b></h3>
+                           <h4><ol>This tool leverages the extensive ESTCP investment in understanding what has happened at 
+                           remediation sites to create a semi-quantitative forecasting tool for understanding what level 
+                           of performance might be achieved at a particular site.  This is then used to predict whether 
+                           the selected technology would be able to obtain the concentration reduction needed to achieve
+                           a site-specific cleanup goal.</ol></h4>")),
+                    column(6,
+                           HTML("<h3><b>How Does it Work?</b></h3>
+                           <h4><ol>
+                           <li> Select variables for contaminant type, maximum concentration range, and technologies in Steps 1-3.</li> 
+                           <li> Input a site-specific cleanup goal and starting concentration in Steps 4-5.</li>
+                           <li> Use the table at the right of the chart to see how close you will get to the site-specific 
+                           cleanup goal based on the expected performance of the selected technology.</li>
+                           <li> See data from the selected remediation projects using the “Data” tab.</li>
+                           <li> Go through the “Remediation Potential Assessment” tab to answer more questions related to 
+                           site-specific expectations of remediation performance</li></ol></h4>"))
+                    ),
 
            fluidRow(br(),
                     column(3,
@@ -101,14 +114,14 @@ PerformanceUI <- function(id, label = "04_Performance"){
                              tabPanel("Results", br(),
                                       column(12,
                                              fluidRow(column(8,# Overall Results
-                                                             HTML("<h2><b>1. Remediation Chart</b></h2>"),
+                                                             HTML("<h2><b> Remediation Chart</b></h2>"),
                                                              plotlyOutput(ns('ts_plot1'), height = "800px")
                                                              #HTML("<hr class='featurette-divider'>"),
                                                              #HTML("<h2><b>Overall Results</b></h2>"),
                                                              #gt_output(ns("rates_table"))
                                                              ),
                                              column(4,
-                                                    HTML("<h2><b>2. Forecasting Results</b></h2>"),
+                                                    HTML("<h2><b> Forecasting Results</b></h2>"),
                                                     br(),
                                                     fluidRow(align = "center",htmlOutput(ns("Rem_num"))),
                                                     br(),
@@ -119,15 +132,23 @@ PerformanceUI <- function(id, label = "04_Performance"){
                                              ),# FluidRow
                                       br(),
                                       fluidRow(
-                                        column(12,fluidRow(includeMarkdown('./www/04_Performance/Tool4_v1.md'), br())))
+                                        column(10,fluidRow(includeMarkdown('./www/04_Performance/Tool4_v1.md'), br()))
+                                        )
                                       ),
                              tabPanel("Data",br(),
                                       HTML("TA2 ESTCP Remediation Performance Database"), br(),
                                       rHandsontableOutput(ns("Rem_data"),width = 550, height = 300)
                                       ),
-                             tabPanel("Potential Remedy",
-                                      
-                                      fluidRow(rHandsontableOutput(ns("Evaluation"), width = 550, height = 300)))
+                             tabPanel("Remediation Potential Assessment",br(),
+                                      HTML("Likelihood of Achieving Remediation Objectives"),
+                                      fluidRow(br()),
+                                      fluidRow(rHandsontableOutput(ns("Evaluation"), width = 550, height = 550)),
+                                      fluidRow(htmlOutput(ns('Tchecked'))),
+
+                                      fluidRow(
+                                        column(10,fluidRow(includeMarkdown('./www/04_Performance/Tool4_v3.md'), br()))
+                                      )
+                                      )
                              ),
                            fluidRow(align = "center",
                                     downloadButton(ns("save_results"),HTML("Save Data and Analysis"), style = button_style),
@@ -457,20 +478,30 @@ PerformanceServer <- function(id,nav) {
       
       # Table of Evaluation Criteria -------------------
       output$Evaluation <- renderRHandsontable({
-      rhandsontable(RemPotential,rowHeaders=NULL,width = 1200, height = 600)%>%
+      rhandsontable(RemPotential,rowHeaders=NULL,width = 1200,allowedTags = "<span><i>")%>%
         hot_cols(columnSorting = TRUE) %>%
-          hot_col(2,valign='htCenter')%>%
-          hot_col(3,valign='htCenter')%>%
-          hot_col(4,valign='htCenter')%>%
-        hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
+          hot_col(2:5,valign='htCenter')%>%
+          hot_col(5, renderer = "html") %>%
+          hot_col(5, renderer = htmlwidgets::JS("safeHtmlRenderer"))%>%
+          hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)%>%
+          hot_cols(colWidths = c(500, 80,100,80,80)) %>%
+          htmlwidgets::onRender("function() {$('[data-toggle=tooltip]').tooltip()}")
       })
-      
+     
       EvalITRC <- reactiveVal()
       
       observeEvent(input$Evaluation,{
         EvalITRC<- hot_to_r(input$Evaluation)
         EvalITRC(EvalITRC)
       })
+      
+      output$Tchecked <-renderText({ 
+        DF<- hot_to_r(input$Evaluation)
+        paste("<H3>","Total Checked:", "<b> High: ", sum(DF$High),",</b></font>",
+              "<b> Moderate: ", sum(DF$Moderate),",</b></font>",
+              "<b> Low: ", sum(DF$Low),"</b></font>","</H3>")
+        })
+      
       
       # Return Dataframes ------------------
       

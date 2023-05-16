@@ -16,7 +16,7 @@ SummaryUI <- function(id, label = "010_Summary"){
                            <h4>This tool walks through the key steps that should be followed when conducting a site-specific transition assessment.  
                                            In this case, the primary objective is to determine if transitioning to MNA is appropriate based on site 
                                            conditions and/or the performance of on-going or prospective remedial measures.  It integrates information 
-                                           from the other tools in this app, including a “Persistence Index” (Tool 10b) that reflects the relative 
+                                           from the other tools in this app, including a “Remediation Transition Assessment Index” (Tool 10b) that reflects the relative 
                                            persistence of contamination at the site due to matrix diffusion effects. </h4>")),
                                column(5,
                                       HTML("<h3><b>How Does it Work?</b></h3>
@@ -29,28 +29,46 @@ SummaryUI <- function(id, label = "010_Summary"){
                       fluidRow(includeHTML('./www/10_Summary/Tool10a_v1.html'))
                                
              ), 
-             tabPanel(HTML("10b RTAI"),
-                      HTML("<H1>Tool 10b. Design of Remediation Assessment Index (RTAI)</H1>"),
-                      br(),
-                      gt_output(ns("Table_B")),
-                      br()
-                      #fluidRow(includeMarkdown('./www/06_Matrix/Tool6b_v1.md'))
-             ), 
+             tabPanel(HTML("10b Remediation Transition Assessment Index"),
+                      fluidRow(style='border-bottom: 5px solid black; text-align:justify;text-justify: inter-word;',
+                               HTML("<H1>Tool 10b. Remediation Transition Assessment Index (RTAI)</H1>"),
+                               HTML("<h4>a.	This portion of Tool 10 integrates information from several other tools 
+                                    in this app into a “Remediation Transition Assessment Index (RTAI)”.  This simple 
+                                    metric reflects the relative persistence of contamination at a site due to matrix 
+                                    diffusion and other site-specific considerations.  It summarizes the results from 
+                                    each of the tools that have been completed by the user, and then assigns a RTAI value 
+                                    to each of those results.  An RTAI of 5 indicates that the results suggest that the 
+                                    site is a strong candidate for transitioning to MNA or enhanced attenuation approaches, 
+                                    while an RTAI of 1 suggests that the site is a poor candidate.  Note that a user can 
+                                    calculate an RTAI for their site without going through the other steps in Tool 10.  
+                                    However, a decision to transition to MNA will likely require that the “bright line” 
+                                    criteria described in Tool 10a have also been met, and that the relevant site 
+                                    information described in the Tool 10c checklists has been adequately documented.</h4>"),
+                               br()),
+                      fluidRow(br(),
+                               br(),
+                               gt_output(ns("Table_B")),
+                               br()
+                               )
+                      ), 
              tabPanel(HTML("10c Checklists"),
                       fluidRow(style='border-bottom: 5px solid black; text-align:justify;text-justify: inter-word;',
                                HTML("<H1>Tool 10c.  Checklists</H1>"),
                                includeCSS("./www/style/style_flip.css"),
                       column(5,
                              HTML("
-                           <h4>The National Research Council (2012) describes the various elements that should be 
-                                  considered during a Transition Assessment.  The NRC approach focused on an evaluation of alternative 
-                                  remedies or long-term management options after demonstrating that asymptotic conditions have occurred for the 
-                                  current remedy. For the purposes of this tool, we have included the initial steps of documenting site conditions 
-                                  and complexities, as well the quantitative assessment of asymptotic trends and plume stability, in the 
-                                  Transition Assessment. This tool provides checklists for each of these key elements to ensure 
-                                  that the user has gathered the necessary information to support a technically rigorous 
-                                  site-specific transition assessment.  It also maps out how each of the other tools in 
-                                  this app can be used to assist in the overall assessment </h4>")),
+                           <h4>a.	This portion of Tool 10 provides checklists to ensure that the user has gathered 
+                                  the necessary information to support a technically rigorous site-specific Transition 
+                                  Assessment.  It also further maps out how each of the other tools in this app can 
+                                  be used to assist in the overall assessment. These checklists are based on three 
+                                  key site-specific elements shown in the graphic to the right.  Note that the 
+                                  National Research Council (2012) has previously described the various elements 
+                                  that should be considered during a Transition Assessment, with a focus on an evaluation 
+                                  of alternative remedies or long-term management options after demonstrating that 
+                                  asymptotic conditions have occurred for the current remedy. For the purposes of this 
+                                  tool, we have included the initial steps of documenting site conditions and 
+                                  complexities, as well the quantitative assessment of asymptotic trends and plume 
+                                  stability, in the Transition Assessment.</h4>")),
                       column(7,HTML("<img src = '10_Summary/Tool10a.png' width='100%' >")
                              )),
                       

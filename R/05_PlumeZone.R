@@ -3,7 +3,7 @@
 PlumeZoneUI <- function(id, label = "05_PlumeZone"){
   ns <- NS(id)
   
-  tabPanel("5. Plume Zone",
+  tabPanel("5. Plume Projections",
            # Page Title ------
            fluidRow(style='border-bottom: 5px solid black',
                     HTML("<h1><b>Tool 5.  Can I meet my cleanup goal at a downgradient point of compliance after the transition from active treatment?</h1></b>"),
@@ -35,7 +35,8 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                       tabPanel(value ='main', HTML("Site-Specific Info"), 
                                br(),
                                fluidRow(column(10, 
-                                               HTML("<h4><b>Step 1.</b> Enter Data. See 'Data Input' tab for more information</h4>")),
+                                               HTML("<h4><b>Step 1.</b> Enter Data.</h4>"),
+                                               HTML("<h4><i>See 'Data Input' tab for more information.</i></h4>")),
                                          column(2, align = "left", style = "padding:10px;",
                                                 actionButton(ns("help1"), HTML("?"), style = button_style2))
                                ), br(),
@@ -53,7 +54,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                         ), br(),
                                fluidRow(column(10,
                                                HTML("<h4><b>Step 3.</b> Select source well.</h4>"),
-                                               HTML("<h4><i>In the Input Data tab, define which well is the source well under well grouping.</i></h4>")
+                                               HTML("<h4><i>In the 'Data Input' tab, define which well is the source well in the column labeled 'Well Grouping'.</i></h4>")
                                                )
                                         ), br(),
                                fluidRow(column(10,
@@ -117,6 +118,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                br(),
                                fluidRow(column(10, 
                                                HTML("<h4><b>Step 1.</b> Select method and time range for combining time series data.</h4>"),
+                                               HTML("<h4><i>Use only data from pre-remediation.</i></h4>"),
                                                fluidRow(align = "center",
                                                         radioButtons(ns("group_method1"), label = NULL,
                                                                      choices = c("Geomean", "Mean"),
@@ -135,7 +137,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                fluidRow(align = "center",
                                                         column(6, align = "right", 
                                                                numericInput(ns("Lsource1"), label = NULL,
-                                                                            value = 300, min = 0, step = 0.01,
+                                                                            value = 30, min = 0, step = 0.01,
                                                                             width = "80px")),
                                                         column(6, align = "left", 
                                                                HTML("<h4> ug/L</h4>")),br())),
@@ -161,7 +163,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                fluidRow(align = "center",
                                                         column(6, align = "right", 
                                                                numericInput(ns("Rate_bio"), label = NULL,
-                                                                            value = 1, min = 0, step = 0.01,
+                                                                            value = 0.1, min = 0, step = 0.01,
                                                                             width = "80px")),
                                                         column(6, align = "left", 
                                                                HTML("<h4> per year</h4>")),br())),
@@ -173,7 +175,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                fluidRow(align = "center",
                                                         column(6, align = "right", 
                                                                numericInput(ns("CIlimit"), label = NULL,
-                                                                            value = 0.5, min = 0, step = 0.01,
+                                                                            value = 0.07, min = 0, step = 0.01,
                                                                             width = "80px")),
                                                         column(6, align = "left", 
                                                                HTML("<h4> per year</h4>")),br())),
@@ -182,6 +184,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                         ), br(),
                                fluidRow(column(10,
                                                HTML("<h4><b>Step 3.</b> Enter current concentration for source well.</h4>"),
+                                               HTML("<h4><i>Use for projection during post-remediation period.</i></h4>"),
                                                fluidRow(align = "center",
                                                         column(6, align = "right", 
                                                                numericInput(ns("Lsource2"), label = NULL,
@@ -200,6 +203,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                br(),
                                fluidRow(column(10, 
                                                HTML("<h4><b>Step 1.</b> Select method and time range for combining time series data.</h4>"),
+                                               HTML("<h4><i>Use only data from the post-remediation period.</i></h4>"),
                                                fluidRow(align = "center",
                                                         radioButtons(ns("group_method3"), label = NULL,
                                                                      choices = c("Geomean", "Mean"),
@@ -216,10 +220,11 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                         ), br(),
                                fluidRow(column(10,
                                                HTML("<h4><b>Step 2. </b> Enter current concentration for source well.</h4>"),
+                                               HTML("<h4><i>Used for projection during post remediation period.</i></h4>"),
                                                fluidRow(align = "center",
                                                         column(6, align = "right", 
                                                                numericInput(ns("Lsource3"), label = NULL,
-                                                                            value = 300, min = 0, step = 0.01,
+                                                                            value = 30, min = 0, step = 0.01,
                                                                             width = "80px")),
                                                         column(6, align = "left", 
                                                                HTML("<h4> ug/L</h4>")),br())),
@@ -253,11 +258,11 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                              br(),
                              conditionalPanel(condition = "input.tabs==`main`", ns=ns,
                                               HTML("<h3 style = 'color: #4a746c;'><b><i>1. Pre-Remediation Period (actual)</i></b></h4>"),
-                                              HTML("<h3 style = 'color: #FF0000;'><b>Please select COCs (Step 7) and 
+                                              HTML("<h3 style = 'color: #FF0000;'><b>Please select COCs (Step 6) and 
                                                    select one of the Rate Constant tabs to see projection of concentration vs. distance.</b></h3>"),
                                               br(),br(),br(),br(),br(),br(),br(),br(),
                                               HTML("<h3 style = 'color: #4a746c;'><b><i>2. Post-Remediation Period (projected)</i></b></h4>"),
-                                              HTML("<h3 style = 'color: #FF0000;'><b>Please select COCs (Step 7) and 
+                                              HTML("<h3 style = 'color: #FF0000;'><b>Please select COCs (Step 6) and 
                                                    select one of the Rate Constant tabs to see projection of concentration vs. distance.</b></h3>"),
                                               br(),br(),br(),br(),br(),br(),br(),br()
                                               ),
@@ -276,8 +281,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                               valueBoxOutput(ns("vbox1_1"))
                                                        ),
                                                        column(3,align = "center",
-                                                              valueBoxOutput(ns("vbox1_2"))
-                                                       ),
+                                                              valueBoxOutput(ns("vbox1_2")))
                                                        ),
                                                        br()
                                                        ),
@@ -373,7 +377,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                      ),
                              # postrem
                              conditionalPanel(condition = "input.tabs==`postrem`", ns=ns,
-                                              HTML("<h3 style = 'color: #4a746c;'><b><i>1. Pre-Remediation Period (actual)</i></b></h3>"),
+                                              HTML("<h3 style = 'color: #4a746c;'><b><i>1. Post-Remediation Period (actual)</i></b></h3>"),
                                               fluidRow(align = "center",
                                                        
                                                        plotlyOutput(ns('ts_plot3_1'), height = "600px"),
@@ -450,7 +454,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       # update Units -------------------
       observe({
-        req(nav() == "5. Plume Zone")
+        req(nav() == "5. Plume Projections")
         req(d_conc())
         
         output$unit<- renderUI({
@@ -478,7 +482,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       # Well Selection Updates -----------------------
       observe({
-        req(nav() == "5. Plume Zone")
+        req(nav() == "5. Plume Projections")
         req(d_conc())
         choices <- sort(unique(d_conc()$WellID))
         
@@ -487,7 +491,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       # COC Selection Updates -----------------------
       observe({
-        req(nav() == "5. Plume Zone")
+        req(nav() == "5. Plume Projections")
         req(d_conc())
         
         choices <- sort(unique(d_conc()$COC))
@@ -587,17 +591,23 @@ PlumeZoneServer <- function(id,data_input,nav) {
       })
     
       
+      setBorderColor <- function(valueBoxTag, color)
+      {tagQuery(valueBoxTag)$find("div.small-box")$addAttrs(
+          "style" = sprintf("border-style: solid; border-color: %s; width: 200px;", color))$allTags()}
       
       #--- Pre Remediation BOX
       output$vbox1_1 <- renderValueBox({
         req(sen_lm())
         rate_constant_pre=as.numeric(sen_lm()[[1]][1]$coefficients[2])
         
-        valueBox(
+        setBorderColor(valueBox(
           "Without Confidence Limit",
-          signif(rate_constant_pre,2)
-        )
+          signif(rate_constant_pre,2)),
+          'black'
+          )
+        
       })
+      
       
       output$vbox1_2 <- renderValueBox({
         req(sen_lm())
@@ -607,19 +617,20 @@ PlumeZoneServer <- function(id,data_input,nav) {
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
         
         rate_constant_pre_CI = confint(sen_lm()[[1]],level=CIvalue1*2-1)[[4]]
-        valueBox(
+        setBorderColor(valueBox(
           "With Confidence Limit",
           signif(rate_constant_pre_CI,2)
-        )
-      })
+        ),'black'      )      })
     
       output$vbox1_3 <- renderValueBox({
         req(sen_lm())
         rate_constant_post=10^(as.numeric(sen_lm()[[1]]$coefficients[1])+
                                  as.numeric(sen_lm()[[1]]$coefficients[2])*input$Ltot)
-        valueBox(
+        setBorderColor(valueBox(
           "Without Confidence Limit",
           signif(rate_constant_post,2)
+        ),
+        'black'
         )
       })
       
@@ -631,9 +642,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
         rate_constant_post_CI = 10^(as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[3]])+
                                        as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[4]])*input$Ltot)
-        valueBox(
+        setBorderColor(valueBox(
           "With Confidence Limit",
           signif(rate_constant_post_CI,2)
+        ),
+        'black'
         )
       })
       
@@ -644,9 +657,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
                                  as.numeric(sen_lm()[[1]]$coefficients[2])*input$Ltot)>input$Conc_goal,
                            "No","Yes")
                            
-        valueBox(
+        setBorderColor(valueBox(
           "Without Confidence Limit",
           subtitle=time_woCI
+        ),
+        'black'
         )
       })
       
@@ -659,9 +674,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
         time_wCI = ifelse(10^(as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[3]])+
                                  as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[4]])*input$Ltot)>input$Conc_goal,
                            "No","Yes")
-        valueBox(
+        setBorderColor(valueBox(
           "With Confidence Limit",
           subtitle=time_wCI
+        ),
+        'black'
         )
         
       })
@@ -672,9 +689,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
             input$Rate_bio)
         rate_constant_pre=as.numeric(input$Rate_bio/input$gwv)
         
-        valueBox(
+        setBorderColor(valueBox(
           "Without Confidence Limit",
           signif(rate_constant_pre,2)
+        ),
+        'black'
         )
       })
       
@@ -683,9 +702,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
             input$CIlimit)
         
         rate_constant_pre_CI = as.numeric(input$CIlimit/input$gwv)
-        valueBox(
+        setBorderColor(valueBox(
           "With Confidence Limit",
           signif(rate_constant_pre_CI,2)
+        ),
+        'black'
         )
       })
       
@@ -695,9 +716,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
             input$Ltot,
             input$Lsource2)
         rate_constant_post=input$Lsource2 - as.numeric(input$Rate_bio/input$gwv)*input$Ltot
-        valueBox(
+        setBorderColor(valueBox(
           "Without Confidence Limit",
           signif(rate_constant_post,2)
+        ),
+        'black'
         )
       })
       
@@ -707,10 +730,12 @@ PlumeZoneServer <- function(id,data_input,nav) {
             input$Ltot,
             input$Lsource2)
         rate_constant_post_CI = input$Lsource2 - as.numeric(input$CIlimit/input$gwv)*input$Ltot
-        valueBox(
+        setBorderColor(valueBox(
           "With Confidence Limit",
           signif(rate_constant_post_CI,2)
-        )
+        ),
+        'black'
+      )
       })
       
       output$vbox2_5 <- renderValueBox({
@@ -723,9 +748,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
         time_woCI = ifelse((input$Lsource2 - as.numeric(input$Rate_bio/input$gwv)*input$Ltot)>input$Conc_goal,
                            "No","Yes")
         
-        valueBox(
+        setBorderColor(valueBox(
           "Without Confidence Limit",
           subtitle=time_woCI
+        ),
+        'black'
         )
       })
       
@@ -738,9 +765,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
         
         time_wCI = ifelse((input$Lsource2 - as.numeric(input$CIlimit/input$gwv)*input$Ltot)>input$Conc_goal,
                           "No","Yes")
-        valueBox(
+        setBorderColor(valueBox(
           "With Confidence Limit",
           subtitle=time_wCI
+        ),
+        'black'
         )
         
       })
@@ -750,9 +779,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(sen_lm())
         rate_constant_pre=as.numeric(sen_lm()[[2]]$coefficients[2])
         
-        valueBox(
+        setBorderColor(valueBox(
           "Without Confidence Limit",
           signif(rate_constant_pre,2)
+        ),
+        'black'
         )
       })
       
@@ -764,9 +795,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
         
         rate_constant_pre_CI = confint(sen_lm()[[2]],level=CIvalue1*2-1)[[4]]
-        valueBox(
+        setBorderColor(valueBox(
           "With Confidence Limit",
           signif(rate_constant_pre_CI,2)
+        ),
+        'black'
         )
       })
       
@@ -774,10 +807,12 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(sen_lm())
         rate_constant_post=10^(as.numeric(sen_lm()[[2]]$coefficients[1])+
                                  as.numeric(sen_lm()[[2]]$coefficients[2])*input$Ltot)
-        valueBox(
+        setBorderColor(valueBox(
           "Without Confidence Limit",
           signif(rate_constant_post,2)
-        )
+        ),
+        'black'
+      )
       })
       
       output$vbox3_4 <- renderValueBox({
@@ -788,9 +823,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
         rate_constant_post_CI = 10^(as.numeric(confint(sen_lm()[[2]],level=CIvalue1*2-1)[[3]])+
                                       as.numeric(confint(sen_lm()[[2]],level=CIvalue1*2-1)[[4]])*input$Ltot)
-        valueBox(
+        setBorderColor(valueBox(
           "With Confidence Limit",
           signif(rate_constant_post_CI,2)
+        ),
+        'black'
         )
       })
       
@@ -801,9 +838,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
                                  as.numeric(sen_lm()[[2]]$coefficients[2])*input$Ltot)>input$Conc_goal,
                            "No","Yes")
         
-        valueBox(
+        setBorderColor(valueBox(
           "Without Confidence Limit",
           subtitle=time_woCI
+        ),
+        'black'
         )
       })
       
@@ -816,9 +855,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
         time_wCI = ifelse(10^(as.numeric(confint(sen_lm()[[2]],level=CIvalue3*2-1)[[3]])+
                                 as.numeric(confint(sen_lm()[[2]],level=CIvalue3*2-1)[[4]])*input$Ltot)>input$Conc_goal,
                           "No","Yes")
-        valueBox(
+        setBorderColor(valueBox(
           "With Confidence Limit",
           subtitle=time_wCI
+        ),
+        'black'
         )
         
       })
@@ -840,7 +881,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$ts_plot1_1 <- renderPlotly({
           validate(need(d_conc(), "Please enter data into the Data Input tab (Step 1)."))
-          validate(need(df(), "Please select COCs (Step 7) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
+          validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
 
           req(df(),
               sen_lm())
@@ -852,7 +893,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$ts_plot1_2 <- renderPlotly({
         validate(need(d_conc(), "Please enter data into the Data Input tab (Step 1)."))
-        validate(need(df(), "Please select COCs (Step 7) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
+        validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
         
         req(df(),
             sen_lm())
@@ -864,7 +905,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$ts_plot2_2 <- renderPlotly({
         validate(need(d_conc(), "Please enter data into the Data Input tab (Step 1)."))
-        validate(need(df(), "Please select COCs (Step 7) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
+        validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
         
         req(df(),
             sen_lm())
@@ -876,7 +917,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$ts_plot3_1 <- renderPlotly({
         validate(need(d_conc(), "Please enter data into the Data Input tab (Step 1)."))
-        validate(need(df(), "Please select COCs (Step 7) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
+        validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
         
         req(df(),
             sen_lm())
@@ -888,7 +929,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$ts_plot3_2 <- renderPlotly({
         validate(need(d_conc(), "Please enter data into the Data Input tab (Step 1)."))
-        validate(need(df(), "Please select COCs (Step 7) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
+        validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
         
         req(df(),
             sen_lm())

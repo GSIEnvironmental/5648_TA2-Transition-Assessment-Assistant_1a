@@ -1,0 +1,16 @@
+<hr class="solid">
+  <p style="margin-top:0pt;margin-bottom:0pt;text-align:justify;vertical-align:baseline;"><span style="font-size:20px;font-family:sans-serif;color:black;font-weight:bold;">What does this table show?&nbsp;</span></p>
+    
+    
+<p style="margin-top:0pt;margin-bottom:0pt;text-align:justify;vertical-align:baseline;"><span style="font-size:20px;font-family:sans-serif;color:black;">This table uses a framework developed by ITRC as part of their &ldquo;Complex Sites&ldquo; guidance (2017) to assess remediation potential.  The user makes a qualitative or quantitative determination of how each of the factors listed above could influence the likelihood of achieving remediation objectives.  The answers to these questions can then be used to evaluate the potential benefits of implementing a specific remedy. Users select &ldquo;High&ldquo;, &ldquo;Moderate&ldquo;, or &ldquo;Low&ldquo; as an answer to each question, and the overall results are tallied.  As described by ITRC (2017): &nbsp;</span><span style="font-size:20px;font-family:sans-serif;color:black;font-style:italic;">“The effect of the evaluation criteria on remediation potential is not likely to be equal. Sometimes, the likelihood of achieving remediation objectives may be high for most criteria, but a lower likelihood criteria may have fatal flaws that preclude achieving the objectives. While assessing the answers to the evaluation criteria questions, the site owners, regulators, and stakeholders may choose to give more weight to some questions than others”.</span><span style="font-size:20px;font-family:sans-serif;color:black;">Possible outcomes from this “remediation potential assessment” include consensus that the objectives are attainable, consensus that the objectives are not attainable, or no clear consensus on the likelihood that remediation objectives will be achieved.&nbsp;</span></p>
+
+
+<p><br></p>
+
+<p style="margin-top:0pt;margin-bottom:0pt;text-align:justify;vertical-align:baseline;"><span style="font-size:20px;font-family:sans-serif;color:black;">Answers to these questions can be based on available site information (including information may have already been compiled as part of the RI/FS or CMS process).  In addition, various other modules within the TA2 Tool can provide support for answering these questions.  Users should click on the Help buttons next to each question for more guidance on selecting an appropriate answer.</span><span style="font-size:20px;font-family:sans-serif;color:black;font-style:italic;">.</span></p>
+
+<p><br></p>
+
+<p style="margin-top:0pt;margin-bottom:0pt;text-align:justify;vertical-align:baseline;"><span style="font-size:20px;font-family:sans-serif;color:black;font-weight:bold;">References</span></p>
+  <p style="margin-top:0pt;margin-bottom:0pt;text-align:left;vertical-align:baseline;"><span style="font-size:20px;font-family:sans-serif;color:black;">ITRC (Interstate Technology & Regulatory Council), 2017. <i>Performance and Costs for In-Situ Remediation at 235 Sites.</i> RMCS-1. Washington, D.C.: Interstate Technology & Regulatory Council, Remediation Management of Complex Sites Team. (</span><a href="https://rmcs-1.itrcweb.org"></a><span style="font-size:20px;font-family:sans-serif;color:black;"><a href="https://rmcs-1.itrcweb.org">https://rmcs-1.itrcweb.org)</a></span>
+  
