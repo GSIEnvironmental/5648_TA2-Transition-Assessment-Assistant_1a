@@ -137,7 +137,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                fluidRow(align = "center",
                                                         column(6, align = "right", 
                                                                numericInput(ns("Lsource1"), label = NULL,
-                                                                            value = 30, min = 0, step = 0.01,
+                                                                            value = 10, min = 0, step = 0.01,
                                                                             width = "80px")),
                                                         column(6, align = "left", 
                                                                HTML("<h4> ug/L</h4>")),br())),
@@ -163,7 +163,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                fluidRow(align = "center",
                                                         column(6, align = "right", 
                                                                numericInput(ns("Rate_bio"), label = NULL,
-                                                                            value = 0.1, min = 0, step = 0.01,
+                                                                            value = 1.7, min = 0, step = 0.01,
                                                                             width = "80px")),
                                                         column(6, align = "left", 
                                                                HTML("<h4> per year</h4>")),br())),
@@ -175,7 +175,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                fluidRow(align = "center",
                                                         column(6, align = "right", 
                                                                numericInput(ns("CIlimit"), label = NULL,
-                                                                            value = 0.07, min = 0, step = 0.01,
+                                                                            value = 1.6, min = 0, step = 0.01,
                                                                             width = "80px")),
                                                         column(6, align = "left", 
                                                                HTML("<h4> per year</h4>")),br())),
@@ -623,8 +623,10 @@ PlumeZoneServer <- function(id,data_input,nav) {
         ),'black'      )      })
     
       output$vbox1_3 <- renderValueBox({
-        req(sen_lm())
-        rate_constant_post=10^(as.numeric(sen_lm()[[1]]$coefficients[1])+
+        req(sen_lm(),
+            input$Lsource1)
+ 
+        rate_constant_post=10^(as.numeric(log10(input$Lsource1))+
                                  as.numeric(sen_lm()[[1]]$coefficients[2])*input$Ltot)
         setBorderColor(valueBox(
           "Without Confidence Limit",
@@ -635,12 +637,13 @@ PlumeZoneServer <- function(id,data_input,nav) {
       })
       
       output$vbox1_4 <- renderValueBox({
-        req(sen_lm())
+        req(sen_lm(),
+            input$Lsource1)
         
         CIvalue1 = ifelse(input$CIvalue1=='80%',0.8,
                           ifelse(input$CIvalue1=='90%',0.9,
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
-        rate_constant_post_CI = 10^(as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[3]])+
+        rate_constant_post_CI = 10^(as.numeric(log10(input$Lsource1))+
                                        as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[4]])*input$Ltot)
         setBorderColor(valueBox(
           "With Confidence Limit",
@@ -651,9 +654,10 @@ PlumeZoneServer <- function(id,data_input,nav) {
       })
       
       output$vbox1_5 <- renderValueBox({
-        req(sen_lm())
+        req(sen_lm(),
+            input$Lsource1)
         
-        time_woCI = ifelse(10^(as.numeric(sen_lm()[[1]]$coefficients[1])+
+        time_woCI = ifelse(10^(as.numeric(log10(input$Lsource1))+
                                  as.numeric(sen_lm()[[1]]$coefficients[2])*input$Ltot)>input$Conc_goal,
                            "No","Yes")
                            
@@ -666,12 +670,13 @@ PlumeZoneServer <- function(id,data_input,nav) {
       })
       
       output$vbox1_6 <- renderValueBox({
-        req(sen_lm())
+        req(sen_lm(),
+            input$Lsource1)
         
         CIvalue1 = ifelse(input$CIvalue1=='80%',0.8,
                           ifelse(input$CIvalue1=='90%',0.9,
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
-        time_wCI = ifelse(10^(as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[3]])+
+        time_wCI = ifelse(10^(as.numeric(log10(input$Lsource1))+
                                  as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[4]])*input$Ltot)>input$Conc_goal,
                            "No","Yes")
         setBorderColor(valueBox(
@@ -804,8 +809,9 @@ PlumeZoneServer <- function(id,data_input,nav) {
       })
       
       output$vbox3_3 <- renderValueBox({
-        req(sen_lm())
-        rate_constant_post=10^(as.numeric(sen_lm()[[2]]$coefficients[1])+
+        req(sen_lm(),
+            input$Lsource3)
+        rate_constant_post=10^(as.numeric(log10(input$Lsource3))+
                                  as.numeric(sen_lm()[[2]]$coefficients[2])*input$Ltot)
         setBorderColor(valueBox(
           "Without Confidence Limit",
@@ -816,12 +822,13 @@ PlumeZoneServer <- function(id,data_input,nav) {
       })
       
       output$vbox3_4 <- renderValueBox({
-        req(sen_lm())
+        req(sen_lm(),
+            input$Lsource3)
         
         CIvalue1 = ifelse(input$CIvalue1=='80%',0.8,
                           ifelse(input$CIvalue1=='90%',0.9,
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
-        rate_constant_post_CI = 10^(as.numeric(confint(sen_lm()[[2]],level=CIvalue1*2-1)[[3]])+
+        rate_constant_post_CI = 10^(as.numeric(log10(input$Lsource3))+
                                       as.numeric(confint(sen_lm()[[2]],level=CIvalue1*2-1)[[4]])*input$Ltot)
         setBorderColor(valueBox(
           "With Confidence Limit",
@@ -832,9 +839,10 @@ PlumeZoneServer <- function(id,data_input,nav) {
       })
       
       output$vbox3_5 <- renderValueBox({
-        req(sen_lm())
+        req(sen_lm(),
+            input$Lsource3)
         
-        time_woCI = ifelse(10^(as.numeric(sen_lm()[[2]]$coefficients[1])+
+        time_woCI = ifelse(10^(as.numeric(log10(input$Lsource3))+
                                  as.numeric(sen_lm()[[2]]$coefficients[2])*input$Ltot)>input$Conc_goal,
                            "No","Yes")
         
@@ -847,12 +855,13 @@ PlumeZoneServer <- function(id,data_input,nav) {
       })
       
       output$vbox3_6 <- renderValueBox({
-        req(sen_lm())
+        req(sen_lm(),
+            input$Lsource3)
         
         CIvalue3 = ifelse(input$CIvalue3=='80%',0.8,
                           ifelse(input$CIvalue3=='90%',0.9,
                                  ifelse(input$CIvalue3=='95%',0.95,0.99)))
-        time_wCI = ifelse(10^(as.numeric(confint(sen_lm()[[2]],level=CIvalue3*2-1)[[3]])+
+        time_wCI = ifelse(10^(as.numeric(log10(input$Lsource3))+
                                 as.numeric(confint(sen_lm()[[2]],level=CIvalue3*2-1)[[4]])*input$Ltot)>input$Conc_goal,
                           "No","Yes")
         setBorderColor(valueBox(
@@ -897,6 +906,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         
         req(df(),
             sen_lm())
+
         p<-Tool5fig(df(), input$Conc_goal, input$Lsource1, input$Ltot, input$CIvalue1, "Projected",input$group_method1,
                            sen = sen_lm()[[1]],gwv=NULL,Rate_bio=NULL)
         
