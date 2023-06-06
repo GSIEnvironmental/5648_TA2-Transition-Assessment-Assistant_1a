@@ -320,7 +320,7 @@ button_style2 <- "white-space: normal;
                         width:34px;
                         font-size: 14px;
                         padding: 0px 0;
-                        margin:0px;"
+                        margin-top:25px;"
 
 
 button_style3 <- "white-space: normal;

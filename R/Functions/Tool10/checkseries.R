@@ -145,25 +145,7 @@ checkseries<-function(ns,button_style2){
          checkboxInput(ns('5_4'), NULL, FALSE),
          br(),
          br(),
-         br(),
-         checkboxInput(ns('5_5'), NULL, FALSE),
-         br(),# 3. identify (EA)
-         br(),
-         br(),
-         br(),
-         br(),
-         br(),
-         br(),
-         br(),
-         checkboxInput(ns('6_1'), NULL, FALSE),
-         br(),
-         br(),
-         br(),
-         checkboxInput(ns('6_2'), NULL, FALSE),
-         br(),
-         checkboxInput(ns('6_3'), NULL, FALSE),
-         br(),
-         checkboxInput(ns('6_4'), NULL, FALSE)   
+         br()
          
   )
   
