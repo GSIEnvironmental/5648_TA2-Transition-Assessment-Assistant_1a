@@ -36,6 +36,7 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                                                           choices = c("Individual Wells" = "individual",
                                                                       "Well Groups" = "groups"),
                                                           inline = T),
+                                             br(),
                                              pickerInput(ns("select_mw"), label = NULL,
                                                          choices = c(""),
                                                          multiple = T,

@@ -98,21 +98,20 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                         ), br(),
                                fluidRow(column(10,
                                                HTML("<h4><b>Step 7.</b> Select the cleanup goal.</h4>"),
-                                               fluidRow(column(10,
-                                                               fluidRow(
-                                                                 column(6, align = "right", 
+                                               fluidRow(align = "center",
+                                                        column(6, align = "right", 
                                                                         numericInput(ns("Conc_goal"), label = NULL,
                                                                                      value = 10, min = 0, step = 0.01,
                                                                                      width = "80px")),
-                                                                 column(6, align = "left", 
-                                                                        htmlOutput(ns("unit"))))),
-                                                        column(2, align = "left", style = "padding:10px;",
-                                                               actionButton(ns("help1_1"), HTML("?"), style = button_style2)
-                                                               )
-                                                        )
-                                               ), br()
-                                        )# end parameter inputs
-                               ), # end first tabpanel
+                                                        column(6, align = "left", 
+                                                                        htmlOutput(ns("unit"))))
+                                                               ),
+                                        column(2, align = "left", style = "padding:10px;",
+                                                               actionButton(ns("help5_4"), HTML("?"), style = button_style2))
+                                        )
+                               ), br(),
+                               #          )# end parameter inputs
+                               # ), # end first tabpanel
                       ## 2. Select Scenario & Hydrologic Setting ---------------
                       tabPanel(value ='prerem',HTML("Use Pre-Remediation Rate Constant"),
                                br(),
@@ -563,7 +562,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
                       Distance = exp(mean(log10(`Distance from Source (m)`),na.rm=TRUE)))
         }
         
-        
+          
         # assign color
         colpalette= brewer.pal(n = 8, name = "Dark2")
         count = 1
@@ -575,8 +574,36 @@ PlumeZoneServer <- function(id,data_input,nav) {
    
         df(df_MW)
       }) # end df()
-      
-      
+
+      # ##hhobserve({
+      #   req(d_conc(),
+      #       input$select_mw,
+      #       input$group_method3,
+      #       input$date_range3,
+      #       input$select_COC)
+      #   
+      #   ave_switch <- input$group_method3
+      #   
+      #   # Filter to Wells
+      #   df_MW <- d_mer() %>%
+      #     filter(WellID %in% input$select_mw,
+      #            Date >= input$date_range3[1],
+      #            Date <= input$date_range3[2],
+      #            COC %in% input$select_COC) 
+      #   
+      #   # Apply Selected Avg. Method
+      #   if (ave_switch == 'Mean'){
+      #     df_MW <- df_MW %>% group_by(WellID, COC,State) %>%
+      #       summarise(Concentration = mean(Concentration, na.rm=TRUE),
+      #                 Distance = mean(`Distance from Source (m)`,na.rm=TRUE))
+      #   }
+      #   
+      #   if (ave_switch == 'Geomean'){
+      #     df_MW <- df_MW %>% group_by(WellID, COC,State) %>%
+      #       summarise(Concentration = exp(mean(log10(Concentration), na.rm=TRUE)),
+      #                 Distance = exp(mean(log10(`Distance from Source (m)`),na.rm=TRUE)))
+      #   }
+      # 
       # RV: Sen Trend Model ---------------
       sen_lm <- reactiveVal()
       

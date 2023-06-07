@@ -1,19 +1,33 @@
 checkbox_list <- function(id, label, help_id, indents) {
   fluidRow(tags$style("input[type=checkbox] {
                                         height:34px;
-                                         width:34px;}
-                      span{margin-left:50px; display: inline-block}"),
+                                         width:34px;}"),
+                      #span{margin-left:50px; display: inline-block}"),
     column(10,
            div(
-             style = paste0("margin-left: ",indents * 60 ,"px; margin-top:25px"),
-             checkboxInput(id, label = label,
-                           width = '100%')
+             style = "span{margin-left:50px; display: inline-block}",
+             checkboxInput2(id, label = label,
+                           width = '100%',
+                           style=paste0("margin-left: ",indents * 60 ,"px; margin-top:25px"))
            )
     ),
     column(2, 
            actionButton(help_id, '?', style = button_style2))
     
   )
+}
+
+checkboxInput2<-function (inputId, label, value = FALSE, width = NULL,...)
+{
+  value <- restoreInput(id = inputId, default = value)
+  inputTag <- tags$input(id = inputId, type = "checkbox")
+  if (!is.null(value) && value)
+    inputTag$attribs$checked <- "checked"
+  div(class = "form-group shiny-input-container", style = css(width = validateCssUnit(width)),
+      div(class = "checkbox", 
+          tags$label(inputTag, tags$span(label,style = "margin-left:50px; display: inline-block")),...
+          )
+      )
 }
 
 
