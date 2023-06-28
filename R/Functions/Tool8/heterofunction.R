@@ -7,6 +7,7 @@
 
 heterofunction<-function(df,TOP,Bottom,aquitard){
   
+  df = hot_to_r(df)
   option = c('No Matrix Diffusion',
              'Matrix Diffusion in Underlying Low-K Units',
              'Matrix Diffusionin Overlying Low-K Units',
@@ -43,7 +44,7 @@ heterofunction<-function(df,TOP,Bottom,aquitard){
                                   ans<50&ans>=10 ~ 'Moderate',
                                   ans <10 ~ 'Low')
   }else if (Percent_B<60&Percent_B>30){
-    C = data.frame(C = Percent_B, N = N_layer)
+    C = data.frame(B = Percent_B, N = N_layer)
     ans = as.numeric(predict(modelC,newdata=C))
     Impact_diffusion2 = case_when(ans>=50 ~ 'High',
                                   ans<50&ans>=10 ~ 'Moderate',

@@ -19,17 +19,14 @@ HeterogeneityUI <- function(id, label = "08_Heterogeneity"){
                                 can be categorized as Low, Moderate, or High.</h4>")),
                     column(6,
                            HTML("<h3><b>How Does it Work?</b></h3>
-                           <h4>You pick one of the four Aquifer Settings that is most 
-                                representative of the geologic conditions for the plume 
-                                at your site (“Select Aquifer Settings” tab).  Then you 
-                                enter data from borings logs from your site to determine 
-                                the distribution of low permeability layers/lenses that 
-                                are in contact with the plume (“Enter Boring Logs” tab).  
-                                The data from these two tabs are used to establish the 
-                                geologic heterogeneity at the site and its potential 
-                                impact on remediation.  The impact is based on modeling 
-                                simulations performed using the REMChlor-MD model 
-                                (see Borden and Cha, 2021 and Farhat et al., 2018).</h4>"))
+                           <h4>In the “Select Aquifer Setting” tab, select the hydrogeologic setting 
+                           that is most representative of the conditions for the plume at your site. 
+                           Then, enter data from boring logs from your site to determine the distribution 
+                           of low permeability layers/lenses that are in contact with the plume (“Enter Boring Logs” tab). 
+                           The data from these two tabs are used to characterize the geologic 
+                           heterogeneity at the site and the potential impact of matrix diffusion 
+                           on remediation. This assessment is based on modeling simulations 
+                           performed using the REMChlor-MD model (see Borden and Cha, 2021 and Farhat et al., 2018).</h4>"))
                     ),
            fluidRow(br(),
                     column(7,#style='border-right: 5px solid black',
@@ -38,23 +35,21 @@ HeterogeneityUI <- function(id, label = "08_Heterogeneity"){
                              tabPanel(HTML('1. Introduction'),
                                       fluidRow(
                                         column(11,
-                                               HTML("<h3><p style='color:#337ab7;'><b>Learn how to distinguish between transmissive (T-Zone)
-                                 and low-permeability  zones (Low-k Zones).</h3></p></b>"),
-                                               HTML("<h4>What is the difference between transmissive and low-K media? A simple rule of thumb 
-                                                    is that matrix diffusion effects are likely important when two geologic units that are in 
-                                                    contact with each other have horizontal hydraulic conductivity values that differ by an order 
-                                                    of magnitude (factor of 10) or more.  The rationale is that—with everything else being equal—
-                                                    the length a plume that is entirely in the lower-K zone will be 10 times shorter than the 
-                                                    plume length if contamination was entirely in the higher-k zone.  For a more detailed 
-                                                    explanation, click on the button below:</h4>"),
+                                               HTML("<h3><p style='color:#337ab7;'><b>Learn how to distinguish between transmissive (T-Zone) and low-permeability zones (Low-k Zones).</h3></p></b>"),
+                                               HTML("<h4>What is the difference between transmissive and low-K media? A simple rule of thumb is that matrix diffusion effects are likely important when two geologic units in contact with each other have horizontal hydraulic conductivity values that differ by an order of magnitude (factor of 10) or more. The rationale behind this rule of thumb is that, with all else equal, the length of a plume entirely in a lower-K zone will be at least 10 times shorter than that of a plume entirely in the transmissive zone. For a more detailed explanation, click on the button below:</h4>"),
                                                HTML("<h3><b>References</b></h3>"),
                                                HTML("<h4>Borden, R.C. and Cha, K.Y., 2021. Evaluating the impact of back diffusion on groundwater cleanup time. 
                                                Journal of Contaminant Hydrology, 243, p.103889.</h4>"),
                                                HTML("<h4>Farhat, S.K., C.J. Newell, R.W. Falta, and K. Lynch, 2018. REMChlor-MD User’s Manual, 
                                                developed for the Environmental Security Technology Certification Program (ESTCP) by GSI Environmental Inc., 
                                                Houston, Texas and Clemson University, Clemson, South Carolina.</h4>"),
+                                               HTML("<h4>Budhu, M., 2008. Soil Mechanics and Foundations, ed. 3. John Wiley & Sons, Inc., Hoboken.​</h4>"),
+                                               HTML("<h4>Domenico, P.A., and F.W. Schwartz, 1998. Physical and Chemical Hydrogeology. Physical and Chemical Hydrogeology, v. 1. Wiley.</h4>"),
+                                               HTML("<h4>Freeze, R.A., and J.A. Cherry, 1979. Groundwater. Prentice-Hall, Englewood Cliffs, New Jersey.​</h4>"),
+                                               HTML("<h4>Payne, F.C., J.A. Quinnan, and S.T. Potter, 2008. Remediation Hydraulics. CRC Press.</h4>"),
                                                br(),
-                                               actionButton(ns("Detailed_Explanation"), HTML("See more detailed explanation"), style = button_style)
+                                               fluidRow(align = "center",actionButton(ns("Detailed_Explanation"), HTML("See more detailed explanation"), style = button_style))
+                                               
                                                )# column
                                         )#fluid row end
                                       ),#tabpanel
@@ -95,7 +90,7 @@ HeterogeneityUI <- function(id, label = "08_Heterogeneity"){
                                                fluidRow(align = "left", style = "padding:10px;",
                                                         
                                                         fluidRow(column(10,align ='center',
-                                                               actionButton(ns("help1"), HTML("See Example"), style = button_style)
+                                                               #actionButton(ns("help1"), HTML("See Example"), style = button_style)
                                                                ),
                                                         br(),
                                                         fluidRow(column(10, align = "left",
@@ -120,9 +115,14 @@ HeterogeneityUI <- function(id, label = "08_Heterogeneity"){
                                                           column(10, align = "left",
                                                                       HTML("<b>Step 3</b>. Enter low permeability (“Low-k”) 
                                                                       layer/lens data from one or more boring logs 
-                                                                      into the data entry screen below.For <u>each</u> 
+                                                                      into the data entry screen below. For <u>each</u> 
                                                                       low-K layer/lens within the plume zone enter thickness 
                                                                       in meters. Do not include upper or lower aquitards."),
+                                                                      HTML("Press “See More Detailed Explanation” for a description of how to distinguish low-k and transmissive soils."),
+                                                                      br(),
+                                                                      fluidRow(align = "center",
+                                                                               actionButton(ns("Detailed_Explanation2"), HTML("See more detailed explanation"),
+                                                                                            style = button_style)),
                                                                       br(),
                                                                       br(),
                                                                       HTML("More Details:<ol>
@@ -169,8 +169,9 @@ HeterogeneityUI <- function(id, label = "08_Heterogeneity"){
                                     column(11,
                                            fluidRow(
                                              column(8,align = "right",
-                                                    actionButton(ns("help1"), HTML("See Example"), style = button_style))
-                                             
+                                                    #actionButton(ns("help1"), HTML("See Example"), style = button_style)
+                                                    )
+
                                            ),#fluidrow
                                            br(),
                                            br(),
@@ -250,8 +251,8 @@ HeterogeneityServer <- function(id) {
             input$TOP,
             input$Bottom,
             input$aquitard)
-
-        Result_table<- heterofunction(temp_boring,input$TOP,input$Bottom,input$aquitard)
+        
+        Result_table<- heterofunction(input$boring,input$TOP,input$Bottom,input$aquitard)
     
         Result_table(Result_table)
       })
@@ -357,7 +358,7 @@ HeterogeneityServer <- function(id) {
 
         
         glue("<H3>","Combining values from all steps,","</H3>",
-             "<H3>","the overall impact on matrix diffusion is expected to be ",
+             "<H3>","the overall impact of heterogeneity on matrix diffusion is expected to be ",
              "<font color=\"#ff0000\"><b>", Result_table$Overall,
              "</b></font>",".","</H3>"
           )
@@ -369,6 +370,9 @@ HeterogeneityServer <- function(id) {
       observeEvent(input$Detailed_Explanation,
                    {Helpboxfunction('FIG/Tool8_fig3.png','"./08_Heterogeneity/',864,843)}
                    )
+      observeEvent(input$Detailed_Explanation2,
+                   {Helpboxfunction('FIG/Tool8_fig3.png','"./08_Heterogeneity/',864,843)}
+      )
       
 
     

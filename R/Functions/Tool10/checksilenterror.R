@@ -4,4 +4,6 @@ checksilenterror<-function(A){tryCatch({
 },
 shiny.silent.error = function(e) {
   print("error")
-})}
+},error = function(e) {
+  print ("error")}
+)}

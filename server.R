@@ -6,7 +6,7 @@ library(shiny)
 shinyServer(function(input, output, session) {
   nav <- reactive(input$nav)
   
-  data_input <- Data_Input_Server("Data_Input")
+  data_input <- Data_Input_Server("Data_Input", Plume = Plume )
   
   LOE_asymp <- AsymptoteServer("01_Asymptote", data_input = data_input, nav = nav)
 
@@ -16,7 +16,7 @@ shinyServer(function(input, output, session) {
  
   Presult <- PerformanceServer("04_Performance", nav = nav)
   
-   PlumeZoneServer("05_PlumeZone", data_input = data_input, nav = nav)
+  Plume <- PlumeZoneServer("05_PlumeZone", data_input = data_input, nav = nav)
   
    MatrixDiffusionServer("06_MatrixDiffusion")
    

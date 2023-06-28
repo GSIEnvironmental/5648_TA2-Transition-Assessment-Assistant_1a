@@ -111,7 +111,12 @@ hline <- function(y = 0, color = "black") {
 
 # Data Input ---------------------
 
-temp_data <- read.xlsx("./data/data_template.xlsx", sheet = "Concentration_Time_Data", startRow = 2,
+temp_data <- read.xlsx("./data/data_template.xlsx", sheet = "Concentration_Time_Data", startRow = 1,
+                       check.names = F) %>%
+  mutate(Event = as.integer(Event),
+         Date = as.Date(Date, origin="1899-12-30",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y")))
+
+temp_data_tool5 <- read.xlsx("./data/data_template.xlsx", sheet = "Tool5_Concentration_Time_Data", startRow = 1,
                        check.names = F) %>%
   mutate(Event = as.integer(Event),
          Date = as.Date(Date, origin="1899-12-30",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y")))
@@ -125,6 +130,8 @@ temp_boring <- read_excel("./data/5648_Dummy_Borling.xlsx")
 Table7_EA <- read_excel("./data/Table7_EA.xlsx")
 
 Table10 <- read_excel("./data/Table10_summary.xlsx")
+
+mole <-read_excel("./data/MolarMass.xlsx")
 
 # Map -----------------------------
 site_map <- leaflet() %>%
