@@ -44,6 +44,29 @@ Data_Input_UI <- function(id, label = "Data_Input"){
                                rHandsontableOutput(ns("conc_time_data_tool5"))
                                ), # end concentration and time table
                       tabPanel(HTML("3. Monitoring Well Information"), br(),
+                               HTML("<b style='color: red;'>Important Note</b><br>
+                                    If you possess either latitude/longitude coordinates 
+                                    or northing/easting coordinates, you are obligated to
+                                    provide EPSG information from this website 
+                                    <a href='https://epsg.io/'>https://epsg.io/</a>.<br>
+                                    However, 
+                                    if you prefer to calculate latitude/longitude from 
+                                    northing/easting coordinates independently, you can 
+                                    utilize one of the following steps. 
+                                    <ul>
+                                      <li>Use surveying data from an official survey of the wells.</li>
+                                      <li>Obtain a site map, georeferenced the map in an GIS system, 
+                                      and obtain the lat/long data.</li>
+                                      <li>Estimate monitoring locations in a Google Earth map, add 
+                                      Placemarks and get lat/long in decimal degrees</li>
+                                      <li>If you have data in degrees/min/sec, convert to decimal 
+                                      degrees at  web sites like this: <br> 
+                                      <a href='https://www.latlong.net/degrees-minutes-seconds-to-decimal-degrees'>
+                                      https://www.latlong.net/degrees-minutes-seconds-to-decimal-degrees</a></li>
+                                    </ul>
+                                    It is 
+                                    crucial to ensure that the wells utilized in tool 5 
+                                    have consistent coordinate systems for northing/easting."),
                                rHandsontableOutput(ns("mw_data"))
                       ) # end concentration and time table
                     ), br()
@@ -53,7 +76,7 @@ Data_Input_UI <- function(id, label = "Data_Input"){
 } # end Data Input UI  
 
 ## Server -------------------------------------
-Data_Input_Server <- function(id,Plume) {
+Data_Input_Server <- function(id,Plume,sourcewell) {
   moduleServer(
     id,
     
@@ -61,9 +84,10 @@ Data_Input_Server <- function(id,Plume) {
       
       # Reactive Variables -------------------
       # Concentration/Time Dataframe
-      mw_Tb5 = checksilenterror(Plume$results())
+      mw_Tb5 = checksilenterror(Plume$Plume())
       if (mw_Tb5 != 'error'){
-        temp_mw_info <-mw_Tb5
+        browser()
+        temp_mw_info <-Plume$Plume()
       }
       # check whether data is uploaded or not
       observeEvent(input$input_file,{
@@ -166,81 +190,58 @@ Data_Input_Server <- function(id,Plume) {
         d_conc_tool5(hot_to_r(input$conc_time_data_tool5))
       })
       
+
       # Monitoring Well Information ----------
-      for (j in 1:nrow(temp_mw_info)){
-        if (is.na(temp_mw_info$Latitude[j])||is.na(temp_mw_info$Longitude[j])){
-          clip_mw_info <- temp_mw_info[,c("Easting","Northing")][j,1:2]
-          coordinates(clip_mw_info) <- ~ Easting  + Northing
-          proj4string(clip_mw_info) <- CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j]))
-          clip_mw_info <- spTransform(clip_mw_info, CRS("+init=epsg:4326"))
-          temp_mw_info$Latitude[j] = clip_mw_info@coords[2]
-          temp_mw_info$Longitude[j] = clip_mw_info@coords[1]
-        }
-        
-        if (is.na(temp_mw_info$Easting[j])||is.na(temp_mw_info$Northing[j])){
-          clip_mw_info <- temp_mw_info[,c("Longitude","Latitude")][j,1:2]
-          coordinates(clip_mw_info) <- ~ Longitude  + Latitude
-          proj4string(clip_mw_info) <- CRS("+init=epsg:4326")
-          clip_mw_info <- spTransform(clip_mw_info, CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j])))
-          temp_mw_info$Northing[j] = clip_mw_info@coords[2]
-          temp_mw_info$Easting[j] = clip_mw_info@coords[1]
-        }
-        source_coord = temp_mw_info%>%filter(`Monitoring Wells`=='Source Well')
-     
-        temp_mw_info <- temp_mw_info%>%
-          mutate(`Distance from Source (m)` = ifelse(`Monitoring Wells`%in%colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],
-                                                     sqrt((Easting-source_coord$Easting)^(2)+
-                                                            (Northing-source_coord$Northing)^(2)),NA)
-          )
-      }
+      
+      temp_mw_info<-data_wellinfo(temp_mw_info)
+      
+      # for (j in 1:nrow(temp_mw_info)){
+      #   if (is.na(temp_mw_info$Latitude[j])||is.na(temp_mw_info$Longitude[j])){
+      #     clip_mw_info <- temp_mw_info[,c("Easting","Northing")][j,1:2]
+      #     coordinates(clip_mw_info) <- ~ Easting  + Northing
+      #     proj4string(clip_mw_info) <- CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j]))
+      #     clip_mw_info <- spTransform(clip_mw_info, CRS("+init=epsg:4326"))
+      #     temp_mw_info$Latitude[j] = clip_mw_info@coords[2]
+      #     temp_mw_info$Longitude[j] = clip_mw_info@coords[1]
+      #   }
+      #   
+      #   if (is.na(temp_mw_info$Easting[j])||is.na(temp_mw_info$Northing[j])){
+      #     clip_mw_info <- temp_mw_info[,c("Longitude","Latitude")][j,1:2]
+      #     coordinates(clip_mw_info) <- ~ Longitude  + Latitude
+      #     proj4string(clip_mw_info) <- CRS("+init=epsg:4326")
+      #     clip_mw_info <- spTransform(clip_mw_info, CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j])))
+      #     temp_mw_info$Northing[j] = clip_mw_info@coords[2]
+      #     temp_mw_info$Easting[j] = clip_mw_info@coords[1]
+      #   }
+      #   source_coord = temp_mw_info%>%filter(`Monitoring Wells`=='Source Well')
+      # 
+      #   temp_mw_info <- temp_mw_info%>%
+      #     mutate(`Distance from Source (m)` = ifelse(`Monitoring Wells`%in%colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],
+      #                                                sqrt((Easting-source_coord$Easting)^(2)+
+      #                                                       (Northing-source_coord$Northing)^(2)),NA)
+      #     )
+      # }
       
 
       d_loc <- reactiveVal(temp_mw_info)
       
       observeEvent(input$mw_data,{
-        
-        temp_mw_info<-hot_to_r(input$mw_data)
-        # if user is missing with lat/long, populate values
-        for (j in 1:nrow(temp_mw_info)){
-          if (is.na(temp_mw_info$Latitude[j])||is.na(temp_mw_info$Longitude[j])){
-            clip_mw_info <- temp_mw_info[,c("Easting","Northing")][j,1:2]
-            coordinates(clip_mw_info) <- ~ Easting  + Northing
-            proj4string(clip_mw_info) <- CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j]))
-            clip_mw_info <- spTransform(clip_mw_info, CRS("+init=epsg:4326"))
-            temp_mw_info$Latitude[j] = clip_mw_info@coords[2]
-            temp_mw_info$Longitude[j] = clip_mw_info@coords[1]
-          }
-          if (is.na(temp_mw_info$Easting[j])||is.na(temp_mw_info$Northing[j])){
-            clip_mw_info <- temp_mw_info[,c("Longitude","Latitude")][j,1:2]
-            coordinates(clip_mw_info) <- ~ Longitude  + Latitude
-            proj4string(clip_mw_info) <- CRS("+init=epsg:4326")
-            clip_mw_info <- spTransform(clip_mw_info, CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j])))
-            temp_mw_info$Northing[j] = clip_mw_info@coords[2]
-            temp_mw_info$Easting[j] = clip_mw_info@coords[1]
-          }
-          
+
+        mw_Tb5 = checksilenterror(Plume$Plume())
+
+        if (mw_Tb5 != 'error'){
+          temp_mw_info <-Plume$Plume()
+        }else{
+          temp_mw_info<-hot_to_r(input$mw_data)
         }
-        # calculate the distance
-        source_coord = temp_mw_info%>%filter(`Well Grouping`=='Source Well')
-        temp_mw_info <- temp_mw_info%>%
-          mutate(`Well Grouping` = ifelse(`Well Grouping`=='Source Well','',`Well Grouping`)
-          )
-        if (!is.null(input$source_well)){
-          temp_mw_info <- temp_mw_info%>%
-            mutate(`Well Grouping` = ifelse(`Monitoring Wells`==input$source_well,'Source Well',`Well Grouping`))
+
+        mw_Tb5 = checksilenterror(Plume$sourcewell())
+        if (mw_Tb5 != 'error'){
+          temp_mw_info<-data_wellinfo(temp_mw_info)
+        }else{
+          temp_mw_info<-data_wellinfo(temp_mw_info,Plume$sourcewell())
         }
-        
-        temp_mw_info <- temp_mw_info%>%
-          mutate(`Distance from Source (m)` = ifelse(`Monitoring Wells`%in%c(colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],"Point of Compliance"),
-                                                     sqrt((Easting-source_coord$Easting)^(2)+
-                                                            (Northing-source_coord$Northing)^(2)),NA))
-        # convert from ft to meter
-        for (k in nrow(temp_mw_info)){
-          projtext = CRS(paste0("+init=epsg:",temp_mw_info$EPSG[k]))
-          temp_mw_info$`Distance from Source (m)`[k] = ifelse(str_contains(projtext@projargs,"+units=m"),
-                                                              temp_mw_info$`Distance from Source (m)`[k],
-                                                              temp_mw_info$`Distance from Source (m)`[k]*0.3078)
-        }  
+        browser()
         d_loc(temp_mw_info)
       })
       
@@ -265,7 +266,7 @@ Data_Input_Server <- function(id,Plume) {
       })
       
       output$mw_data <- renderRHandsontable({
-        rhandsontable(temp_mw_info, rowHeaders = NULL, width = 1200, height = 600) %>%
+        rhandsontable(d_loc(), rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE) %>%
           hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
       })

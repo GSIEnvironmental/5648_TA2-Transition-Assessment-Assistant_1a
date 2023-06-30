@@ -12,7 +12,8 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                      unit_method,
                      sen = NULL,gwv=NULL,Rate_bio=NULL,projection_state=NULL){
   
-  
+  max_raw = max(10^ceiling(log10(df_series$Concentration)))
+  min_raw = min(10^floor(log10(df_series$Concentration)))
   if (State!='Lab-Based'){
     # create y axis as log 
     # tval <- sort(as.vector(sapply(seq(1,9),
@@ -23,7 +24,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
     # ttxt <- rep(" ",length(tval))  # no label at most of the ticks
     # ttxt[seq(1,length(tval),9)] <- as.character(tval)[seq(1,length(tval),9)] # every 9th tick is labelled
     # 
-    
+
     pt_small <-min(min(df_series$Concentration,na.rm=TRUE),C_goal)
     
     # generate point of compliance and cleanup goal line
@@ -35,10 +36,11 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                                      rm.na=TRUE),
                    line = list(dash = "dash",color='black'), showlegend=FALSE)%>% #  CONCENTRATION GOAL
       add_trace(x= c(Ltot,Ltot),#10%
-                y = c((min(df_series$Concentration,na.rm = TRUE))-0.5, 
+                y = c((min(df_series$Concentration,min_raw,na.rm = TRUE)), 
                       yend = max(predict(sen,data.frame(Distance = 0)),
                                  (max(df_series$Concentration,na.rm = TRUE))+1,
-                                 C_goal
+                                 C_goal,
+                                 max_raw
                                  )),
                 name = ' ',
                 type = "scatter",
@@ -50,12 +52,17 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
     
   }else{
     # generate point of compliance and cleanup goal line
+    eval_series<-df_series%>%filter(WellID==eval_well)
+    if (nrow(eval_series)==2){
+      eval_series<-eval_series%>%filter(State=="PostRem")
+    }
     p <- plot_ly(source = 'ts_selected')%>%
       add_segments(y = (C_goal), yend = (C_goal),
                    x = 0, xend = Ltot*1.2,
                    line = list(dash = "dash",color='black'), showlegend=FALSE)%>% #  CONCENTRATION GOAL
       add_trace(x= c(Ltot,Ltot),#10%
-                y = c((min(1,Lsource1*0.5,C_goal*0.5)), (max(1,Lsource1*1.5,C_goal*1.5))) ,
+                y = c((min(1,Lsource1*0.5,C_goal*0.5,min_raw)), 
+                      (max(1,Lsource1*1.5,C_goal*1.5,max_raw))) ,
                 name = ' ',
                 type = "scatter",
                 mode = 'lines',
@@ -79,7 +86,9 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                      text = ~Concentration,
                      marker = list(size=10),
                      color = ~as.factor(State),
-                     hovertemplate = paste('<br>Distance: %{x:.0f} m',
+                     customdata = ~I(WellID),
+                     hovertemplate = paste('<br>Well ID: %{customdata}',
+                                           '<br>Distance: %{x:.0f} m',
                                            '<br>Concentration: %{text:.2f} ',unit_method,'<br>'))
       # add_trace(x= 0,
       #                y = (Lsource1) ,
@@ -91,30 +100,75 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
       #                hovertemplate = paste('<br>Distance: %{x} m',
       #                                      '<br>Concentration: %{text:.2f} ',unit_method,'<br>'))
     
-    plot_df2 <-data.frame(x=c(0, Ltot),
-                          y=c((Lsource1),10^(log10(Lsource1) + as.numeric(sen$coefficients[2]*Ltot)))
-    )
+    plot_df2 <-data.frame(x=c(0, 
+                              sen$model$Distance,
+                              Ltot,
+                              Ltot*2.9,
+                              (log10(C_goal)-as.numeric(sen$coefficients[1]))/as.numeric(sen$coefficients[2])
+                              ),
+                          y=c(10^predict(sen,data.frame(Distance = 0)),
+                              10^fitted(sen),
+                              10^predict(sen,data.frame(Distance = Ltot)),
+                              10^predict(sen,data.frame(Distance = Ltot*2.9)),
+                              C_goal
+                              )
+                          )
 
-    Esource1 = dd%>%filter(WellID==eval_well,
-                           State==ifelse(projection_state=='Pre','PreRem','PostRem'))
-    plot_df3<-data.frame(x=c(Esource1$Distance, max(dd$Distance)),
-                          y=c((Esource1$Concentration),10^(log10(Esource1$Concentration) + as.numeric(sen$coefficients[2]*max(dd$Distance))))
+    Esource1 = dd%>%filter(WellID==eval_well)
+    
+    if (nrow(Esource1)==2){
+      Esource1 <- Esource1%>%
+        filter(State==ifelse(projection_state=='Pre','PreRem','PostRem'))
+    }
+                           
+    plot_df3<-data.frame(x=c(Esource1$Distance, 
+                             max(dd$Distance),
+                             Ltot,
+                             Ltot*2.9
+                             ),
+                          y=c((Esource1$Concentration),
+                              10^(log10(Esource1$Concentration) + as.numeric(sen$coefficients[2]*max(dd$Distance))),
+                              10^(log10(Esource1$Concentration) + as.numeric(sen$coefficients[2]*Ltot)),
+                              10^(log10(Esource1$Concentration) + as.numeric(sen$coefficients[2]*Ltot*2.9))
+                              )
     )
     
     
   }else if(State=='Lab-Based'){
-    p<-p%>%add_markers(x= 0,
-                       y = (Lsource1) ,
-                       name = 'Current Concentration for Source Well',
-                       type = "scatter",
-                       mode = 'markers',
-                       text =  I(Lsource1),
-                       marker = marker_plotly(color='black'),
-                       hovertemplate = paste('<br>Distance: %{x} m',
-                                             '<br>Concentration: %{text:.2f} ',unit_method,'<br>'))
+    # p<-p%>%add_markers(x= 0,
+    #                    y = (Lsource1) ,
+    #                    name = 'Current Concentration for Source Well',
+    #                    type = "scatter",
+    #                    mode = 'markers',
+    #                    text =  I(Lsource1),
+    #                    marker = marker_plotly(color='black'),
+    #                    hovertemplate = paste('<br>Distance: %{x} m',
+    #                                          '<br>Concentration: %{text:.2f} ',unit_method,'<br>'))
+    # 
+
+    dd = df_series
+    p<-p%>%add_trace(data = dd,
+                     x= ~Distance,
+                     y = ~Concentration ,
+                     name = ~State,#' ',
+                     type = "scatter",
+                     mode = 'markers',
+                     text = ~Concentration,
+                     marker = list(size=10),
+                     color = ~as.factor(State),
+                     customdata = ~I(WellID),
+                     hovertemplate = paste('<br>Well ID: %{customdata}',
+                                           '<br>Distance: %{x:.0f} m',
+                                           '<br>Concentration: %{text:.2f} ',unit_method,'<br>'))
+    Esource1 = dd%>%filter(WellID==eval_well)
     
-    plot_df2 <-data.frame(x=c(0, Ltot,C_goal*0.1*Lsource1*gwv/Rate_bio),
-                          y=c((Lsource1),(Lsource1-Rate_bio/gwv*Ltot),C_goal*0.1)
+    if (nrow(Esource1)==2){
+      Esource1 <- Esource1%>%
+        filter(State==ifelse(projection_state=='Pre','PreRem','PostRem'))
+    }
+    
+    plot_df2 <-data.frame(x=c(eval_series$Distance, Ltot,C_goal*0.1*eval_series$Concentration*gwv/Rate_bio),
+                          y=c((eval_series$Concentration),(eval_series$Concentration-Rate_bio/gwv*Ltot),C_goal*0.1)
     )
     plot_df2<-plot_df2%>%filter(y>=0)
   }else{
@@ -128,7 +182,9 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                      mode = 'markers',
                      text = ~Concentration,
                      marker = marker_plotly(color='black'),
-                     hovertemplate = paste('<br>Distance: %{x:.0f} m',
+                     customdata = ~I(WellID),
+                     hovertemplate = paste('<br>Well ID: %{customdata}',
+                                           '<br>Distance: %{x:.0f} m',
                                            '<br>Concentration: %{text:.2f} ',unit_method,'<br>'))
     
     plot_df2 <-data.frame(x=c(0, sen$model$Distance,Ltot,Ltot*2.9,
@@ -142,7 +198,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
   
   
   
-  plot_df2<-plot_df2%>%arrange(-x)
+  plot_df2<-plot_df2%>%arrange(x)
   
   c_raw2 <- (plot_df2$y)
   
@@ -155,7 +211,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
     CIvalue1 = ifelse(CI=='80%',0.8,
                       ifelse(CI=='90%',0.9,
                              ifelse(CI=='95%',0.95,0.99)))
-    
+
     p <- p%>%
       add_lines(data = plot_df2,
                 x = ~x,
@@ -171,13 +227,13 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
       )%>%
       add_lines(data = plot_df2,
                 x = ~x,
-                y = ~10^(log10(Lsource1)+confint(sen,level=CIvalue1*2-1)[[4]]*x),
-                text = ~10^(log10(Lsource1)+confint(sen,level=CIvalue1*2-1)[[4]]*x),
+                y = ~10^(sen$coefficients[1]+confint(sen,level=CIvalue1*2-1)[[4]]*x),
+                text = ~10^(sen$coefficients[1]+confint(sen,level=CIvalue1*2-1)[[4]]*x),
                 line = list(color = '#4472C4',shape='spline',dash = 'dash'),
-                name = ifelse(State=='Projected'|State=='Lab-Based',
-                              paste0("Regression:Source ",State," with confidence"),
-                              paste0("Regression:Souce ",State,"ediation with confidence")),
-                hovertemplate = paste('<br>Source<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ',unit_method,'L<br>')
+                name =paste0("Regression:",State,"ediation with confidence"),
+                hovertemplate = ifelse(State=='PreRem',
+                                       paste('<br>Pre Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f}',unit_method,'<br>'),
+                                       paste('<br>Post Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f}',unit_method,'<br>'))
       )%>%
       add_lines(data = plot_df3,
                 x = ~x,
@@ -191,8 +247,8 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
       )%>%
       add_lines(data = plot_df3,
                 x = ~x,
-                y = ~10^(log10(Esource1$Distance)+confint(sen,level=CIvalue1*2-1)[[4]]*x),
-                text = ~10^(log10(Esource1$Distance)+confint(sen,level=CIvalue1*2-1)[[4]]*x),
+                y = ~10^(log10(Esource1$Concentration)+confint(sen,level=CIvalue1*2-1)[[4]]*x-confint(sen,level=CIvalue1*2-1)[[4]]*plot_df3$x[1]),
+                text = ~10^(log10(Esource1$Concentration)+confint(sen,level=CIvalue1*2-1)[[4]]*x-confint(sen,level=CIvalue1*2-1)[[4]]*plot_df3$x[1]),
                 line = list(color = '#BEBADA',shape='spline',dash = 'dash'),
                 name = ifelse(State=='Projected'|State=='Lab-Based',
                               paste0("Regression:Evaluation Well ",State," with confidence"),
@@ -216,8 +272,8 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                                          paste('<br>Post Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ',unit_method,'<br>'))
         )%>%add_lines(data = plot_df2,
                 x = ~x,
-                y = ~Lsource1-CI/gwv*x,
-                text = ~Lsource1-CI/gwv*x,
+                y = ~eval_series$Concentration-CI/gwv*x+CI/gwv*x[1],
+                text = ~eval_series$Concentration-CI/gwv*x+CI/gwv*x[1],
                 line = list(color = '#4472C4',shape='spline',dash = 'dash'),
                 name = paste0("Regression:",State, ' with Confidence'),
                 hovertemplate = paste('<br>Post Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ',unit_method,'<br>'))
@@ -301,7 +357,8 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
         margin = margin
       )
   }else{
-    
+    max_raw = max(10^ceiling(log10(dd$Concentration)))
+    min_raw = min(10^floor(log10(dd$Concentration)))
     p <- p %>%
       add_annotations(x = ifelse(State=="projected",Ltot*1.2/2,
                                  mean(df_series$Distance*1.2,na.rm = TRUE)),
@@ -336,10 +393,11 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
         yaxis = list(title = list(text = ifelse(unit_method =="µmole/L","COC Concentration (µmole/L)","COC Concentration (µg/L)"),
                                   font = list(size=18)),
                      tickfont = list(size = 18),
-                     range=c(min(min(df_series$Concentration),log10(min(df_series$Concentration,na.rm = TRUE))), 
+                     range=c(min(log10(min(df_series$Concentration,min_raw,na.rm = TRUE))), 
                              yend = log10(max(10^predict(sen,data.frame(Distance = 0)),
                                10^(predict(sen,data.frame(Distance = Ltot))),
-                               max(df_series$Concentration,na.rm = TRUE)
+                               max(df_series$Concentration,na.rm = TRUE),
+                               max_raw
                                )
                              )),
                      linecolor = toRGB("black"),

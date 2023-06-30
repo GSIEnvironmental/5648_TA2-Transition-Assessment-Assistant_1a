@@ -61,6 +61,7 @@ library(DT)
 library(shiny)
 library(shinydashboard)
 library(htmltools)
+library(sjmisc)
 
 
 # Plot Parameters -------------

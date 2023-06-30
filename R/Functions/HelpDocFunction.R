@@ -10,6 +10,38 @@ HelpDocFunction<-function(text1){
   ))
 }
 
+HelpDoclist_Tool5<-function(){
+  
+  c(
+    #Specific Info tab
+    # Step 5 (#1)
+    tags$div("To estimate a field-scale rate constant for natural attenuation, the user should focus on selecting wells that are located along the plume centerline in the direction of groundwater flow.   This is typically four or more wells starting at (or near) the source location and proceeding downgradient towards the point of compliance.   The user may choose to include all of the wells along the plume centerline for this evaluation, or just a subset of wells.  In some cases, the user may choose to omit certain wells because they have limited data or data that are not necessarily representative.  For example, a well that is located along the plume centerline but typically has much lower concentrations than wells located slightly downgradient may not be representative of plume conditions for various reasons (e.g., well construction, subsurface heterogeneity).      In Step 3, the user will designate a “source” well to use as the starting location for projecting the future plume concentrations with distance once remedial measures have been halted."),
+    # step 6 (#2)
+    tags$div("The seepage velocity is the velocity at which groundwater flows through the aquifer.  It can be calculated from site-specific data (e.g., static water levels, hydraulic conductivity, and porosity).  For contaminants that sorb strongly to aquifer solids, a retardation factor may be applied based on the assumption that these contaminants will travel at a slower rate than groundwater.  The user should also check that their estimate of the groundwater seepage velocity is consistent with the current extent of the plume.  For example, if their initial estimate of the groundwater seepage velocity is too slow to account for the current plume extent, then the velocity estimate should probably be adjusted upward."),
+    #step 8 (#3)
+    tags$div("This is the concentration that should be achieved at the point of compliance.  Tool 5 will show this concentration as a horizontal line to help visualize whether natural attenuation is sufficiently reducing to the plume concentration with distance in the direction of groundwater flow."),
+    
+    # use Pre-Rem Tab (#4)
+    tags$div("To allow the user to address uncertainty in the rate constant, Tool 5 will calculate the slower one-tailed confidence interval on the rate constant for attenuation at a level of uncertainty selected by the user.  The user can then see how the slower confidence interval impacts the projected concentrations along the flow path on the same graph."),
+    
+    # use Lab-Based Tab
+    #step1 (#5)
+    tags$div("Tool 5 lets the user project concentrations with distance based on degradation rates obtained from lab-scale testing.  Relevant lab-based studies could include a conventional microcosm study, a 14C assay of degradation, or the abundance of biomarkers for biodegradation of the contaminants in groundwater from the site.  These laboratory rate constants have the units of reciprocal time (e.g., 1/day).  The tool divides lab-based rate constant by the seepage velocity to calculate a rate constant for degradation with distance along the flow path.  It then uses the rate constant for degradation to forecast concentrations of the contaminants along the flow path, which is provided in graphical form."),
+    #step2 (#6)
+    tags$div("The user has the option to enter a lower confidence interval for the lab-based rate constant. Tool 5 will then show how the slower confidence interval for the rate constant impacts the projected concentrations along the flow path on the same graph."),
+    #step3 (#7)
+    tags$div("This represents the current concentration at a user-selected starting location (source well or other well) that will be used in projecting the concentration with distance from that location.  The tool will use the rate constant estimated from the pre-remediation data as part of that projection.  See the “Site-Specific Info” tab in Tool 5 for more information on selecting a starting location for the projection."),
+    
+    # use Post-Rem  (#8)
+    tags$div("To allow the user to address uncertainty in the rate constant, Tool 5 will calculate the slower one-tailed confidence interval on the rate constant for attenuation at a level of uncertainty selected by the user.  The user can then see how the slower confidence interval impacts the projected concentrations along the flow path on the same graph.")
+    
+  )
+  
+}
+
+
+
+
 HelpDoclist<-function(){
   
   c(

@@ -57,3 +57,58 @@ data_merge <- function(d, d_mw,conc_name="Concentration"){
   return(cd)
 }
 
+
+# handling the well information
+data_wellinfo<-function(temp_mw_info,sourcewell=NULL,welllist=NULL){
+  
+  # if user is missing with lat/long, populate values
+  for (j in 1:nrow(temp_mw_info)){
+    if (is.na(temp_mw_info$Latitude[j])||is.na(temp_mw_info$Longitude[j])){
+      clip_mw_info <- temp_mw_info[,c("Easting","Northing")][j,1:2]
+      coordinates(clip_mw_info) <- ~ Easting  + Northing
+      proj4string(clip_mw_info) <- CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j]))
+      clip_mw_info <- spTransform(clip_mw_info, CRS("+init=epsg:4326"))
+      temp_mw_info$Latitude[j] = clip_mw_info@coords[2]
+      temp_mw_info$Longitude[j] = clip_mw_info@coords[1]
+    }
+    if (is.na(temp_mw_info$Easting[j])||is.na(temp_mw_info$Northing[j])){
+      clip_mw_info <- temp_mw_info[,c("Longitude","Latitude")][j,1:2]
+      coordinates(clip_mw_info) <- ~ Longitude  + Latitude
+      proj4string(clip_mw_info) <- CRS("+init=epsg:4326")
+      clip_mw_info <- spTransform(clip_mw_info, CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j])))
+      temp_mw_info$Northing[j] = clip_mw_info@coords[2]
+      temp_mw_info$Easting[j] = clip_mw_info@coords[1]
+    }
+    
+  }
+  # calculate the distance
+  if (!is.null(sourcewell)){
+    temp_mw_info <- temp_mw_info%>%
+      mutate(`Well Grouping` = ifelse(`Well Grouping`=='Source Well','',`Well Grouping`)
+      )
+    temp_mw_info <- temp_mw_info%>%
+      mutate(`Well Grouping` = ifelse(`Monitoring Wells`==sourcewell,'Source Well',`Well Grouping`))
+  }
+  source_coord = temp_mw_info%>%filter(`Well Grouping`=='Source Well')
+  
+  if (is.null(welllist)){
+    temp_mw_info <- temp_mw_info%>%
+      mutate(`Distance from Source (m)` = ifelse(`Monitoring Wells`%in%c(colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],"Point of Compliance"),
+                                                 sqrt((Easting-source_coord$Easting)^(2)+
+                                                        (Northing-source_coord$Northing)^(2)),NA))
+  }else{
+    temp_mw_info <- temp_mw_info%>%
+      mutate(`Distance from Source (m)` = ifelse(`Monitoring Wells`%in%c(welllist,"Point of Compliance"),
+                                                 sqrt((Easting-source_coord$Easting)^(2)+
+                                                        (Northing-source_coord$Northing)^(2)),NA))
+  }
+
+  # convert from ft to meter
+  for (k in 1:nrow(temp_mw_info)){
+    projtext = CRS(paste0("+init=epsg:",temp_mw_info$EPSG[k]))
+    temp_mw_info$`Distance from Source (m)`[k] = ifelse(str_contains(projtext@projargs,"+units=m"),
+                                                        temp_mw_info$`Distance from Source (m)`[k],
+                                                        temp_mw_info$`Distance from Source (m)`[k]*0.3078)
+  }
+  return(temp_mw_info)
+}
