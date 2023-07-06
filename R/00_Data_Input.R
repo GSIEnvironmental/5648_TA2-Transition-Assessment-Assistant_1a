@@ -86,7 +86,7 @@ Data_Input_Server <- function(id,Plume,sourcewell) {
       # Concentration/Time Dataframe
       mw_Tb5 = checksilenterror(Plume$Plume())
       if (mw_Tb5 != 'error'){
-        browser()
+
         temp_mw_info <-Plume$Plume()
       }
       # check whether data is uploaded or not
@@ -241,7 +241,7 @@ Data_Input_Server <- function(id,Plume,sourcewell) {
         }else{
           temp_mw_info<-data_wellinfo(temp_mw_info,Plume$sourcewell())
         }
-        browser()
+
         d_loc(temp_mw_info)
       })
       

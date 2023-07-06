@@ -179,30 +179,83 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                       ## 3. (Optional) Site-Specific Parameters -------------------------------------
                       tabPanel(value ='lab', HTML("Use Lab-Based Rate Constant"),
                                br(),
-                               fluidRow(column(10,
-                                               HTML("<h4><b>Step 1.</b> Enter biodegradation rate constant for COC of interest.</h4>"),
-                                               fluidRow(align = "center",
-                                                        column(6, align = "right", 
-                                                               numericInput(ns("Rate_bio"), label = NULL,
-                                                                            value = 1.7, min = 0, step = 0.01,
-                                                                            width = "80px")),
-                                                        column(6, align = "left", 
-                                                               HTML("<h4> per year</h4>")),br())),
-                                        column(2, align = "left", style = "padding:10px;",
-                                               actionButton(ns("help5thTool5"), HTML("?"), style = button_style2))
-                                        ), br(),
-                               fluidRow(column(10,
-                                               HTML("<h4><b>Step 2.</b> Enter upper confidence limit for biodegradation rate constant (if known).</h4>"),
-                                               fluidRow(align = "center",
-                                                        column(6, align = "right", 
-                                                               numericInput(ns("CIlimit"), label = NULL,
-                                                                            value = 1.6, min = 0, step = 0.01,
-                                                                            width = "80px")),
-                                                        column(6, align = "left", 
-                                                               HTML("<h4> per year</h4>")),br())),
-                                        column(2, align = "left", style = "padding:10px;",
-                                               actionButton(ns("help5thTool6"), HTML("?"), style = button_style2))
-                                        ), br(),
+                               conditionalPanel(condition = "input.unit_method=='µg/L'", ns = ns,
+                                                fluidRow(column(10,
+                                                                HTML("<h4><b>Step 1.</b> Enter biodegradation rate constant for COC of interest.</h4>"),
+                                                                fluidRow(align = "center",
+                                                                         column(6, align = "right", 
+                                                                                numericInput(ns("Rate_bio"), label = NULL,
+                                                                                             value = 1.7, min = 0, step = 0.01,
+                                                                                             width = "80px")),
+                                                                         column(6, align = "left", 
+                                                                                HTML("<h4> per year</h4>")),br())),
+                                                         column(2, align = "left", style = "padding:10px;",
+                                                                actionButton(ns("help5thTool5"), HTML("?"), style = button_style2))
+                                                ), br(),
+                                                fluidRow(column(10,
+                                                                HTML("<h4><b>Step 2.</b> Enter upper confidence limit for biodegradation rate constant (if known).</h4>"),
+                                                                fluidRow(align = "center",
+                                                                         column(6, align = "right", 
+                                                                                numericInput(ns("CIlimit"), label = NULL,
+                                                                                             value = 1.9, min = 0, step = 0.01,
+                                                                                             width = "80px")),
+                                                                         column(6, align = "left", 
+                                                                                HTML("<h4> per year</h4>")),br())),
+                                                         column(2, align = "left", style = "padding:10px;",
+                                                                actionButton(ns("help5thTool6"), HTML("?"), style = button_style2))
+                                                )),
+                               conditionalPanel(condition = "input.unit_method=='µmole/L'", ns = ns,
+                                                fluidRow(column(10,
+                                                                HTML("<h4><b>Step 1.</b> Enter biodegradation rate constant for COC of interest.</h4>"),
+                                                                fluidRow(align = "center",
+                                                                         column(6, align = "right", 
+                                                                                numericInput(ns("Rate_bio2"), label = NULL,
+                                                                                             value = 0.01, min = 0, step = 0.01,
+                                                                                             width = "80px")),
+                                                                         column(6, align = "left", 
+                                                                                HTML("<h4> per year</h4>")),br())),
+                                                         column(2, align = "left", style = "padding:10px;",
+                                                                actionButton(ns("help5thTool5"), HTML("?"), style = button_style2))
+                                                ), br(),
+                                                fluidRow(column(10,
+                                                                HTML("<h4><b>Step 2.</b> Enter upper confidence limit for biodegradation rate constant (if known).</h4>"),
+                                                                fluidRow(align = "center",
+                                                                         column(6, align = "right", 
+                                                                                numericInput(ns("CIlimit2"), label = NULL,
+                                                                                             value = 0.02, min = 0, step = 0.01,
+                                                                                             width = "80px")),
+                                                                         column(6, align = "left", 
+                                                                                HTML("<h4> per year</h4>")),br())),
+                                                         column(2, align = "left", style = "padding:10px;",
+                                                                actionButton(ns("help5thTool6"), HTML("?"), style = button_style2))
+                                                )),
+                               
+                                 
+                               # fluidRow(column(10,
+                               #                 HTML("<h4><b>Step 1.</b> Enter biodegradation rate constant for COC of interest.</h4>"),
+                               #                 fluidRow(align = "center",
+                               #                          column(6, align = "right", 
+                               #                                 numericInput(ns("Rate_bio"), label = NULL,
+                               #                                              value = 1.7, min = 0, step = 0.01,
+                               #                                              width = "80px")),
+                               #                          column(6, align = "left", 
+                               #                                 HTML("<h4> per year</h4>")),br())),
+                               #          column(2, align = "left", style = "padding:10px;",
+                               #                 actionButton(ns("help5thTool5"), HTML("?"), style = button_style2))
+                               #          ), br(),
+                               # fluidRow(column(10,
+                               #                 HTML("<h4><b>Step 2.</b> Enter upper confidence limit for biodegradation rate constant (if known).</h4>"),
+                               #                 fluidRow(align = "center",
+                               #                          column(6, align = "right", 
+                               #                                 numericInput(ns("CIlimit"), label = NULL,
+                               #                                              value = 1.9, min = 0, step = 0.01,
+                               #                                              width = "80px")),
+                               #                          column(6, align = "left", 
+                               #                                 HTML("<h4> per year</h4>")),br())),
+                               #          column(2, align = "left", style = "padding:10px;",
+                               #                 actionButton(ns("help5thTool6"), HTML("?"), style = button_style2))
+                               #          ), 
+                               br(),
                                # fluidRow(column(10,
                                #                 HTML("<h4><b>Step 3.</b> Enter current concentration for source well.</h4>"),
                                #                 HTML("<h4><i>Use for projection during post-remediation period.</i></h4>"),
@@ -493,6 +546,34 @@ PlumeZoneServer <- function(id,data_input,nav) {
         })
       }) # end update unit 
       
+      # update CI and ratio ----------------------
+      d_CI <- reactiveVal()
+      observeEvent({input$unit_method
+                    input$CIlimit
+                    input$CIlimit2
+                    },
+                   {
+                     if (input$unit_method =='µg/L'){
+                       d_CI(input$CIimit)
+                     }else{
+                       d_CI(input$CIimit2)
+                     }
+                     
+                   })
+      
+      d_ratio <- reactiveVal()
+      observeEvent({input$unit_method
+        input$Rate_bio
+        input$Rate_bio2
+      },
+      {
+        if (input$unit_method =='µg/L'){
+          d_ratio(input$Rate_bio)
+        }else{
+          d_ratio(input$Rate_bio2)
+        }
+        
+      })
       
       # RV: Location Data -----------------------
       d_loc <- reactiveVal(data_mw_clean(temp_mw_info))
@@ -853,8 +934,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
       #--- Lab Based BOX
       output$vbox2_1 <- renderValueBox({
         req(input$gwv,
-            input$Rate_bio)
-        rate_constant_pre=as.numeric(input$Rate_bio/input$gwv)
+            d_ratio())
+        rate_constant_pre=as.numeric(d_ratio()/input$gwv)
         
         setBorderColor(valueBox(
           "Without Confidence Limit",
@@ -866,9 +947,9 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$vbox2_2 <- renderValueBox({
         req(input$gwv,
-            input$CIlimit)
-        
-        rate_constant_pre_CI = as.numeric(input$CIlimit/input$gwv)
+            d_CI())
+
+        rate_constant_pre_CI = as.numeric(d_CI()/input$gwv)
         setBorderColor(valueBox(
           "With Confidence Limit",
           signif(rate_constant_pre_CI,2)
@@ -879,10 +960,10 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$vbox2_3 <- renderValueBox({
         req(input$gwv,
-            input$Rate_bio,
+            d_ratio(),
             Ltot(),
             Leval_well())
-        rate_constant_post=Leval_well() - as.numeric(input$Rate_bio/input$gwv)*Ltot()
+        rate_constant_post=Leval_well() - as.numeric(d_ratio()/input$gwv)*Ltot()
         rate_constant_post = ifelse(rate_constant_post<0,0,rate_constant_post)
         setBorderColor(valueBox(
           "Without Confidence Limit",
@@ -894,10 +975,10 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$vbox2_4 <- renderValueBox({
         req(input$gwv,
-            input$CIlimit,
+            d_CI(),
             Ltot(),
             Leval_well())
-        rate_constant_post_CI = Leval_well() - as.numeric(input$CIlimit/input$gwv)*Ltot()
+        rate_constant_post_CI = Leval_well() - as.numeric(d_CI()/input$gwv)*Ltot()
         rate_constant_post_CI = ifelse(rate_constant_post_CI<0,0,rate_constant_post_CI)
         setBorderColor(valueBox(
           "With Confidence Limit",
@@ -909,12 +990,12 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$vbox2_5 <- renderValueBox({
         req(input$gwv,
-            input$Rate_bio,
+            d_ratio(),
             Ltot(),
             Leval_well(),
             input$Conc_goal)
         
-        time_woCI = ifelse((Leval_well() - as.numeric(input$Rate_bio/input$gwv)*Ltot())>input$Conc_goal,
+        time_woCI = ifelse((Leval_well() - as.numeric(d_ratio()/input$gwv)*Ltot())>input$Conc_goal,
                            "No","Yes")
         
         setBorderColor(valueBox(
@@ -927,12 +1008,12 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$vbox2_6 <- renderValueBox({
         req(input$gwv,
-            input$CIlimit,
+            d_CI(),
             Ltot(),
             Leval_well(),
             input$Conc_goal)
         
-        time_wCI = ifelse((Leval_well() - as.numeric(input$CIlimit/input$gwv)*Ltot())>input$Conc_goal,
+        time_wCI = ifelse((Leval_well() - as.numeric(d_CI()/input$gwv)*Ltot())>input$Conc_goal,
                           "No","Yes")
         setBorderColor(valueBox(
           "With Confidence Limit",
@@ -1091,8 +1172,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(df(),
             sen_lm(),
             Ltot())
-        p<-Tool5fig(df(), input$Conc_goal, Lsource1(), Ltot(), input$CIlimit, "Lab-Based",input$eval_well,
-                    input$unit_method,sen = NULL,gwv=input$gwv,Rate_bio=input$Rate_bio)
+        p<-Tool5fig(df(), input$Conc_goal, Lsource1(), Ltot(), d_CI(), "Lab-Based",input$eval_well,
+                    input$unit_method,sen = NULL,gwv=input$gwv,Rate_bio=d_ratio())
         
         p
       })

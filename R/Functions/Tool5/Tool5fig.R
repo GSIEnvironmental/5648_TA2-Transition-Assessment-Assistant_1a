@@ -14,6 +14,9 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
   
   max_raw = max(10^ceiling(log10(df_series$Concentration)))
   min_raw = min(10^floor(log10(df_series$Concentration)))
+  max_dist = max(10^ceiling(log10(df_series$Distance)))
+  min_dist = min(10^floor(log10(df_series$Distance)))
+
   if (State!='Lab-Based'){
     # create y axis as log 
     # tval <- sort(as.vector(sapply(seq(1,9),
@@ -167,8 +170,13 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
         filter(State==ifelse(projection_state=='Pre','PreRem','PostRem'))
     }
     
-    plot_df2 <-data.frame(x=c(eval_series$Distance, Ltot,C_goal*0.1*eval_series$Concentration*gwv/Rate_bio),
-                          y=c((eval_series$Concentration),(eval_series$Concentration-Rate_bio/gwv*Ltot),C_goal*0.1)
+    plot_df2 <-data.frame(x=c(eval_series$Distance, 
+                              Ltot+eval_series$Distance,
+                              (eval_series$Concentration-min_raw)*gwv/Rate_bio+eval_series$Distance),
+                          y=c((eval_series$Concentration),
+                              eval_series$Concentration-(Rate_bio/gwv*Ltot),
+                              min_raw
+                              )
     )
     plot_df2<-plot_df2%>%filter(y>=0)
   }else{
@@ -258,6 +266,18 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
     
     
   }else if(State =='Lab-Based'){
+
+    plot_df3 <-data.frame(x=c(eval_series$Distance, 
+                              Ltot+eval_series$Distance,
+                              (eval_series$Concentration-min_raw)*gwv/CI+eval_series$Distance),
+                          y=c((eval_series$Concentration),
+                              eval_series$Concentration-(CI/gwv*Ltot),
+                              min_raw
+                              )
+                          )
+    plot_df3<-plot_df3%>%filter(y>=0)
+    plot_df3<-plot_df3%>%arrange(x)
+
     p <- p%>%
         add_lines(data = plot_df2,
                   x = ~x,
@@ -270,10 +290,10 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                   hovertemplate = ifelse(State=='PreRem',
                                          paste('<br>Pre Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ',unit_method,'<br>'),
                                          paste('<br>Post Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ',unit_method,'<br>'))
-        )%>%add_lines(data = plot_df2,
+        )%>%add_lines(data = plot_df3,
                 x = ~x,
-                y = ~eval_series$Concentration-CI/gwv*x+CI/gwv*x[1],
-                text = ~eval_series$Concentration-CI/gwv*x+CI/gwv*x[1],
+                y = ~y,
+                text = ~y,
                 line = list(color = '#4472C4',shape='spline',dash = 'dash'),
                 name = paste0("Regression:",State, ' with Confidence'),
                 hovertemplate = paste('<br>Post Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ',unit_method,'<br>'))
@@ -340,11 +360,19 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                      linewidth = 2,
                      showline=T,
                      mirror = "ticks",
-                     range = c(0,Ltot*1.2)),
+                     range = ifelse(rep(State=='Projected'|State=='Lab-Based',2),
+                                    c(0,max(Ltot*1.2,df_series$Distance,na.rm=TRUE)),
+                                    c(0,max(df_series$Distance*1.2,Ltot*1.2,max(df_series$Distance),rm.na=TRUE))
+                                    )),#c(0,Ltot*1.2)),
         yaxis = list(title = list(text = ifelse(unit_method =="µmole/L","COC Concentration (µmole/L)","COC Concentration (µg/L)"),
                                   font = list(size=18)),
                      tickfont = list(size = 18),
-                     range = c(log10(min(1,Lsource1*0.5,C_goal*0.5)), log10(max(1,Lsource1*1.5,C_goal*1.5))),
+                     range = c(min(log10(min(df_series$Concentration,min_raw,na.rm = TRUE))), 
+                                     yend = log10(max(
+                                                      max(df_series$Concentration,na.rm = TRUE),
+                                                      max_raw
+                                     )
+                                     )),#c(log10(min(1,Lsource1*0.5,C_goal*0.5)), log10(max(1,Lsource1*1.5,C_goal*1.5))),
                      #range=c(log10(Lsource1)-0.5, yend = log10(max(Lsource1)+1)),
                      linecolor = toRGB("black"),
                      linewidth = 2,
