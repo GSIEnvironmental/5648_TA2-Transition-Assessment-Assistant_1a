@@ -12,21 +12,12 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                      unit_method,
                      sen = NULL,gwv=NULL,Rate_bio=NULL,projection_state=NULL){
   
-  max_raw = max(10^ceiling(log10(df_series$Concentration)))
-  min_raw = min(10^floor(log10(df_series$Concentration)))
-  max_dist = max(10^ceiling(log10(df_series$Distance)))
-  min_dist = min(10^floor(log10(df_series$Distance)))
-
+  max_raw = max(10^(ceiling(log10(df_series$Concentration))))
+  min_raw = min(10^(floor(log10(df_series$Concentration))))
+  max_dist = max(10^(ceiling(log10(df_series$Distance))))
+  min_dist = min(10^(floor(log10(df_series$Distance))))
   if (State!='Lab-Based'){
-    # create y axis as log 
-    # tval <- sort(as.vector(sapply(seq(1,9),
-    #                               function(x)
-    #                                 x*(seq(floor(min(C_goal,min(df_series$Concentration,na.rm=TRUE))),
-    #                                        ceiling(max(df_series$Concentration,na.rm=TRUE)))))))#generates a sequence of numbers in logarithmic divisions
-    # 
-    # ttxt <- rep(" ",length(tval))  # no label at most of the ticks
-    # ttxt[seq(1,length(tval),9)] <- as.character(tval)[seq(1,length(tval),9)] # every 9th tick is labelled
-    # 
+
 
     pt_small <-min(min(df_series$Concentration,na.rm=TRUE),C_goal)
     
@@ -35,7 +26,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
       add_segments(y = (C_goal), yend = (C_goal),
                    x = 0, xend = max(sen$model$Distance,df_series$Distance,Ltot,
                                      0, sen$model$Distance,Ltot,Ltot*2.9,
-                                     (log10(C_goal)-as.numeric(sen$coefficients[1]))/as.numeric(sen$coefficients[2]),
+                                     (log(C_goal)-as.numeric(sen$coefficients[1]))/as.numeric(sen$coefficients[2]),
                                      rm.na=TRUE),
                    line = list(dash = "dash",color='black'), showlegend=FALSE)%>% #  CONCENTRATION GOAL
       add_trace(x= c(Ltot,Ltot),#10%
@@ -83,7 +74,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
     p<-p%>%add_trace(data = dd,
                      x= ~Distance,
                      y = ~Concentration ,
-                     name = ~State,#' ',
+                     name = ~State_name,#' ',
                      type = "scatter",
                      mode = 'markers',
                      text = ~Concentration,
@@ -107,12 +98,12 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                               sen$model$Distance,
                               Ltot,
                               Ltot*2.9,
-                              (log10(C_goal)-as.numeric(sen$coefficients[1]))/as.numeric(sen$coefficients[2])
+                              (log(C_goal)-as.numeric(sen$coefficients[1]))/as.numeric(sen$coefficients[2])
                               ),
-                          y=c(10^predict(sen,data.frame(Distance = 0)),
-                              10^fitted(sen),
-                              10^predict(sen,data.frame(Distance = Ltot)),
-                              10^predict(sen,data.frame(Distance = Ltot*2.9)),
+                          y=c(exp(predict(sen,data.frame(Distance = 0))),
+                              exp(fitted(sen)),
+                              exp(predict(sen,data.frame(Distance = Ltot))),
+                              exp(predict(sen,data.frame(Distance = Ltot*2.9))),
                               C_goal
                               )
                           )
@@ -130,9 +121,9 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                              Ltot*2.9
                              ),
                           y=c((Esource1$Concentration),
-                              10^(log10(Esource1$Concentration) + as.numeric(sen$coefficients[2]*max(dd$Distance))),
-                              10^(log10(Esource1$Concentration) + as.numeric(sen$coefficients[2]*Ltot)),
-                              10^(log10(Esource1$Concentration) + as.numeric(sen$coefficients[2]*Ltot*2.9))
+                              exp(log(Esource1$Concentration) + as.numeric(sen$coefficients[2]*(max(dd$Distance)-Esource1$Distance))),
+                              exp(log(Esource1$Concentration) + as.numeric(sen$coefficients[2]*(Ltot-Esource1$Distance))),
+                              exp(log(Esource1$Concentration) + as.numeric(sen$coefficients[2]*(Ltot-Esource1$Distance)*2.9))
                               )
     )
     
@@ -153,7 +144,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
     p<-p%>%add_trace(data = dd,
                      x= ~Distance,
                      y = ~Concentration ,
-                     name = ~State,#' ',
+                     name = ~State_name,#' ',
                      type = "scatter",
                      mode = 'markers',
                      text = ~Concentration,
@@ -169,12 +160,14 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
       Esource1 <- Esource1%>%
         filter(State==ifelse(projection_state=='Pre','PreRem','PostRem'))
     }
-    
+
     plot_df2 <-data.frame(x=c(eval_series$Distance, 
+                              Ltot,
                               Ltot+eval_series$Distance,
-                              (eval_series$Concentration-min_raw)*gwv/Rate_bio+eval_series$Distance),
+                              exp(log((eval_series$Concentration-min_raw))*gwv/Rate_bio+eval_series$Distance)),
                           y=c((eval_series$Concentration),
-                              eval_series$Concentration-(Rate_bio/gwv*Ltot),
+                              exp(log(eval_series$Concentration)-((Rate_bio/gwv*(Ltot-eval_series$Distance)))),
+                              exp(log(eval_series$Concentration)-((Rate_bio/gwv*Ltot))),
                               min_raw
                               )
     )
@@ -185,7 +178,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
     p<-p%>%add_trace(data = dd,
                      x= ~Distance,
                      y = ~Concentration ,
-                     name = ~State,#' ',
+                     name = ~State_name,#' ',
                      type = "scatter",
                      mode = 'markers',
                      text = ~Concentration,
@@ -196,11 +189,11 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                                            '<br>Concentration: %{text:.2f} ',unit_method,'<br>'))
     
     plot_df2 <-data.frame(x=c(0, sen$model$Distance,Ltot,Ltot*2.9,
-                              (log10(C_goal)-as.numeric(sen$coefficients[1]))/as.numeric(sen$coefficients[2])),
-                          y=c(10^predict(sen,data.frame(Distance = 0)),
-                              10^fitted(sen),
-                              10^predict(sen,data.frame(Distance = Ltot)),
-                              10^predict(sen,data.frame(Distance = Ltot*2.9)),C_goal))
+                              (log(C_goal)-as.numeric(sen$coefficients[1]))/as.numeric(sen$coefficients[2])),
+                          y=c(exp(predict(sen,data.frame(Distance = 0))),
+                              exp(fitted(sen)),
+                              exp(predict(sen,data.frame(Distance = Ltot))),
+                              exp(predict(sen,data.frame(Distance = Ltot*2.9))),C_goal))
   }
   
   
@@ -235,8 +228,8 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
       )%>%
       add_lines(data = plot_df2,
                 x = ~x,
-                y = ~10^(sen$coefficients[1]+confint(sen,level=CIvalue1*2-1)[[4]]*x),
-                text = ~10^(sen$coefficients[1]+confint(sen,level=CIvalue1*2-1)[[4]]*x),
+                y = ~exp(sen$coefficients[1]+confint(sen,level=CIvalue1*2-1)[[4]]*x),
+                text = ~exp(sen$coefficients[1]+confint(sen,level=CIvalue1*2-1)[[4]]*x),
                 line = list(color = '#4472C4',shape='spline',dash = 'dash'),
                 name =paste0("Regression:",State,"ediation with confidence"),
                 hovertemplate = ifelse(State=='PreRem',
@@ -255,8 +248,8 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
       )%>%
       add_lines(data = plot_df3,
                 x = ~x,
-                y = ~10^(log10(Esource1$Concentration)+confint(sen,level=CIvalue1*2-1)[[4]]*x-confint(sen,level=CIvalue1*2-1)[[4]]*plot_df3$x[1]),
-                text = ~10^(log10(Esource1$Concentration)+confint(sen,level=CIvalue1*2-1)[[4]]*x-confint(sen,level=CIvalue1*2-1)[[4]]*plot_df3$x[1]),
+                y = ~exp(log(Esource1$Concentration)+confint(sen,level=CIvalue1*2-1)[[4]]*x-confint(sen,level=CIvalue1*2-1)[[4]]*plot_df3$x[1]),
+                text = ~exp(log(Esource1$Concentration)+confint(sen,level=CIvalue1*2-1)[[4]]*x-confint(sen,level=CIvalue1*2-1)[[4]]*plot_df3$x[1]),
                 line = list(color = '#BEBADA',shape='spline',dash = 'dash'),
                 name = ifelse(State=='Projected'|State=='Lab-Based',
                               paste0("Regression:Evaluation Well ",State," with confidence"),
@@ -268,10 +261,12 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
   }else if(State =='Lab-Based'){
 
     plot_df3 <-data.frame(x=c(eval_series$Distance, 
+                              Ltot,
                               Ltot+eval_series$Distance,
-                              (eval_series$Concentration-min_raw)*gwv/CI+eval_series$Distance),
+                              exp(log((eval_series$Concentration-min_raw))*gwv/CI+eval_series$Distance)),
                           y=c((eval_series$Concentration),
-                              eval_series$Concentration-(CI/gwv*Ltot),
+                              exp(log(eval_series$Concentration)-((CI/gwv*(Ltot-eval_series$Distance)))),
+                              exp(log(eval_series$Concentration)-((CI/gwv*Ltot))),
                               min_raw
                               )
                           )
@@ -285,8 +280,8 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                   text = c_raw2,
                   line = list(color = '#4472C4',shape='spline'),
                   name = ifelse(State=='Projected'|State=='Lab-Based',
-                                paste0("Regression:",State),
-                                paste0("Regression:",State,"ediation")),
+                                paste0("Projection ",State),
+                                paste0("Projection ",State,"ediation")),
                   hovertemplate = ifelse(State=='PreRem',
                                          paste('<br>Pre Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ',unit_method,'<br>'),
                                          paste('<br>Post Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ',unit_method,'<br>'))
@@ -295,7 +290,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                 y = ~y,
                 text = ~y,
                 line = list(color = '#4472C4',shape='spline',dash = 'dash'),
-                name = paste0("Regression:",State, ' with Confidence'),
+                name = paste0("Projection ",State, ' with Confidence'),
                 hovertemplate = paste('<br>Post Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ',unit_method,'<br>'))
     
   }else{
@@ -318,8 +313,8 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
       )%>%
       add_lines(data = plot_df2,
                 x = ~x,
-                y = ~10^(sen$coefficients[1]+confint(sen,level=CIvalue1*2-1)[[4]]*x),
-                text = ~10^(sen$coefficients[1]+confint(sen,level=CIvalue1*2-1)[[4]]*x),
+                y = ~exp(sen$coefficients[1]+confint(sen,level=CIvalue1*2-1)[[4]]*x),
+                text = ~exp(sen$coefficients[1]+confint(sen,level=CIvalue1*2-1)[[4]]*x),
                 line = list(color = '#4472C4',shape='spline',dash = 'dash'),
                 name =paste0("Regression:",State,"ediation with confidence"),
                 hovertemplate = ifelse(State=='PreRem',
@@ -332,12 +327,14 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
   
   
   # format the figure
-  #browser()
+
+  
   if (State=='Lab-Based'){
+
     p <- p %>%
       add_annotations(x = mean(Ltot*0.5,na.rm = TRUE),
-                      y = (C_goal*1.3),
-                      text = paste0("Cleanup Goal (",C_goal," ug/L)"),
+                      y = log10(C_goal*1.3),
+                      text = paste0("Cleanup Goal (",C_goal," ",unit_method,")"),
                       xref = "x",
                       yref = "y",
                       font=list(size=15, color="black"),
@@ -359,6 +356,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                      linecolor = toRGB("black"),
                      linewidth = 2,
                      showline=T,
+                     ticks="outside",
                      mirror = "ticks",
                      range = ifelse(rep(State=='Projected'|State=='Lab-Based',2),
                                     c(0,max(Ltot*1.2,df_series$Distance,na.rm=TRUE)),
@@ -372,12 +370,19 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                                                       max(df_series$Concentration,na.rm = TRUE),
                                                       max_raw
                                      )
-                                     )),#c(log10(min(1,Lsource1*0.5,C_goal*0.5)), log10(max(1,Lsource1*1.5,C_goal*1.5))),
-                     #range=c(log10(Lsource1)-0.5, yend = log10(max(Lsource1)+1)),
+                                     )),#c(log(min(1,Lsource1*0.5,C_goal*0.5)), log(max(1,Lsource1*1.5,C_goal*1.5))),
+                     #range=c(log(Lsource1)-0.5, yend = log(max(Lsource1)+1)),
                      linecolor = toRGB("black"),
                      linewidth = 2,
                      showline=T,
                      zeroline = FALSE,
+                     ticks="outside",
+                     tickmode = 'linear',
+                     dtick = 1,
+                     tick0 = min(log10(min(df_series$Concentration,min_raw,na.rm = TRUE))),
+                     #tickvals=tval,
+                     #ticktext=ttxt,
+                     exponentformat = "power",
                      type="log",
                      mirror = "ticks"),
         showlegend = TRUE,
@@ -385,13 +390,18 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
         margin = margin
       )
   }else{
-    max_raw = max(10^ceiling(log10(dd$Concentration)))
-    min_raw = min(10^floor(log10(dd$Concentration)))
+    max_raw = max(10^(ceiling(log10(dd$Concentration))))
+    min_raw = min(10^(floor(log10(dd$Concentration))))
+    mmax = ceiling(log10(max(10^(predict(sen,data.frame(Distance = 0))),
+                             10^(predict(sen,data.frame(Distance = Ltot))),
+                             max(df_series$Concentration,na.rm = TRUE),
+                             max_raw)))
+    mmin = floor(min(log10(min(df_series$Concentration,min_raw,na.rm = TRUE))))
     p <- p %>%
       add_annotations(x = ifelse(State=="projected",Ltot*1.2/2,
                                  mean(df_series$Distance*1.2,na.rm = TRUE)),
-                      y = (C_goal*1.3),
-                      text = paste0("Cleanup Goal (",C_goal," ug/L)"),
+                      y = log10(C_goal*1.3),
+                      text = paste0("Cleanup Goal (",C_goal," ",unit_method,")"),
                       xref = "x",
                       yref = "y",
                       font=list(size=15, color="black"),
@@ -412,6 +422,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                      linecolor = toRGB("black"),
                      linewidth = 2,
                      showline=T,
+                     ticks="outside",
                      mirror = "ticks",
                      range = ifelse(rep(State=='Projected'|State=='Lab-Based',2),
                                     c(0,max(Ltot*1.2,df_series$Distance,na.rm=TRUE)),
@@ -422,8 +433,8 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                                   font = list(size=18)),
                      tickfont = list(size = 18),
                      range=c(min(log10(min(df_series$Concentration,min_raw,na.rm = TRUE))), 
-                             yend = log10(max(10^predict(sen,data.frame(Distance = 0)),
-                               10^(predict(sen,data.frame(Distance = Ltot))),
+                             yend = log10(max(exp(predict(sen,data.frame(Distance = 0))),
+                               exp(predict(sen,data.frame(Distance = Ltot))),
                                max(df_series$Concentration,na.rm = TRUE),
                                max_raw
                                )
@@ -433,6 +444,13 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                      type="log",
                      showline=T,
                      zeroline = FALSE,
+                     ticks="outside",
+                     tickmode = 'linear',
+                     dtick = 1,
+                     tick0 = mmin,
+                     #tickvals=tval,
+                     #ticktext=ttxt,
+                     exponentformat = "power",
                      mirror = "ticks"
         ), 
         showlegend = TRUE,

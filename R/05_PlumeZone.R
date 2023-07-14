@@ -107,13 +107,15 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                         ), br(),
                                fluidRow(column(10,
                                                HTML("<h4><b>Step 7.</b> Choose COC.</h4>"),
+                                               HTML("<h4><i>Tool 5 will sum values for all the COCs that are selected.</i></h4>"),
                                                fluidRow(align = "center",
                                                         column(12, align = "right", 
                                                                pickerInput(ns("select_COC"), label = NULL,
                                                                            choices = c(),
                                                                            multiple = T,
                                                                            options = list(`live-search`=TRUE,
-                                                                                          `none-selected-text` = "Select COCs")))))
+                                                                                          `none-selected-text` = "Select COCs"))))
+                                               )
                                         ), br(),
                                
                                fluidRow(column(10,
@@ -185,7 +187,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                                 fluidRow(align = "center",
                                                                          column(6, align = "right", 
                                                                                 numericInput(ns("Rate_bio"), label = NULL,
-                                                                                             value = 1.7, min = 0, step = 0.01,
+                                                                                             value = 0.05, min = 0, step = 0.01,
                                                                                              width = "80px")),
                                                                          column(6, align = "left", 
                                                                                 HTML("<h4> per year</h4>")),br())),
@@ -197,7 +199,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                                 fluidRow(align = "center",
                                                                          column(6, align = "right", 
                                                                                 numericInput(ns("CIlimit"), label = NULL,
-                                                                                             value = 1.9, min = 0, step = 0.01,
+                                                                                             value = 0.08, min = 0, step = 0.01,
                                                                                              width = "80px")),
                                                                          column(6, align = "left", 
                                                                                 HTML("<h4> per year</h4>")),br())),
@@ -348,14 +350,14 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                        plotlyOutput(ns('ts_plot1_1'), height = "600px"),
                                                        br(),
                                                        
-                                                       fluidRow(column(6,
+                                                       fluidRow(column(4,
                                                                        align = "left",
                                                                        HTML("<h3><b><i>Estimated Attenuation Rate Constant (per meter)</i></b></h3>")
                                                        ),
-                                                       column(3,align = "center",
+                                                       column(4,align = "center",
                                                               valueBoxOutput(ns("vbox1_1"))
                                                        ),
-                                                       column(3,align = "center",
+                                                       column(4,align = "center",
                                                               valueBoxOutput(ns("vbox1_2")))
                                                        ),
                                                        br()
@@ -365,28 +367,29 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                        plotlyOutput(ns('ts_plot1_2'), height = "600px"),
                                                        br(),
                                                        
-                                                       fluidRow(column(6,
+                                                       fluidRow(column(4,
                                                                        align = "left",
-                                                                       HTML("<h3><b><i>Estimated Concentration at Point of Compliance (ug/L)</i></b></h3>")
+                                                                       #HTML("<h3><b><i>Estimated Concentration at Point of Compliance </i></b></h3>"),
+                                                                       htmlOutput(ns("unit1"))
                                                        ),
-                                                       column(3,align = "center",
+                                                       column(4,align = "center",
                                                               valueBoxOutput(ns("vbox1_3"))
                                                        ),
-                                                       column(3,align = "center",
+                                                       column(4,align = "center",
                                                               valueBoxOutput(ns("vbox1_4"))
                                                        ),
                                                        ),
                                                        
                                                        br(),
                                                        fluidRow(align = "center", 
-                                                                column(6,
+                                                                column(4,
                                                                        align = "left",
                                                                        HTML("<h3><b><i>Cleanup Goal Achieved at Point of Compliance?</i></b></h3>")
                                                                 ),
-                                                                column(3,align = "center",
+                                                                column(4,align = "center",
                                                                        valueBoxOutput(ns("vbox1_5"))
                                                                 ),
-                                                                column(3,align = "center",
+                                                                column(4,align = "center",
                                                                        valueBoxOutput(ns("vbox1_6"))
                                                                        ),
                                                                 ),
@@ -404,14 +407,14 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                       
                                               br(),
                                               
-                                              fluidRow(column(6,
+                                              fluidRow(column(4,
                                                               align = "left",
                                                               HTML("<h3><b><i>Estimated Attenuation Rate Constant (per meter)</i></b></h3>")
                                               ),
-                                              column(3,align = "center",
+                                              column(4,align = "center",
                                                      valueBoxOutput(ns("vbox2_1"))
                                               ),
-                                              column(3,align = "center",
+                                              column(4,align = "center",
                                                      valueBoxOutput(ns("vbox2_2"))
                                               ),
                                               ),
@@ -422,28 +425,29 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                               plotlyOutput(ns('ts_plot2_2'), height = "600px"),
                                               br(),
                                               
-                                              fluidRow(column(6,
+                                              fluidRow(column(4,
                                                               align = "left",
-                                                              HTML("<h3><b><i>Estimated Concentration at Point of Compliance (ug/L)</i></b></h3>")
+                                                              #HTML("<h3><b><i>Estimated Concentration at Point of Compliance (ug/L)</i></b></h3>"),
+                                                              htmlOutput(ns("unit2"))
                                               ),
-                                              column(3,align = "center",
+                                              column(4,align = "center",
                                                      valueBoxOutput(ns("vbox2_3"))
                                               ),
-                                              column(3,align = "center",
+                                              column(4,align = "center",
                                                      valueBoxOutput(ns("vbox2_4"))
                                               ),
                                               ),
                                               
                                               br(),
                                               fluidRow(align = "center", 
-                                                       column(6,
+                                                       column(4,
                                                               align = "left",
                                                               HTML("<h3><b><i>Cleanup Goal Achieved at Point of Compliance?</i></b></h3>")
                                                        ),
-                                                       column(3,align = "center",
+                                                       column(4,align = "center",
                                                               valueBoxOutput(ns("vbox2_5"))
                                                        ),
-                                                       column(3,align = "center",
+                                                       column(4,align = "center",
                                                               valueBoxOutput(ns("vbox2_6"))
                                                        ),
                                                        ),
@@ -458,14 +462,14 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                        plotlyOutput(ns('ts_plot3_1'), height = "600px"),
                                                        br(),
                                                        
-                                                       fluidRow(column(6,
+                                                       fluidRow(column(4,
                                                                        align = "left",
                                                                        HTML("<h3><b><i>Estimated Attenuation Rate Constant (per meter)</i></b></h3>")
                                                        ),
-                                                       column(3,align = "center",
+                                                       column(4,align = "center",
                                                               valueBoxOutput(ns("vbox3_1"))
                                                        ),
-                                                       column(3,align = "center",
+                                                       column(4,align = "center",
                                                               valueBoxOutput(ns("vbox3_2"))
                                                        ),
                                                        ),
@@ -476,28 +480,29 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                        plotlyOutput(ns('ts_plot3_2'), height = "600px"),
                                                        br(),
                                                        
-                                                       fluidRow(column(6,
+                                                       fluidRow(column(4,
                                                                        align = "left",
-                                                                       HTML("<h3><b><i>Estimated Concentration at Point of Compliance (ug/L)</i></b></h3>")
+                                                                       #HTML("<h3><b><i>Estimated Concentration at Point of Compliance (ug/L)</i></b></h3>"),
+                                                                       htmlOutput(ns("unit3"))
                                                        ),
-                                                       column(3,align = "center",
+                                                       column(4,align = "center",
                                                               valueBoxOutput(ns("vbox3_3"))
                                                        ),
-                                                       column(3,align = "center",
+                                                       column(4,align = "center",
                                                               valueBoxOutput(ns("vbox3_4"))
                                                        ),
                                                        ),
                                                        
                                                        br(),
                                                        fluidRow(align = "center", 
-                                                                column(6,
+                                                                column(4,
                                                                        align = "left",
                                                                        HTML("<h3><b><i>Cleanup Goal Achieved at Point of Compliance?</i></b></h3>")
                                                                 ),
-                                                                column(3,align = "center",
+                                                                column(4,align = "center",
                                                                        valueBoxOutput(ns("vbox3_5"))
                                                                 ),
-                                                                column(3,align = "center",
+                                                                column(4,align = "center",
                                                                        valueBoxOutput(ns("vbox3_6"))
                                                                 ),
                                                        ),
@@ -539,10 +544,40 @@ PlumeZoneServer <- function(id,data_input,nav) {
       # update Units -------------------
       observe({
         req(nav() == "5. Plume Projections")
-        req(d_conc_tool5())
+        req(input$unit_method)
         
         output$unit<- renderUI({
-          HTML(paste0("<h4>",unique(d_conc_tool5()$Units),"</h4>",sep=''))
+          HTML(paste0("<h4>",input$unit_method,"</h4>",sep=''))
+        })
+      }) # end update unit 
+      
+      # update Units -------------------
+      observe({
+        req(nav() == "5. Plume Projections")
+        req(input$unit_method)
+        
+        output$unit1<- renderUI({
+          HTML(paste0("<h3><b><i>Estimated Concentration at Point of Compliance ", input$unit_method,"</i></b></h3>",sep=''))
+        })
+      }) # end update unit 
+      
+      # update Units -------------------
+      observe({
+        req(nav() == "5. Plume Projections")
+        req(input$unit_method)
+        
+        output$unit2<- renderUI({
+          HTML(paste0("<h3><b><i>Estimated Concentration at Point of Compliance ", input$unit_method,"</i></b></h3>",sep=''))
+        })
+      }) # end update unit 
+      
+      # update Units -------------------
+      observe({
+        req(nav() == "5. Plume Projections")
+        req(input$unit_method)
+        
+        output$unit3<- renderUI({
+          HTML(paste0("<h3><b><i>Estimated Concentration at Point of Compliance ", input$unit_method,"</i></b></h3>",sep=''))
         })
       }) # end update unit 
       
@@ -554,9 +589,9 @@ PlumeZoneServer <- function(id,data_input,nav) {
                     },
                    {
                      if (input$unit_method =='µg/L'){
-                       d_CI(input$CIimit)
+                       d_CI(input$CIlimit)
                      }else{
-                       d_CI(input$CIimit2)
+                       d_CI(input$CIlimit2)
                      }
                      
                    })
@@ -706,7 +741,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(d_conc_tool5(),
             input$select_mw,
             input$select_COC,
-            input$tabs =='prerem')
+            input$tabs)
         
         # Filter to Wells
         df_MW <- d_mer() %>%
@@ -728,30 +763,33 @@ PlumeZoneServer <- function(id,data_input,nav) {
           df_MW$color = ifelse(df_MW$State==j,colpalette[count],df_MW$color)
           count = count+1
         }
-
+        
+        df_MW$State_name = ifelse(df_MW$State=='PostRem','Post Remediation','Pre Remediation')
+        
         df(df_MW)
       }) # end df()
 
-      observe({
-        req(d_conc_tool5(),
-            input$select_mw,
-            input$select_COC,
-            input$tabs =='postrem')
-
-
-        # Filter to Wells
-        df_MW <- d_mer() %>%
-          filter(WellID %in% input$select_mw,
-                 # Date >= input$date_range3[1],
-                 # Date <= input$date_range3[2],
-                 COC %in% input$select_COC)
-        
-          df_MW <- df_MW %>% group_by(WellID,State) %>%
-            summarise(Concentration = sum(Concentration,na.rm=TRUE),
-                      Distance = max(`Distance from Source (m)`,na.rm=TRUE))
-
-        df(df_MW)
-      })
+      # observe({
+      #   req(d_conc_tool5(),
+      #       input$select_mw,
+      #       input$select_COC,
+      #       input$tabs =='postrem')
+      # 
+      # 
+      #   # Filter to Wells
+      #   df_MW <- d_mer() %>%
+      #     filter(WellID %in% input$select_mw,
+      #            # Date >= input$date_range3[1],
+      #            # Date <= input$date_range3[2],
+      #            COC %in% input$select_COC)
+      #   
+      #     df_MW <- df_MW %>% group_by(WellID,State) %>%
+      #       summarise(Concentration = sum(Concentration,na.rm=TRUE),
+      #                 Distance = max(`Distance from Source (m)`,na.rm=TRUE))%>%
+      #       mutate(State_name = ifelse(State=='PostRem','Post Remediation','Pre Remediation'))
+      #   
+      #   df(df_MW)
+      # })
       
       # calculate the distance from the Point of Compliance -------------------
       Ltot<-reactiveVal()
@@ -802,18 +840,33 @@ PlumeZoneServer <- function(id,data_input,nav) {
       # calculate concentration at the eval_well
       Leval_well <-reactiveVal()
       observe({
-        req(data_input$d_conc_tool5(),
-            input$eval_well,
-            input$select_COC)
-        SconE<-data_input$d_conc_tool5()%>%
-          filter(COC%in%input$select_COC,
-                 WellID%in%input$eval_well)
+        req(input$eval_well,
+            input$select_COC,
+            df(),
+            input$unit_method)
+        SconE<-df()%>%
+          filter(WellID%in%input$eval_well)
         if (length(unique(SconE$State))==2){
           SconE<-SconE%>%filter(State=='PostRem')
         }
-        SconE <- sum(SconE$Concentration_org)
-        
+        SconE <- SconE$Concentration
         Leval_well(SconE)
+      })
+      
+      # calculate concentration at the eval_well
+      Deval_well <-reactiveVal()
+      observe({
+        req(input$eval_well,
+            input$select_COC,
+            df())
+        SconE<-df()%>%
+          filter(WellID%in%input$eval_well)
+        if (length(unique(SconE$State))==2){
+          SconE<-SconE%>%filter(State=='PostRem')
+        }
+        SconE <- SconE$Distance
+        
+        Deval_well(SconE)
       })
       
       # RV: Sen Trend Model ---------------
@@ -823,16 +876,16 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(length(df()$Concentration) > 2)
        
         if(length(unique(df()$State))==1){
-          sen_lm(list(sen_trend_distance(df(),input$select_COC)))
+          sen_lm(list(sen_trend_distance(df(),input$select_COC,'natural')))
         }else{
-          sen_lm(sen_trend_distance(df(),input$select_COC))
+          sen_lm(sen_trend_distance(df(),input$select_COC,'natural'))
         }
       })
     
       
       setBorderColor <- function(valueBoxTag, color)
       {tagQuery(valueBoxTag)$find("div.small-box")$addAttrs(
-          "style" = sprintf("border-style: solid; border-color: %s; width: 200px;", color))$allTags()}
+          "style" = sprintf("border-style: solid; border-color: %s; width: 150px;", color))$allTags()}
       
       #--- Pre Remediation BOX
       output$vbox1_1 <- renderValueBox({
@@ -866,7 +919,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(sen_lm(),
             Leval_well())
  
-        rate_constant_post=10^(as.numeric(log10(Leval_well()))+
+        rate_constant_post=exp(as.numeric(log(Leval_well()))+
                                  as.numeric(sen_lm()[[1]]$coefficients[2])*Ltot())
         
         rate_constant_post = ifelse(rate_constant_post<0,0,rate_constant_post)
@@ -885,7 +938,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         CIvalue1 = ifelse(input$CIvalue1=='80%',0.8,
                           ifelse(input$CIvalue1=='90%',0.9,
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
-        rate_constant_post_CI = 10^(as.numeric(log10(Leval_well()))+
+        rate_constant_post_CI = exp(as.numeric(log(Leval_well()))+
                                        as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[4]])*Ltot())
         rate_constant_post_CI  = ifelse(rate_constant_post_CI<0,0,rate_constant_post_CI)
         setBorderColor(valueBox(
@@ -900,7 +953,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(sen_lm(),
             Lsource1())
         
-        time_woCI = ifelse(10^(as.numeric(log10(Leval_well()))+
+        time_woCI = ifelse(exp(as.numeric(log(Leval_well()))+
                                  as.numeric(sen_lm()[[1]]$coefficients[2])*Ltot())>input$Conc_goal,
                            "No","Yes")
                            
@@ -919,7 +972,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         CIvalue1 = ifelse(input$CIvalue1=='80%',0.8,
                           ifelse(input$CIvalue1=='90%',0.9,
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
-        time_wCI = ifelse(10^(as.numeric(log10(Leval_well()))+
+        time_wCI = ifelse(exp(as.numeric(log(Leval_well()))+
                                  as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[4]])*Ltot())>input$Conc_goal,
                            "No","Yes")
         setBorderColor(valueBox(
@@ -936,7 +989,6 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(input$gwv,
             d_ratio())
         rate_constant_pre=as.numeric(d_ratio()/input$gwv)
-        
         setBorderColor(valueBox(
           "Without Confidence Limit",
           signif(rate_constant_pre,2)
@@ -948,7 +1000,6 @@ PlumeZoneServer <- function(id,data_input,nav) {
       output$vbox2_2 <- renderValueBox({
         req(input$gwv,
             d_CI())
-
         rate_constant_pre_CI = as.numeric(d_CI()/input$gwv)
         setBorderColor(valueBox(
           "With Confidence Limit",
@@ -962,8 +1013,9 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(input$gwv,
             d_ratio(),
             Ltot(),
-            Leval_well())
-        rate_constant_post=Leval_well() - as.numeric(d_ratio()/input$gwv)*Ltot()
+            Leval_well(),
+            Deval_well())
+        rate_constant_post=exp(log(Leval_well()) - (as.numeric(d_ratio()/input$gwv)*(Ltot()-Deval_well())))
         rate_constant_post = ifelse(rate_constant_post<0,0,rate_constant_post)
         setBorderColor(valueBox(
           "Without Confidence Limit",
@@ -973,12 +1025,14 @@ PlumeZoneServer <- function(id,data_input,nav) {
         )
       })
       
+
       output$vbox2_4 <- renderValueBox({
         req(input$gwv,
             d_CI(),
             Ltot(),
-            Leval_well())
-        rate_constant_post_CI = Leval_well() - as.numeric(d_CI()/input$gwv)*Ltot()
+            Leval_well(),
+            Deval_well())
+        rate_constant_post_CI = exp(log(Leval_well()) - (as.numeric(d_CI()/input$gwv)*(Ltot()-Deval_well())))
         rate_constant_post_CI = ifelse(rate_constant_post_CI<0,0,rate_constant_post_CI)
         setBorderColor(valueBox(
           "With Confidence Limit",
@@ -994,8 +1048,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
             Ltot(),
             Leval_well(),
             input$Conc_goal)
-        
-        time_woCI = ifelse((Leval_well() - as.numeric(d_ratio()/input$gwv)*Ltot())>input$Conc_goal,
+
+        time_woCI = ifelse(exp(log(Leval_well()) - (as.numeric(d_ratio()/input$gwv)*(Ltot()-Deval_well())))>input$Conc_goal,
                            "No","Yes")
         
         setBorderColor(valueBox(
@@ -1013,7 +1067,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
             Leval_well(),
             input$Conc_goal)
         
-        time_wCI = ifelse((Leval_well() - as.numeric(d_CI()/input$gwv)*Ltot())>input$Conc_goal,
+        time_wCI = ifelse(exp(log(Leval_well()) - (as.numeric(d_CI()/input$gwv)*(Ltot()-Deval_well())))>input$Conc_goal,
                           "No","Yes")
         setBorderColor(valueBox(
           "With Confidence Limit",
@@ -1056,7 +1110,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       output$vbox3_3 <- renderValueBox({
         req(sen_lm(),
             Leval_well())
-        rate_constant_post=10^(as.numeric(log10(Leval_well()))+
+        rate_constant_post=exp(as.numeric(log(Leval_well()))+
                                  as.numeric(sen_lm()[[2]]$coefficients[2])*Ltot())
         rate_constant_post = ifelse(rate_constant_post<0,0,rate_constant_post)
         setBorderColor(valueBox(
@@ -1074,7 +1128,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         CIvalue1 = ifelse(input$CIvalue1=='80%',0.8,
                           ifelse(input$CIvalue1=='90%',0.9,
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
-        rate_constant_post_CI = 10^(as.numeric(log10(Leval_well()))+
+        rate_constant_post_CI = exp(as.numeric(log(Leval_well()))+
                                       as.numeric(confint(sen_lm()[[2]],level=CIvalue1*2-1)[[4]])*Ltot())
         rate_constant_post_CI = ifelse(rate_constant_post_CI<0,0,rate_constant_post_CI)
         setBorderColor(valueBox(
@@ -1089,7 +1143,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(sen_lm(),
             Leval_well())
         
-        time_woCI = ifelse(10^(as.numeric(log10(Leval_well()))+
+        time_woCI = ifelse(exp(as.numeric(log(Leval_well()))+
                                  as.numeric(sen_lm()[[2]]$coefficients[2])*Ltot())>input$Conc_goal,
                            "No","Yes")
         
@@ -1108,7 +1162,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         CIvalue3 = ifelse(input$CIvalue3=='80%',0.8,
                           ifelse(input$CIvalue3=='90%',0.9,
                                  ifelse(input$CIvalue3=='95%',0.95,0.99)))
-        time_wCI = ifelse(10^(as.numeric(log10(Leval_well()))+
+        time_wCI = ifelse(exp(as.numeric(log(Leval_well()))+
                                 as.numeric(confint(sen_lm()[[2]],level=CIvalue3*2-1)[[4]])*Ltot())>input$Conc_goal,
                           "No","Yes")
         setBorderColor(valueBox(
@@ -1142,7 +1196,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
 
           req(df(),
               sen_lm(),
-              Ltot())
+              Ltot(),
+              input$unit_method)
  
         p<-Tool5fig(df(), input$Conc_goal, Lsource1(), Ltot(), input$CIvalue1, "PreRem",input$eval_well,
                     input$unit_method,
@@ -1157,7 +1212,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
         
         req(df(),
             sen_lm(),
-            Ltot())
+            Ltot(),
+            input$unit_method)
      
         p<-Tool5fig(df(), input$Conc_goal, Lsource1(), Ltot(), input$CIvalue1, "Projected",input$eval_well,
                     input$unit_method,sen = sen_lm()[[1]],gwv=NULL,Rate_bio=NULL,projection_state='Pre')
@@ -1170,8 +1226,10 @@ PlumeZoneServer <- function(id,data_input,nav) {
         validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
         
         req(df(),
-            sen_lm(),
-            Ltot())
+            Ltot(),
+            input$gwv,
+            d_ratio(),
+            input$unit_method)
         p<-Tool5fig(df(), input$Conc_goal, Lsource1(), Ltot(), d_CI(), "Lab-Based",input$eval_well,
                     input$unit_method,sen = NULL,gwv=input$gwv,Rate_bio=d_ratio())
         
@@ -1184,7 +1242,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
         
         req(df(),
             sen_lm(),
-            Ltot())
+            Ltot(),
+            input$unit_method)
 
         p<-Tool5fig(df(), input$Conc_goal, Lsource3(), Ltot(), input$CIvalue3, "PostRem",input$eval_well,
                     input$unit_method,sen = sen_lm()[[2]],gwv=NULL,Rate_bio=NULL)
@@ -1198,7 +1257,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
         
         req(df(),
             sen_lm(),
-            Ltot())
+            Ltot(),
+            input$unit_method)
         p<-Tool5fig(df(), input$Conc_goal, Lsource3(), Ltot(), input$CIvalue3, "Projected",input$eval_well,
                     input$unit_method,sen = sen_lm()[[2]],gwv=NULL,Rate_bio=NULL,projection_state='Post')
         
