@@ -304,7 +304,7 @@ TrendServer <- function(id, data_input, nav) {
             input$type == "Concentration")
 
         df_MW <- df() %>% rename(Group = WellID, Value = Concentration)
-        MK_conc_well(MannKendall_MAROS(d = df_MW))
+        MK_conc_well(MannKendall_MAROS(d = df_MW,MK_table))
       })
 
       # RV: MK Concentration by Group ----------------------
@@ -324,7 +324,7 @@ TrendServer <- function(id, data_input, nav) {
           df_MW_group <- df_group() %>% group_by(Group, Date) %>%
             summarise(Concentration = exp(mean(log(Concentration), na.rm=TRUE))) %>% ungroup()}
 
-        MK_conc_group(MannKendall_MAROS(d = df_MW_group %>% rename(Value = Concentration)))
+        MK_conc_group(MannKendall_MAROS(d = df_MW_group %>% rename(Value = Concentration),MK_table))
       })
 
       # RV: Mass by Group ----------------------
@@ -365,7 +365,7 @@ TrendServer <- function(id, data_input, nav) {
         cd <- df_mass_group()[["overall_tbl"]] %>%
           select(Group, Date, Value = total_mass_kg)
 
-        MK_mass_group(MannKendall_MAROS(d = cd))
+        MK_mass_group(MannKendall_MAROS(d = cd,MK_table))
       })
 
       # Select Updates: Well Grouping --------------
@@ -521,6 +521,7 @@ TrendServer <- function(id, data_input, nav) {
         validate(need(unique(MK_conc_well()$enough_data)!='FALSE','The individual wells have no time series data.'))
         if(input$type == "Concentration"){
           req(MK_conc_well())
+        
           cd <- MK_conc_well() %>%
             select(Group, Trend, MK.S, MK.p, MK.CV, S.Slope)%>%
             mutate(MK.p = ifelse(MK.p<0.05,'<0.05',as.character(signif(MK.p,3))))%>%

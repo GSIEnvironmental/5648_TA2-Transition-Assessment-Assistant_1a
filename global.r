@@ -161,6 +161,8 @@ TZ_Soil_Type <- read_excel("./data/BordenTool_Data_Template.xlsx",
 Parameters <- read_excel("./data/BordenTool_Data_Template.xlsx", 
                          sheet = "Parameters")
 
+MK_table <- read_excel("./data/MK_probability.xlsx")
+
 # name of Constituents order
 Constituents_order <-c("***User specified***",
                        "PCE","TCE","cis-DCE","1,1-DCE","Vinyl chloride",
