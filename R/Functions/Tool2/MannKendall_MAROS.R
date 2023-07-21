@@ -13,7 +13,7 @@ MannKendall_MAROS<-function(d){
   # function for ManKendall Test
 
   # Calculate MK for each well
-  
+  browser()
   MKeach <- map_dfr(unique(d$Group), ~{
     x <- d %>% filter(Group == .x)%>%
       filter(!is.na(Value)) %>%
@@ -39,7 +39,7 @@ MannKendall_MAROS<-function(d){
                  "enough_data" = F)
     }
   })
-  
+
   # Assigning Trend to Results
   MKeach <- MKeach %>%
     mutate(MK.CF = (1-MK.p),

@@ -853,7 +853,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         Leval_well(SconE)
       })
       
-      # calculate concentration at the eval_well
+      # calculate distance at the eval_well
       Deval_well <-reactiveVal()
       observe({
         req(input$eval_well,
@@ -920,7 +920,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
             Leval_well())
  
         rate_constant_post=exp(as.numeric(log(Leval_well()))+
-                                 as.numeric(sen_lm()[[1]]$coefficients[2])*Ltot())
+                                 as.numeric(sen_lm()[[1]]$coefficients[2])*Ltot() - as.numeric(sen_lm()[[1]]$coefficients[2])*Deval_well())
         
         rate_constant_post = ifelse(rate_constant_post<0,0,rate_constant_post)
         setBorderColor(valueBox(
@@ -934,12 +934,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
       output$vbox1_4 <- renderValueBox({
         req(sen_lm(),
             Leval_well())
-        
         CIvalue1 = ifelse(input$CIvalue1=='80%',0.8,
                           ifelse(input$CIvalue1=='90%',0.9,
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
         rate_constant_post_CI = exp(as.numeric(log(Leval_well()))+
-                                       as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[4]])*Ltot())
+                                       as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[4]])*Ltot()- as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[4]])*Deval_well())
         rate_constant_post_CI  = ifelse(rate_constant_post_CI<0,0,rate_constant_post_CI)
         setBorderColor(valueBox(
           "With Confidence Limit",
@@ -954,7 +953,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
             Lsource1())
         
         time_woCI = ifelse(exp(as.numeric(log(Leval_well()))+
-                                 as.numeric(sen_lm()[[1]]$coefficients[2])*Ltot())>input$Conc_goal,
+                                 as.numeric(sen_lm()[[1]]$coefficients[2])*Ltot()- as.numeric(sen_lm()[[1]]$coefficients[2])*Deval_well())>input$Conc_goal,
                            "No","Yes")
                            
         setBorderColor(valueBox(
@@ -973,7 +972,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
                           ifelse(input$CIvalue1=='90%',0.9,
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
         time_wCI = ifelse(exp(as.numeric(log(Leval_well()))+
-                                 as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[4]])*Ltot())>input$Conc_goal,
+                                 as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[4]])*Ltot()- as.numeric(confint(sen_lm()[[1]],level=CIvalue1*2-1)[[4]])*Deval_well())>input$Conc_goal,
                            "No","Yes")
         setBorderColor(valueBox(
           "With Confidence Limit",
@@ -1111,7 +1110,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(sen_lm(),
             Leval_well())
         rate_constant_post=exp(as.numeric(log(Leval_well()))+
-                                 as.numeric(sen_lm()[[2]]$coefficients[2])*Ltot())
+                                 as.numeric(sen_lm()[[2]]$coefficients[2])*Ltot()- as.numeric(sen_lm()[[2]]$coefficients[2])*Deval_well())
         rate_constant_post = ifelse(rate_constant_post<0,0,rate_constant_post)
         setBorderColor(valueBox(
           "Without Confidence Limit",
@@ -1129,7 +1128,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
                           ifelse(input$CIvalue1=='90%',0.9,
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
         rate_constant_post_CI = exp(as.numeric(log(Leval_well()))+
-                                      as.numeric(confint(sen_lm()[[2]],level=CIvalue1*2-1)[[4]])*Ltot())
+                                      as.numeric(confint(sen_lm()[[2]],level=CIvalue1*2-1)[[4]])*Ltot()- as.numeric(confint(sen_lm()[[2]],level=CIvalue1*2-1)[[4]])*Deval_well())
         rate_constant_post_CI = ifelse(rate_constant_post_CI<0,0,rate_constant_post_CI)
         setBorderColor(valueBox(
           "With Confidence Limit",
@@ -1144,7 +1143,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
             Leval_well())
         
         time_woCI = ifelse(exp(as.numeric(log(Leval_well()))+
-                                 as.numeric(sen_lm()[[2]]$coefficients[2])*Ltot())>input$Conc_goal,
+                                 as.numeric(sen_lm()[[2]]$coefficients[2])*Ltot()-as.numeric(sen_lm()[[2]]$coefficients[2])*Deval_well())>input$Conc_goal,
                            "No","Yes")
         
         setBorderColor(valueBox(
@@ -1163,7 +1162,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
                           ifelse(input$CIvalue3=='90%',0.9,
                                  ifelse(input$CIvalue3=='95%',0.95,0.99)))
         time_wCI = ifelse(exp(as.numeric(log(Leval_well()))+
-                                as.numeric(confint(sen_lm()[[2]],level=CIvalue3*2-1)[[4]])*Ltot())>input$Conc_goal,
+                                as.numeric(confint(sen_lm()[[2]],level=CIvalue3*2-1)[[4]])*Ltot()-as.numeric(confint(sen_lm()[[2]],level=CIvalue3*2-1)[[4]])*Deval_well())>input$Conc_goal,
                           "No","Yes")
         setBorderColor(valueBox(
           "With Confidence Limit",

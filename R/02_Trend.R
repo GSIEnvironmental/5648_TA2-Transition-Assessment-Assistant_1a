@@ -251,7 +251,7 @@ TrendServer <- function(id, data_input, nav) {
             summarise(Concentration = exp(mean(log(Concentration), na.rm=TRUE))) %>% ungroup()}
 
         df_MW <- df_MW %>% select(Date, Concentration, WellID)
-
+        
         df(df_MW)
       }) # end df()
 

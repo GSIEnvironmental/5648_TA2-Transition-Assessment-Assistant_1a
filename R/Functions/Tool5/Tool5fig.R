@@ -119,13 +119,14 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                              max(dd$Distance),
                              Ltot,
                              Ltot*2.9
-                             ),
-                          y=c((Esource1$Concentration),
-                              exp(log(Esource1$Concentration) + as.numeric(sen$coefficients[2]*(max(dd$Distance)-Esource1$Distance))),
-                              exp(log(Esource1$Concentration) + as.numeric(sen$coefficients[2]*(Ltot-Esource1$Distance))),
-                              exp(log(Esource1$Concentration) + as.numeric(sen$coefficients[2]*(Ltot-Esource1$Distance)*2.9))
-                              )
-    )
+                             ))
+    plot_df3$y = exp(log(Esource1$Concentration)+sen$coefficients[2]*plot_df3$x-sen$coefficients[2]*plot_df3$x[1])
+                          # y=c((Esource1$Concentration),
+                          #     exp(log(Esource1$Concentration) + as.numeric(sen$coefficients[2]*(max(dd$Distance)-Esource1$Distance))),
+                          #     exp(log(Esource1$Concentration) + as.numeric(sen$coefficients[2]*(Ltot-Esource1$Distance))),
+                          #     exp(log(Esource1$Concentration) + as.numeric(sen$coefficients[2]*(Ltot-Esource1$Distance)*2.9))
+                          #     )
+    #)
     
     
   }else if(State=='Lab-Based'){
@@ -205,7 +206,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
   
   
   
-  
+
   # plot upper confidence interval line
   if (State =='Projected'){
     # add line for 80% confidence
@@ -220,7 +221,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                 text = c_raw2,
                 line = list(color = '#4472C4',shape='spline'),
                 name = ifelse(State=='Projected'|State=='Lab-Based',
-                              paste0("Regression:Source",State),
+                              paste0("Regression:",State),
                               paste0("Regression:",State,"ediation")),
                 hovertemplate = ifelse(State=='PreRem',
                                        paste('<br>Pre Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f} ',unit_method,'<br>'),
@@ -231,7 +232,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                 y = ~exp(sen$coefficients[1]+confint(sen,level=CIvalue1*2-1)[[4]]*x),
                 text = ~exp(sen$coefficients[1]+confint(sen,level=CIvalue1*2-1)[[4]]*x),
                 line = list(color = '#4472C4',shape='spline',dash = 'dash'),
-                name =paste0("Regression:",State,"ediation with confidence"),
+                name =paste0("Regression:",State," with confidence"),
                 hovertemplate = ifelse(State=='PreRem',
                                        paste('<br>Pre Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f}',unit_method,'<br>'),
                                        paste('<br>Post Rem<br>Distance: %{x:.0f} m', '<br>Concentration: %{text:.2f}',unit_method,'<br>'))
