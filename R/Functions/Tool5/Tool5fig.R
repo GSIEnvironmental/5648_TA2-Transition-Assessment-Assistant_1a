@@ -109,10 +109,10 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
                           )
 
     Esource1 = dd%>%filter(WellID==eval_well)
-    
+
     if (nrow(Esource1)==2){
       Esource1 <- Esource1%>%
-        filter(State==ifelse(projection_state=='Pre','PreRem','PostRem'))
+        filter(State==ifelse(projection_state=='PreRemediation','PreRem','PostRem'))
     }
                            
     plot_df3<-data.frame(x=c(Esource1$Distance, 
@@ -159,7 +159,7 @@ Tool5fig <- function(df_series, C_goal, Lsource1, Ltot, CI, State,eval_well,
     
     if (nrow(Esource1)==2){
       Esource1 <- Esource1%>%
-        filter(State==ifelse(projection_state=='Pre','PreRem','PostRem'))
+        filter(State==ifelse(projection_state=='PreRemediation','PreRem','PostRem'))
     }
 
     plot_df2 <-data.frame(x=c(eval_series$Distance, 

@@ -67,7 +67,16 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                                     choices = c(""),
                                                                     #selected = "MW-GWOU-15",
                                                                     options = list(`live-search`=TRUE,
-                                                                                   `none-selected-text` = "Select Wells")))
+                                                                                   `none-selected-text` = "Select Wells"))
+                                                        ),
+                                               HTML("<h4><i>Choose the remediation condition of the evaluation well.</i></h4>"),
+                                               fluidRow(align = "center",
+                                                        pickerInput(ns("eval_con"), label = NULL,
+                                                                    choices = c("PreRemediation","Post Remediation"),
+                                                                    selected = "PreRemediation",
+                                                                    options = list(`live-search`=TRUE,
+                                                                                   `none-selected-text` = "Select Wells"))
+                                               )
                                                
                                                # fluidRow(align = "center",
                                                #          column(6, align = "right", 
@@ -653,8 +662,9 @@ PlumeZoneServer <- function(id,data_input,nav) {
       # Source Well Selection Updates -----------------------
       observe({
         req(nav() == "5. Plume Projections")
-        req(d_conc_tool5())
-        choices <- sort(unique(d_conc_tool5()$WellID))
+        req(d_conc_tool5(),
+            input$select_mw)
+        choices <- input$select_mw#sort(unique(d_conc_tool5()$WellID))
         if (!is.null(input$souce_well)){
           if (any(input$souce_well!='')){
             updatePickerInput(session, "source_well", choices = choices, selected = input$source_well)
@@ -670,8 +680,9 @@ PlumeZoneServer <- function(id,data_input,nav) {
       # Evaluation Well Selection Updates -----------------------
       observe({
         req(nav() == "5. Plume Projections")
-        req(d_conc_tool5())
-        choices <- sort(unique(d_conc_tool5()$WellID))
+        req(d_conc_tool5(),
+            input$select_mw)
+        choices <- input$select_mw#sort(unique(d_conc_tool5()$WellID))
         if (!is.null(input$eval_well)){
           if (any(input$eval_well!='')){
             updatePickerInput(session, "eval_well", choices = choices, selected = input$eval_well)
@@ -1212,10 +1223,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(df(),
             sen_lm(),
             Ltot(),
-            input$unit_method)
+            input$unit_method,
+            input$eval_con)
      
         p<-Tool5fig(df(), input$Conc_goal, Lsource1(), Ltot(), input$CIvalue1, "Projected",input$eval_well,
-                    input$unit_method,sen = sen_lm()[[1]],gwv=NULL,Rate_bio=NULL,projection_state='Pre')
+                    input$unit_method,sen = sen_lm()[[1]],gwv=NULL,Rate_bio=NULL,projection_state=input$eval_con)
         
         p
       })
@@ -1257,9 +1269,10 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(df(),
             sen_lm(),
             Ltot(),
-            input$unit_method)
+            input$unit_method,
+            input$eval_con)
         p<-Tool5fig(df(), input$Conc_goal, Lsource3(), Ltot(), input$CIvalue3, "Projected",input$eval_well,
-                    input$unit_method,sen = sen_lm()[[2]],gwv=NULL,Rate_bio=NULL,projection_state='Post')
+                    input$unit_method,sen = sen_lm()[[2]],gwv=NULL,Rate_bio=NULL,projection_state=input$eval_con)
         
         p
       })
