@@ -76,7 +76,7 @@ Data_Input_UI <- function(id, label = "Data_Input"){
 } # end Data Input UI  
 
 ## Server -------------------------------------
-Data_Input_Server <- function(id,Plume,sourcewell) {
+Data_Input_Server <- function(id,Plume,nav) {
   moduleServer(
     id,
     
@@ -86,7 +86,6 @@ Data_Input_Server <- function(id,Plume,sourcewell) {
       # Concentration/Time Dataframe
       mw_Tb5 = checksilenterror(Plume$Plume())
       if (mw_Tb5 != 'error'){
-
         temp_mw_info <-Plume$Plume()
       }
       # check whether data is uploaded or not
@@ -192,8 +191,8 @@ Data_Input_Server <- function(id,Plume,sourcewell) {
       
 
       # Monitoring Well Information ----------
+
       
-      temp_mw_info<-data_wellinfo(temp_mw_info)
       
       # for (j in 1:nrow(temp_mw_info)){
       #   if (is.na(temp_mw_info$Latitude[j])||is.na(temp_mw_info$Longitude[j])){
@@ -224,24 +223,33 @@ Data_Input_Server <- function(id,Plume,sourcewell) {
       
 
       d_loc <- reactiveVal(temp_mw_info)
+
+      # eventReactive(id,{
+      #   mw_Tb5 = checksilenterror(Plume$Plume())
+      #   if (mw_Tb5 != 'error'){
+      #     temp_mw_info <-Plume$Plume()
+      #   }
+      #   browser()
+      #   d_loc(temp_mw_info)
+      # })
       
-      observeEvent(input$mw_data,{
-
+      observeEvent({
+        input$mw_data
+        nav()
+        },{
+          req(nav()=='Data Input')
         mw_Tb5 = checksilenterror(Plume$Plume())
-
         if (mw_Tb5 != 'error'){
           temp_mw_info <-Plume$Plume()
-        }else{
-          temp_mw_info<-hot_to_r(input$mw_data)
         }
-
-        mw_Tb5 = checksilenterror(Plume$sourcewell())
-        if (mw_Tb5 != 'error'){
-          temp_mw_info<-data_wellinfo(temp_mw_info)
-        }else{
-          temp_mw_info<-data_wellinfo(temp_mw_info,Plume$sourcewell())
-        }
-
+       
+          if (!is.null(input$mw_data$changes$source)){
+            temp_mw_info<-hot_to_r(input$mw_data)
+          }else{
+            temp_mw_info = temp_mw_info
+          }
+          
+        # }
         d_loc(temp_mw_info)
       })
       

@@ -22,7 +22,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                            <h4><ol>
                            <li> Use “Site-Specific Information” tab to enter relevant monitoring locations and concentration data.</li> 
                            <li> Select “Use Pre-Remediation Rate Constant” tab if concentration data are available for the monitoring period prior to the start of active treatment.  This will project the concentration vs. distance during the Post-Remediation period using the rate constant that applied before active treatment.</li>
-                           <li> Select “Use Lab-Based Rate Constant” tab if a biodegradation rate constant is available from a lab-based microcosm, 14C assay, or biomarker data.  This rate constant will be used to project the concentration vs. distance during the Post-Remediation period.</li>     
+                           <li> Select “Use Lab-Based Rate Constant” tab if a degradation rate constant is available from a lab-based microcosm, 14C assay, or biomarker data.  This rate constant will be used to project the concentration vs. distance during the Post-Remediation period.</li>     
                            <li> Select “Use Post-Remediation Rate Constant” tab if concentration data are available for the period after active treatment has stopped.  This will project the concentration vs. distance during the Post-Remediation period using the recent rate constant assuming steady state conditions have been restored.</li>
                                 </ol></h4>"))), # end Page Title
            ## Input Data ----------
@@ -36,7 +36,13 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                br(),
                                fluidRow(column(10, 
                                                HTML("<h4><b>Step 1.</b> Enter Data.</h4>"),
-                                               HTML("<h4><i>See 'Data Input' tab for more information.</i></h4>"))
+                                               HTML("<h4><i>Choose unit and see 'Data Input' tab for more information.</i></h4>"),
+                                               fluidRow(align = "center", 
+                                                        column(12,align = "center",
+                                                               radioButtons(ns("USorSI"),label = NULL,
+                                                                            choices = c("US Unit","SI Unit"),
+                                                                            selected = "SI Unit", inline = T)
+                                                               )))
                                         
                                ), br(),
                                fluidRow(column(10,
@@ -69,7 +75,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                                     options = list(`live-search`=TRUE,
                                                                                    `none-selected-text` = "Select Wells"))
                                                         ),
-                                               HTML("<h4><i>Choose the remediation condition of the evaluation well.</i></h4>"),
+                                               HTML("<h4><i>Select the evaluation well's remediation condition. If data exists in only one condition, it will be automatically chosen, regardless of your selection here.</i></h4>"),
                                                fluidRow(align = "center",
                                                         pickerInput(ns("eval_con"), label = NULL,
                                                                     choices = c("PreRemediation","Post Remediation"),
@@ -102,14 +108,25 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                ), br(),
                                fluidRow(column(10,
                                                HTML("<h4><b>Step 6.</b> Input seepage velocity.</h4>"),
-                                               fluidRow(align = "center",
-                                                        column(6, align = "right", 
-                                                               numericInput(ns("gwv"), label = NULL,
-                                                                            value = 30, min = 0, step = 0.01,
-                                                                            width = "80px")),
-                                                        column(6, align = "left", 
-                                                               HTML("<h4>m/year</h4>")),br()
-                                                        )
+                                               conditionalPanel(condition = "input.USorSI=='US Unit'", ns = ns,
+                                                                fluidRow(align = "center",
+                                                                         column(6, align = "right", 
+                                                                                numericInput(ns("gwv"), label = NULL,
+                                                                                             value = 98, min = 0, step = 0.01,
+                                                                                             width = "80px")),
+                                                                         column(6, align = "left", HTML(paste0("<h4>ft/year</h4>",sep=''))),
+                                                                         br()
+                                                                )),
+                                               conditionalPanel(condition = "input.USorSI=='SI Unit'", ns = ns,
+                                                                fluidRow(align = "center",
+                                                                         column(6, align = "right", 
+                                                                                numericInput(ns("gwv"), label = NULL,
+                                                                                             value = 30, min = 0, step = 0.01,
+                                                                                             width = "80px")),
+                                                                         column(6, align = "left", HTML(paste0("<h4>m/year</h4>",sep=''))),
+                                                                         br()
+                                                                )),
+                                               
                                                ),
                                         column(2, align = "left", style = "padding:10px;",
                                                actionButton(ns("help5thTool2"), HTML("?"), style = button_style2))
@@ -192,7 +209,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                br(),
                                conditionalPanel(condition = "input.unit_method=='µg/L'", ns = ns,
                                                 fluidRow(column(10,
-                                                                HTML("<h4><b>Step 1.</b> Enter biodegradation rate constant for COC of interest.</h4>"),
+                                                                HTML("<h4><b>Step 1.</b> Enter degradation rate constant for COC of interest.</h4>"),
                                                                 fluidRow(align = "center",
                                                                          column(6, align = "right", 
                                                                                 numericInput(ns("Rate_bio"), label = NULL,
@@ -204,7 +221,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                                 actionButton(ns("help5thTool5"), HTML("?"), style = button_style2))
                                                 ), br(),
                                                 fluidRow(column(10,
-                                                                HTML("<h4><b>Step 2.</b> Enter upper confidence limit for biodegradation rate constant (if known).</h4>"),
+                                                                HTML("<h4><b>Step 2.</b> Enter upper confidence limit for degradation rate constant (if known).</h4>"),
                                                                 fluidRow(align = "center",
                                                                          column(6, align = "right", 
                                                                                 numericInput(ns("CIlimit"), label = NULL,
@@ -217,7 +234,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                 )),
                                conditionalPanel(condition = "input.unit_method=='µmole/L'", ns = ns,
                                                 fluidRow(column(10,
-                                                                HTML("<h4><b>Step 1.</b> Enter biodegradation rate constant for COC of interest.</h4>"),
+                                                                HTML("<h4><b>Step 1.</b> Enter degradation rate constant for COC of interest.</h4>"),
                                                                 fluidRow(align = "center",
                                                                          column(6, align = "right", 
                                                                                 numericInput(ns("Rate_bio2"), label = NULL,
@@ -229,7 +246,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                                 actionButton(ns("help5thTool5"), HTML("?"), style = button_style2))
                                                 ), br(),
                                                 fluidRow(column(10,
-                                                                HTML("<h4><b>Step 2.</b> Enter upper confidence limit for biodegradation rate constant (if known).</h4>"),
+                                                                HTML("<h4><b>Step 2.</b> Enter upper confidence limit for degradation rate constant (if known).</h4>"),
                                                                 fluidRow(align = "center",
                                                                          column(6, align = "right", 
                                                                                 numericInput(ns("CIlimit2"), label = NULL,
@@ -411,7 +428,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                      fluidRow(align = "center",
                                               HTML("<h3 style = 'color: #FF0000;'><b>Data from Pre-Remediation Period is not used.  
                                                    Attenuation rate constant is estimated using 
-                                                   user-entered biodegradation rate constant and 
+                                                   user-entered degradation rate constant and 
                                                    groundwater seepage velocity</b></h3>"),
                                       
                                               br(),
@@ -550,6 +567,24 @@ PlumeZoneServer <- function(id,data_input,nav) {
         d_conc_tool5(df)
       }) # end d_conc()
       
+      # # update SI or US Units -------------------
+      # observe({
+      #   req(nav() == "5. Plume Projections")
+      #   req(input$USorSI)
+      #   browser()
+      #   if (input$USorSI=='US Unit'){
+      #     output$USorSIvel<- renderUI({
+      #       HTML(paste0("<h4>ft/year</h4>",sep=''))
+      #     })
+      #     
+      #   }else{
+      #     output$USorSIvel<- renderUI({
+      #       HTML(paste0("<h4>m/year</h4>",sep=''))
+      #     })
+      #   }
+      #   
+      # }) # end update SI or US unit 
+      
       # update Units -------------------
       observe({
         req(nav() == "5. Plume Projections")
@@ -559,7 +594,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
           HTML(paste0("<h4>",input$unit_method,"</h4>",sep=''))
         })
       }) # end update unit 
-      
+ 
       # update Units -------------------
       observe({
         req(nav() == "5. Plume Projections")
@@ -621,13 +656,16 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       # RV: Location Data -----------------------
       d_loc <- reactiveVal(data_mw_clean(temp_mw_info))
-      observeEvent({data_input$d_loc()
-        input$source_well},{
+      observeEvent({
+        data_input$d_loc()
+        input$source_well
+        input$USorSI
+        },{
         req(input$source_well)
           
           temp_mw_info <- data_input$d_loc()
           # calculate the distance from the source
-          temp_mw_info<-data_wellinfo(temp_mw_info,input$source_well,input$select_mw)
+          temp_mw_info<-data_wellinfo(temp_mw_info,input$USorSI,input$source_well,input$select_mw)
          
         d_loc(temp_mw_info)
       }) # end d_loc()
@@ -664,7 +702,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(nav() == "5. Plume Projections")
         req(d_conc_tool5(),
             input$select_mw)
-        choices <- input$select_mw#sort(unique(d_conc_tool5()$WellID))
+        choices <- sort(unique(d_conc_tool5()$WellID))
         if (!is.null(input$souce_well)){
           if (any(input$souce_well!='')){
             updatePickerInput(session, "source_well", choices = choices, selected = input$source_well)
@@ -682,7 +720,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(nav() == "5. Plume Projections")
         req(d_conc_tool5(),
             input$select_mw)
-        choices <- input$select_mw#sort(unique(d_conc_tool5()$WellID))
+        choices <- sort(unique(d_conc_tool5()$WellID))
         if (!is.null(input$eval_well)){
           if (any(input$eval_well!='')){
             updatePickerInput(session, "eval_well", choices = choices, selected = input$eval_well)
@@ -763,7 +801,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
 
         df_MW <- df_MW %>% group_by(WellID,State) %>%
             summarise(Concentration = sum(Concentration,na.rm=TRUE),
-                      Distance = max(`Distance from Source (m)`,na.rm=TRUE))
+                      Distance = max(ifelse("Distance from Source (m)"%in%colnames(df_MW),
+                                                `Distance from Source (m)`,`Distance from Source (ft)`),na.rm=TRUE))
         
           
         # assign color
@@ -779,7 +818,43 @@ PlumeZoneServer <- function(id,data_input,nav) {
         
         df(df_MW)
       }) # end df()
-
+      
+      # df_eval includes all the monitoring wells in the database---------------
+      df_eval <- reactiveVal()
+      
+      observe({
+        req(d_conc_tool5(),
+            input$select_mw,
+            input$select_COC,
+            input$tabs)
+        
+        # Filter to Wells
+        df_MW <- d_mer() %>%
+          filter(#WellID %in% input$eval_well,
+                 # Date >= input$date_range1[1],
+                 # Date <= input$date_range1[2],
+                 COC %in% input$select_COC) 
+        
+        df_MW <- df_MW %>% group_by(WellID,State) %>%
+          summarise(Concentration = sum(Concentration,na.rm=TRUE),
+                    Distance = max(ifelse("Distance from Source (m)"%in%colnames(df_MW),
+                                          `Distance from Source (m)`,`Distance from Source (ft)`)
+                      ,na.rm=TRUE))
+        
+        
+        # assign color
+        colpalette= brewer.pal(n = 8, name = "Dark2")
+        count = 1
+        df_MW$color <- colpalette[1]
+        for (j in unique(df_MW$State)){
+          df_MW$color = ifelse(df_MW$State==j,colpalette[count],df_MW$color)
+          count = count+1
+        }
+        
+        df_MW$State_name = ifelse(df_MW$State=='PostRem','Post Remediation','Pre Remediation')
+        
+        df_eval(df_MW)
+      }) # end df()
       # observe({
       #   req(d_conc_tool5(),
       #       input$select_mw,
@@ -814,7 +889,9 @@ PlumeZoneServer <- function(id,data_input,nav) {
  
         df<- d_loc()
         df<-df%>%filter(`Monitoring Wells`=="Point of Compliance")
-        distance <-df$`Distance from Source (m)`
+        distance <-ifelse("Distance from Source (m)"%in%colnames(df),
+                          df$`Distance from Source (m)`,
+                          df$`Distance from Source (ft)`)
         Ltot(distance)
       })
       
@@ -853,9 +930,9 @@ PlumeZoneServer <- function(id,data_input,nav) {
       observe({
         req(input$eval_well,
             input$select_COC,
-            df(),
+            df_eval(),
             input$unit_method)
-        SconE<-df()%>%
+        SconE<-df_eval()%>%
           filter(WellID%in%input$eval_well)
         if (length(unique(SconE$State))==2){
           SconE<-SconE%>%filter(State=='PostRem')
@@ -869,8 +946,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
       observe({
         req(input$eval_well,
             input$select_COC,
-            df())
-        SconE<-df()%>%
+            df_eval())
+        SconE<-df_eval()%>%
           filter(WellID%in%input$eval_well)
         if (length(unique(SconE$State))==2){
           SconE<-SconE%>%filter(State=='PostRem')
@@ -929,7 +1006,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       output$vbox1_3 <- renderValueBox({
         req(sen_lm(),
             Leval_well())
- 
+        
         rate_constant_post=exp(as.numeric(log(Leval_well()))+
                                  as.numeric(sen_lm()[[1]]$coefficients[2])*Ltot() - as.numeric(sen_lm()[[1]]$coefficients[2])*Deval_well())
         
@@ -1209,8 +1286,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
               Ltot(),
               input$unit_method)
  
-        p<-Tool5fig(df(), input$Conc_goal, Lsource1(), Ltot(), input$CIvalue1, "PreRem",input$eval_well,
-                    input$unit_method,
+        p<-Tool5fig(df_eval(), input$Conc_goal, Lsource1(), Ltot(), input$CIvalue1, "PreRem",input$eval_well,
+                    input$unit_method,input$USorSI,
                     sen = sen_lm()[[1]],gwv=NULL,Rate_bio=NULL)
         
         p
@@ -1226,8 +1303,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
             input$unit_method,
             input$eval_con)
      
-        p<-Tool5fig(df(), input$Conc_goal, Lsource1(), Ltot(), input$CIvalue1, "Projected",input$eval_well,
-                    input$unit_method,sen = sen_lm()[[1]],gwv=NULL,Rate_bio=NULL,projection_state=input$eval_con)
+        p<-Tool5fig(df_eval(), input$Conc_goal, Lsource1(), Ltot(), input$CIvalue1, "Projected",input$eval_well,
+                    input$unit_method,input$USorSI,sen = sen_lm()[[1]],gwv=NULL,Rate_bio=NULL,projection_state=input$eval_con)
         
         p
       })
@@ -1241,8 +1318,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
             input$gwv,
             d_ratio(),
             input$unit_method)
-        p<-Tool5fig(df(), input$Conc_goal, Lsource1(), Ltot(), d_CI(), "Lab-Based",input$eval_well,
-                    input$unit_method,sen = NULL,gwv=input$gwv,Rate_bio=d_ratio())
+        p<-Tool5fig(df_eval(), input$Conc_goal, Lsource1(), Ltot(), d_CI(), "Lab-Based",input$eval_well,
+                    input$unit_method,input$USorSI,sen = NULL,gwv=input$gwv,Rate_bio=d_ratio(),projection_state=input$eval_con)
         
         p
       })
@@ -1256,8 +1333,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
             Ltot(),
             input$unit_method)
 
-        p<-Tool5fig(df(), input$Conc_goal, Lsource3(), Ltot(), input$CIvalue3, "PostRem",input$eval_well,
-                    input$unit_method,sen = sen_lm()[[2]],gwv=NULL,Rate_bio=NULL)
+        p<-Tool5fig(df_eval(), input$Conc_goal, Lsource3(), Ltot(), input$CIvalue3, "PostRem",input$eval_well,
+                    input$unit_method,input$USorSI,sen = sen_lm()[[2]],gwv=NULL,Rate_bio=NULL)
         
         p
       })
@@ -1271,8 +1348,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
             Ltot(),
             input$unit_method,
             input$eval_con)
-        p<-Tool5fig(df(), input$Conc_goal, Lsource3(), Ltot(), input$CIvalue3, "Projected",input$eval_well,
-                    input$unit_method,sen = sen_lm()[[2]],gwv=NULL,Rate_bio=NULL,projection_state=input$eval_con)
+        p<-Tool5fig(df_eval(), input$Conc_goal, Lsource3(), Ltot(), input$CIvalue3, "Projected",input$eval_well,
+                    input$unit_method,input$USorSI,sen = sen_lm()[[2]],gwv=NULL,Rate_bio=NULL,projection_state=input$eval_con)
         
         p
       })

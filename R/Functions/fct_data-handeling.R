@@ -59,8 +59,14 @@ data_merge <- function(d, d_mw,conc_name="Concentration"){
 
 
 # handling the well information
-data_wellinfo<-function(temp_mw_info,sourcewell=NULL,welllist=NULL){
+data_wellinfo<-function(temp_mw_info,USorSI=NULL,sourcewell=NULL,welllist=NULL){
+  if("Distance from Source (ft)"%in%colnames(temp_mw_info)){
+    temp_mw_info <- temp_mw_info%>%
+      rename(`Distance from Source (m)` = "Distance from Source (ft)")%>%
+      mutate(`Distance from Source (m)` = `Distance from Source (m)`*0.3078)
+  }
   
+   
   # if user is missing with lat/long, populate values
   for (j in 1:nrow(temp_mw_info)){
     if (is.na(temp_mw_info$Latitude[j])||is.na(temp_mw_info$Longitude[j])){
@@ -110,5 +116,14 @@ data_wellinfo<-function(temp_mw_info,sourcewell=NULL,welllist=NULL){
                                                         temp_mw_info$`Distance from Source (m)`[k],
                                                         temp_mw_info$`Distance from Source (m)`[k]*0.3078)
   }
+  
+  if (!is.null(sourcewell)){
+    if (USorSI=='US Unit'){
+      temp_mw_info<-temp_mw_info%>%
+        rename(`Distance from Source (ft)` = "Distance from Source (m)")%>%
+        mutate(`Distance from Source (ft)` = `Distance from Source (ft)`/0.3078)
+    }
+  }
+    
   return(temp_mw_info)
 }

@@ -6,7 +6,7 @@ library(shiny)
 shinyServer(function(input, output, session) {
   nav <- reactive(input$nav)
   
-  data_input <- Data_Input_Server("Data_Input", Plume = Plume, sourcewell = sourcewell )
+  data_input <- Data_Input_Server("Data_Input", Plume = Plume, nav=nav )
   
   LOE_asymp <- AsymptoteServer("01_Asymptote", data_input = data_input, nav = nav)
 

@@ -142,7 +142,7 @@ forecasted_clean <-function(fit, C_goal,CI){
 # regression_fitness: output results from regression_fitness function
 
 
-Asymptote_Analysis <- function(df_series, sen,CIlevel){
+Asymptote_Analysis <- function(df_series, sen,CIlevel,alt){
   
   cd <- data.frame(LOE = 1:5,
                    Met = NA)
@@ -155,22 +155,35 @@ Asymptote_Analysis <- function(df_series, sen,CIlevel){
   pvalue_fit1 <- summary.mblm(sen[["Period 1"]])$coefficients[2,4]
   pvalue_fit2 <- summary.mblm(sen[["Period 2"]])$coefficients[2,4]
   
-  
+
   # Ratio of Rate1 to Rate2 Second Cell
   Ratio_fit1_fit2 <- sen[["Period 1"]]$coefficients[2]/sen[["Period 2"]]$coefficients[2]*100
   
   # 1. Are the slopes significantly different
-  sens_list_1 <-sens.slope(c(df_series%>%filter(period=='Period 1')%>%select(Concentration))$Concentration,
-                           conf.level = CIlevel)
-  sens_list_2 <-sens.slope(c(df_series%>%filter(period=='Period 2')%>%select(Concentration))$Concentration,
-                           conf.level = CIlevel)
-  
-  
-  Asymptotic_1 <- ifelse(sens_list_2$conf.int[1]>sens_list_2$conf.int[1]&
-                           sens_list_2$conf.int[1]<sens_list_2$conf.int[2],'NO',
-                         ifelse(sens_list_2$conf.int[2]>sens_list_2$conf.int[1]&
-                           sens_list_2$conf.int[2]<sens_list_2$conf.int[2],'NO','YES')
-                         ) # need to decide on test
+  # sens_list_1 <-sens.slope(c(df_series%>%filter(period=='Period 1')%>%select(Concentration))$Concentration,
+  #                          conf.level = CIlevel)
+  # sens_list_2 <-sens.slope(c(df_series%>%filter(period=='Period 2')%>%select(Concentration))$Concentration,
+  #                          conf.level = CIlevel)
+  sens_list_1<-confint.mblm.GSI(sen[["Period 1"]], level = CIlevel, alt = alt)
+  sens_list_2<-confint.mblm.GSI(sen[["Period 2"]], level = CIlevel, alt = alt)
+
+  if (alt =='less'){
+    slope_min_1 = as.numeric(sen[["Period 1"]]$coefficients[2])
+    slope_min_2 = as.numeric(sen[["Period 2"]]$coefficients[2])
+    
+    Asymptotic_1 <- ifelse((slope_min_2>slope_min_1&
+                              slope_min_2<sens_list_1[2,2])|
+                             (sens_list_2[2,2]>slope_min_1&
+                                sens_list_2[2,2]<sens_list_1[2,2]),
+                           'NO','YES') # need to decide on test
+  }else{
+    Asymptotic_1 <- ifelse((sens_list_2[2,1]>sens_list_1[2,1]&
+                              sens_list_2[2,1]<sens_list_1[2,2])|
+                             (sens_list_2[2,2]>sens_list_1[2,1]&
+                                sens_list_2[2,2]<sens_list_1[2,2]),
+                           'NO','YES') # need to decide on test
+  }
+
   
   # 2. Is the slope of period 2 0? 
   CI <- as.data.frame(t(confint.mblm(sen[["Period 2"]], 'Date', level=CIlevel)))
@@ -215,4 +228,16 @@ Asymptote_Analysis <- function(df_series, sen,CIlevel){
 # Asymptotic_result: final result of asymptotic results, YES or NO
 
 
+confint.mblm.GSI <- function (object, parm, level, alt = 'two.sided', ...) 
+{
+  res = c(0, 0, 0, 0)
+  dim(res) = c(2, 2)
+  rownames(res) = names(object$coefficients)
+  colnames(res) = as.character(c((1 - level)/2, 1 - (1 - level)/2))
+  res[2, ] = wilcox.test(object$slopes, alternative = alt, 
+                         conf.int = TRUE, conf.level = level)$conf.int
+  res[1, ] = wilcox.test(object$intercepts, alternative = alt,
+                         conf.int = TRUE, conf.level = level)$conf.int
+  res
+}
 

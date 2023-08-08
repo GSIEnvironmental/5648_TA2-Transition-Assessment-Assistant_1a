@@ -291,7 +291,7 @@ AsymptoteServer <- function(id, data_input, nav) {
             length(df() %>% filter("period" == "Period 2")) > 2)
         
         if (bp()$pointNumber>2){
-          results <- Asymptote_Analysis(df(), sen_lm(),input$CI_input) 
+          results <- Asymptote_Analysis(df(), sen_lm(),input$CI_input,'two.sided') 
         }else{
           results <-NULL
         }
@@ -362,8 +362,9 @@ AsymptoteServer <- function(id, data_input, nav) {
       # Attenuation Rates Table -------------------------
       output$rates_table <- render_gt({
         req(input$select_mw)
+        validate(need(input$select_COC, "Please select COC (Step 3)"))
         validate(need(length(df()$Concentration) > 2, "Insufficent data to calculate rate. Make sure at least 2 data points are present."))
-        validate(need(input$conc_goal > 0, "Please select a valid concentration goal (Step 4)"))
+        validate(need(input$conc_goal > 0, "Please select a valid concentration goal (Step 5)"))
         req(sen_table())
         
    
@@ -423,7 +424,7 @@ AsymptoteServer <- function(id, data_input, nav) {
         fitcp_tbl = c(ints = param.est(fit_changepoint)$mean,
                       cp = cpts(fit_changepoint))
        
-        validate(need(bp()$x, paste0("Please select a breakpoint between two different time periods (Step 6).\n",
+        validate(need(bp()$x, paste0("Please select a breakpoint between two different time periods in the above figure.\n",
                                      "Binary Segmentation suggest change point at ",
                                      as.character(as.Date(df()[as.numeric(fitcp_tbl[3]),]$Date)),sep='')))
         # validate(need(dim(df() %>% filter("period" == "Period 2"))[1] > 2, "Period 1 must have at least 2 data points."))
@@ -442,7 +443,7 @@ AsymptoteServer <- function(id, data_input, nav) {
         results <- asy_results()
         
         cd <- data.frame(LOE = c("1. Are the two slopes for the two periods significantly different?",
-                                 "2. Is the rate for period 2 significantly different than 0?",
+                                 "2. Is the rate for period 2 not significantly different than 0?",
                                  "3. Is the rate of the first period more than two times the second rate?",
                                  "4. Is the the absolute difference of last points on each regression line is greater than 10?",
                                  "5. Is the period 2 rate less than 0.0693 per year (10 year half-life)?"),
