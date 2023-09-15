@@ -1,20 +1,40 @@
-<div class="col-md-3" style = "text-align: left;"> 
+<div class="col-md-8" style = "text-align: justify;"> 
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'>
+Enhanced attenuation options for plumes and discharge zones are intended to be lower energy and require less infrastructure than more aggressive remediation approaches. This generally results in fewer negative impacts, (e.g., lower greenhouse gas emissions, less invasive approaches) while achieving an acceptable level of treatment. 
+The main difference between plume enhancement zones and discharge enhancement zones is the location where the technology is applied. Plume enhancement zones are applied in a manner that either treats or controls contaminants in groundwater so that they are below cleanup goals before reaching downgradient receptors.  Discharge enhancement zones are applied immediately before groundwater discharges to surface water bodies, such as a gaining stream. (ITRC, 2008). </p>
+
+
 <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'><strong><span style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;">Reduce Loading</span></strong></p>
-<div style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'>
-    <ul>
-        <li>Plant based hydraulic control</li>
-    </ul>
-</div>
-<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'><span style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;"><strong>Increase Attenuation Capacity</strong></span></p>
-<ul>
-    <li style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;">Inject nutrients</li>
-    <li style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;">Permeable reactive barrier</li>
-    <li style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;">Biological and abiologic methods</li>
-    <li style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;">Plant-based method (e.g.: phytoextraction)</li>
-</ul>
-  </div>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:.25in;font-size:11.0pt;font-family:"Calibri",sans-serif;'><span style='font-family:"Arial",sans-serif;font-size: 16px;'>1. Plant based hydraulic control</span></p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:.25in;font-size:11.0pt;font-family:"Calibri",sans-serif;'><span style='font-family:"Arial",sans-serif;font-size: 16px;'>
+Hydraulic control using plant-based methods relies on various types of vegetation to modify the flow of water and contaminants to reduce loading. By using the high rates of water uptake and evapotranspiration of certain plant species, this method is applicable to locations where the contaminants and/or water table are present are shallow. The aim is to promote direct plant uptake of contaminants and/or achieve a locally depressed water table by removing infiltration or groundwater at a rate quicker than its replenishment (ITRC, 2008). The main benefit of this process is that it is minimally invasive and may require little long-term maintenance once plantings are established. External factors that may interfere at some sites are extreme weather conditions and animals feeding on the vegetation.</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'><strong><span style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;">Increase Attenuation Capacity</span></strong></p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:.25in;font-size:11.0pt;font-family:"Calibri",sans-serif;'><span style='font-family:"Arial",sans-serif;font-size: 16px;'>1. Inject nutrients</span></p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:.25in;font-size:11.0pt;font-family:"Calibri",sans-serif;'><span style='font-family:"Arial",sans-serif;font-size: 16px;'>
+This remediation method utilizes injection points to deliver amendments that will enhance attenuation capacity. This may include the injection of specific nutrients, substrates, or electron acceptors (e.g., oxygen) to promote natural biological (or biogeochemical) activity.  The key differences between this approach and conventional in situ bioremediation is that the amendment represents some element that is critical for stimulating natural attenuation and that it can be delivered in passive method that does not require multiple injection events.   The main benefits of this method are that the contaminant is removed rather than contained in the groundwater, and that the nutrient or other amendment can be tailored ed to the target contaminant and site conditions. Permeable reactive barrier</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:.25in;font-size:11.0pt;font-family:"Calibri",sans-serif;'><span style='font-family:"Arial",sans-serif;font-size: 16px;'>
+This method utilizes a permeable wall that is installed below the ground surface to remediate contaminated groundwater. The wall contains a reactive material such as iron, limestone, carbon or mulch which is selected based on its capacity to reduce the target contaminant through sorption, precipitation, chemical reactions, and/or biodegradation processes. The main benefit of this method is that it can be relatively inexpensive and low-effort remediation technique, with no energy required once it is in place. Additionally, once installed, no above-ground equipment is required during use  (EPA, 2021). The width and depth of the barrier will depends on site-specific factors like contaminant concentration, plume size, and groundwater velocity.  Total depths are typically 50 feet or less. The main limitation of this method is that the reactive material of the walls will eventually be depleted , such that the barrierwill be  less effective at treating groundwater. If this occurs before the site-specific remedial goals are achieved, then the reactive material will have to be replacedto ensure continued treatment (EPA, 2021).</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:.25in;font-size:11.0pt;font-family:"Calibri",sans-serif;'><span style='font-family:"Arial",sans-serif;font-size: 16px;'>2. Biological and abiologic methods</span></p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:.25in;font-size:11.0pt;font-family:"Calibri",sans-serif;'><span style='font-family:"Arial",sans-serif;font-size: 16px;'>
+The combination of biological and abiologic methods can be used for the destruction and removal of chloroethene contaminants. Abiologic processes provide chemical degradation of contaminants without relying on bioactivity while biologic processes promote degradation through promoting reactants (ITRC, 2008). When combining these two processes, the methods that are most successful include reactive barriers and biogeochemical reductive dechlorination. In situ chemical oxidation can result in microbial benefits which facilitate the transition to either an enhancement or MNA. These microbial benefits include the improvement of aquifer hydraulic conductivity, the oxidation of chloroethene contaminant, the partial oxidation of natural organic matter that increases substrate surface area for bacteria. The main limitation of this method is that the design of these treatment systems is significantly influenced by the geochemistry indigenous of the environment (ITRC, 2008).</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:.25in;font-size:11.0pt;font-family:"Calibri",sans-serif;'><span style='font-family:"Arial",sans-serif;font-size: 16px;'>3. Plant-based method (e.g.: phytoextraction)</span></p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:.25in;font-size:11.0pt;font-family:"Calibri",sans-serif;'><span style='font-family:"Arial",sans-serif;font-size: 16px;'>
+This remediation technique utilizes living plants for in situ cleanup of groundwater and soil through removal, degradation or containment. This passive technique of growing and sometimes harvesting plants is most applicable to sites with shallow, and low to moderate levels of contamination. Contaminants that plant based methods are most effective at removing include metals, explosives, pesticides, solvents, crude oil, landfill leachates, and hydrocarbons. One benefit of this method is the cost of application may be less than half of using other physical or chemical techniques. Additionally, there is little long-term maintenance given external factors do not interfere. This leads to the main limitation; unless in a controlled environment, the effectiveness of the remediation technique can be altered by extreme weather events or animals feeding on the plants (EPA, 1999).</p>
+
+</div>     
   
-<div class="col-md-9" style = "text-align: left;"> 
+<div class="col-md-4" style = "text-align: left;"> 
 <img src="07_MNA/FIG/Tool7d_Fig.png" class="center" width= 600 height=455>
 <br>
 </br>

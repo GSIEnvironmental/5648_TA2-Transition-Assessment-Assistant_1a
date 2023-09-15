@@ -50,7 +50,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                fluidRow(align = "center",
                                                         column(12, align = "center", 
                                                                radioButtons(ns("unit_method"), label = NULL,
-                                                                            choices = c("µg/L", "µmole/L"),
+                                                                            choices = c("µg/L", "µmol/L"),
                                                                             selected = "µg/L",
                                                                             inline = T)))
                                )
@@ -232,7 +232,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                          column(2, align = "left", style = "padding:10px;",
                                                                 actionButton(ns("help5thTool6"), HTML("?"), style = button_style2))
                                                 )),
-                               conditionalPanel(condition = "input.unit_method=='µmole/L'", ns = ns,
+                               conditionalPanel(condition = "input.unit_method=='µmol/L'", ns = ns,
                                                 fluidRow(column(10,
                                                                 HTML("<h4><b>Step 1.</b> Enter degradation rate constant for COC of interest.</h4>"),
                                                                 fluidRow(align = "center",
@@ -559,7 +559,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         input$unit_method},{
         df <- data_input$d_conc_tool5()
         df <- df%>%left_join(mole,by=c('COC'='Name'))
-        if(input$unit_method=="µmole/L"){
+        if(input$unit_method=="µmol/L"){
           df$Concentration <-df$Concentration_org/df$`g/mol`
         }else{
           df$Concentration = df$Concentration_org

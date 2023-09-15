@@ -13,12 +13,10 @@ MannKendall_MAROS<-function(d,p_tb){
   # function for ManKendall Test
 
   # Calculate MK for each well
-
   MKeach <- map_dfr(unique(d$Group), ~{
     x <- d %>% filter(Group == .x)%>%
       filter(!is.na(Value)) %>%
       arrange(Date)
- 
     if(length(na.omit(x %>% pull(Value))) > 40){
       y <- mk.test(x %>% pull(Value))
       z <- sens.slope(x %>% pull(Value), conf.level = 0.95) # sen's slope calculation
@@ -36,7 +34,7 @@ MannKendall_MAROS<-function(d,p_tb){
       get_tb<-p_tb%>%filter(...1==abs(y$estimates[["S"]]))
       ncount = nrow(x)
       data.frame("Group" = .x,
-                 "MK.p" = get_tb[[as.character(ncount)]],
+                 "MK.p" = as.character(get_tb[[as.character(ncount)]]),
                  "MK.S" = y$estimates[["S"]],
                  "MK.CV" = sd(x %>% pull(Value))/mean(x %>% pull(Value)),
                  "S.Slope" =  z$estimates[["Sen's slope"]],
@@ -50,7 +48,7 @@ MannKendall_MAROS<-function(d,p_tb){
                  "enough_data" = F)
     }
   })
-
+  
   # Assigning Trend to Results
   MKeach <- MKeach %>%
     mutate(MK.CF = ifelse(MK.p=='>99',0.999,(1-as.numeric(MK.p))),
