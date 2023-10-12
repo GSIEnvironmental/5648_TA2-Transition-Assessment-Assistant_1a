@@ -22,7 +22,7 @@ Tool5fig <- function(df_eval,C_goal, Lsource1, Ltot, CI, State,eval_well,
     pt_small <-min(min(df_eval$Concentration,na.rm=TRUE),C_goal)
     
     # generate point of compliance and cleanup goal line
-    p <- plot_ly(source = 'ts_selected')%>%
+    p <- plot_ly(source = 'ts_selected',colors = c('Pre Remediation' = 'red','Post Remediation' = 'blue'))%>%
       add_segments(y = (C_goal), yend = (C_goal),
                    x = 0, xend = max(sen$model$Distance,df_eval$Distance,Ltot,
                                      0, sen$model$Distance,Ltot,Ltot*2.9,
@@ -52,7 +52,7 @@ Tool5fig <- function(df_eval,C_goal, Lsource1, Ltot, CI, State,eval_well,
     if (nrow(eval_series)==2){
       eval_series<-eval_series%>%filter(State==ifelse(projection_state=='PreRemediation','PreRem','PostRem'))
     }
-    p <- plot_ly(source = 'ts_selected')%>%
+    p <- plot_ly(source = 'ts_selected',colors = c('Pre Remediation' = 'red','Post Remediation' = 'blue'))%>%
       add_segments(y = (C_goal), yend = (C_goal),
                    x = 0, xend = Ltot*1.2,
                    line = list(dash = "dash",color='black'), showlegend=T, name = paste0("Cleanup Goal (",C_goal," ",unit_method,")"))%>% #  CONCENTRATION GOAL
@@ -83,7 +83,7 @@ Tool5fig <- function(df_eval,C_goal, Lsource1, Ltot, CI, State,eval_well,
                      mode = 'markers',
                      text = ~Concentration,
                      marker = list(size=10),
-                     color = ~as.factor(State),
+                     color = ~State_name,
                      customdata = ~I(WellID),
                      hovertemplate = paste('<br>Well ID: %{customdata}',
                                            ifelse(USorSI=='US Unit',
@@ -156,7 +156,7 @@ Tool5fig <- function(df_eval,C_goal, Lsource1, Ltot, CI, State,eval_well,
                      mode = 'markers',
                      text = ~Concentration,
                      marker = list(size=10),
-                     color = ~as.factor(State),
+                     color = ~State_name,
                      customdata = ~I(WellID),
                      hovertemplate = paste('<br>Well ID: %{customdata}',
                                            '<br>Distance: %{x:.0f} m',
@@ -205,7 +205,7 @@ Tool5fig <- function(df_eval,C_goal, Lsource1, Ltot, CI, State,eval_well,
   }
   
   
-  
+
   
   plot_df2<-plot_df2%>%arrange(x)
   

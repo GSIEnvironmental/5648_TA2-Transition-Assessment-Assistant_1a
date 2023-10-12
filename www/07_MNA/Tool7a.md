@@ -5,6 +5,7 @@
 
 <p style="text-align: center;"> 
 <img src="07_MNA/FIG/Tool7_Fig.png" width= 468 height=271 class="center">
+<figcaption style='font-size:16px'>Figure.1 Concept of Enhanced Attenuation as a Bridge Between Source Treatment and MNA (ITRC, 2008)</figcaption>
 </p>
 
 <br>
@@ -17,9 +18,9 @@
 <h1 style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'><strong>What are Examples of EA?</strong></h1>
 <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'>At chlorinated solvent sites, three target areas for EA approaches were identified by the ITRC (ITRC, 2008): &nbsp;</p>
 <ul>
-    <li style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;">source enhancements (see Tab 6b);</li>
-    <li style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;">plume enhancements (see Tab 6c) and</li>
-    <li style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;">discharge zone enhancements (see Tab 6d) (ITRC, 2008). &nbsp;</li>
+    <li style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;">source enhancements (see Tab 7b);</li>
+    <li style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;">plume enhancements (see Tab 7c) and</li>
+    <li style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;">discharge zone enhancements (see Tab 7d) (ITRC, 2008). &nbsp;</li>
 </ul>
 <p style='margin-top:0in;margin-right:0in;margin-bottom:8.0pt;margin-left:0in;line-height:107%;font-size:16px;font-family:"Arial",sans-serif;'>Examples of EA for different groundwater contaminants classes are shown in Table 1.</p>
 
@@ -67,7 +68,7 @@
   none;border-bottom:solid white 1.0pt;border-right:solid white 1.0pt;
   mso-border-top-alt:solid white 3.0pt;mso-border-left-alt:solid white 1.0pt;
   background:#CCD2DE;padding:.05in .1in .05in .1in;height:2.3in'>
-  <p class=MsoNormal onclick="$('li:eq(109) a').tab('show');" role="button" style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+  <p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:0in;
   margin-left:.5in;text-indent:-.25in;line-height:normal;mso-list:l0 level1 lfo3;
   tab-stops:list .5in'><![if !supportLists]><span style='font-size:14.0pt;
   font-family:"Arial",sans-serif;mso-fareast-font-family:Arial'><span

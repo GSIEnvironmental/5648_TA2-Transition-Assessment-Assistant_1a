@@ -120,7 +120,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                conditionalPanel(condition = "input.USorSI=='SI Unit'", ns = ns,
                                                                 fluidRow(align = "center",
                                                                          column(6, align = "right", 
-                                                                                numericInput(ns("gwv"), label = NULL,
+                                                                                numericInput(ns("gwv2"), label = NULL,
                                                                                              value = 30, min = 0, step = 0.01,
                                                                                              width = "80px")),
                                                                          column(6, align = "left", HTML(paste0("<h4>m/year</h4>",sep=''))),
@@ -378,7 +378,8 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                        
                                                        fluidRow(column(4,
                                                                        align = "left",
-                                                                       HTML("<h3><b><i>Estimated Attenuation Rate Constant (per meter)</i></b></h3>")
+                                                                       htmlOutput(ns("unit1_1"))
+                                                                       #HTML("<h3><b><i>Estimated Attenuation Rate Constant (per meter)</i></b></h3>")
                                                        ),
                                                        column(4,align = "center",
                                                               valueBoxOutput(ns("vbox1_1"))
@@ -435,7 +436,8 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                               
                                               fluidRow(column(4,
                                                               align = "left",
-                                                              HTML("<h3><b><i>Estimated Attenuation Rate Constant (per meter)</i></b></h3>")
+                                                              htmlOutput(ns("unit2_1"))
+                                                              #HTML("<h3><b><i>Estimated Attenuation Rate Constant (per meter)</i></b></h3>")
                                               ),
                                               column(4,align = "center",
                                                      valueBoxOutput(ns("vbox2_1"))
@@ -454,7 +456,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                               fluidRow(column(4,
                                                               align = "left",
                                                               #HTML("<h3><b><i>Estimated Concentration at Point of Compliance (ug/L)</i></b></h3>"),
-                                                              htmlOutput(ns("unit2"))
+                                                              htmlOutput(ns("unit2")),
                                               ),
                                               column(4,align = "center",
                                                      valueBoxOutput(ns("vbox2_3"))
@@ -490,7 +492,8 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                        
                                                        fluidRow(column(4,
                                                                        align = "left",
-                                                                       HTML("<h3><b><i>Estimated Attenuation Rate Constant (per meter)</i></b></h3>")
+                                                                       htmlOutput(ns("unit3_1"))
+                                                                       #HTML("<h3><b><i>Estimated Attenuation Rate Constant (per meter)</i></b></h3>")
                                                        ),
                                                        column(4,align = "center",
                                                               valueBoxOutput(ns("vbox3_1"))
@@ -625,6 +628,67 @@ PlumeZoneServer <- function(id,data_input,nav) {
         })
       }) # end update unit 
       
+      
+      # # update Units -------------------
+      observe({
+        req(nav() == "5. Plume Projections")
+        req(input$USorSI) 
+        
+        if (input$USorSI =='US Unit'){
+          output$unit1_1<- renderUI({
+            HTML(paste0("<h3><b><i>Estimated Attenuation Rate Constant (per ft)</i></b></h3>",sep=''
+                        )
+                 )
+            })
+          }else{
+            output$unit1_1<- renderUI({
+              HTML(paste0("<h3><b><i>Estimated Attenuation Rate Constant (per meter)</i></b></h3>",sep=''))})
+        }
+
+
+      }) # end update unit
+
+      # update Units -------------------
+      observe({
+        req(nav() == "5. Plume Projections")
+        req(input$USorSI)
+
+        if (input$USorSI =='US Unit'){
+          output$unit2_1<- renderUI({
+            HTML(paste0("<h3><b><i>Estimated Attenuation Rate Constant (per ft)</i></b></h3>",sep=''))})
+        }else{
+          output$unit2_1<- renderUI({
+            HTML(paste0("<h3><b><i>Estimated Attenuation Rate Constant (per meter)</i></b></h3>",sep=''))})
+        }
+      }) # end update unit
+
+      # update Units -------------------
+      observe({
+        req(nav() == "5. Plume Projections")
+        req(input$USorSI)
+
+        if (input$USorSI =='US Unit'){
+          output$unit3_1<- renderUI({
+            HTML(paste0("<h3><b><i>Estimated Attenuation Rate Constant (per ft)</i></b></h3>",sep=''))})
+        }else{
+          output$unit3_1<- renderUI({
+            HTML(paste0("<h3><b><i>Estimated Attenuation Rate Constant (per meter)</i></b></h3>",sep=''))})
+        }
+      }) # end update unit
+      
+      #update gwv
+      gwv<- reactiveVal()
+      observeEvent({input$gwv
+                    input$gwv2
+                    input$USorSI
+                   },
+                   {if(input$USorSI == 'US Unit'){
+                     gwv(input$gwv)
+                   }else{
+                     gwv(input$gwv2)
+                   }
+                     
+                   })
       # update CI and ratio ----------------------
       d_CI <- reactiveVal()
       observeEvent({input$unit_method
@@ -744,10 +808,10 @@ PlumeZoneServer <- function(id,data_input,nav) {
           if (any(input$select_COC!='')){
             updatePickerInput(session, "select_COC", choices = choices, selected = input$select_COC)
           }else{
-            updatePickerInput(session, "select_COC", choices = choices, selected = c('PCE','TCE','totalDCE','VC'))
+            updatePickerInput(session, "select_COC", choices = choices, selected = c('1,1-DCE','PCE','TCE','cis-DCE','trans-DCE','VC'))
           }
         }else{
-          updatePickerInput(session, "select_COC", choices = choices, selected = c('PCE','TCE','totalDCE','VC'))
+          updatePickerInput(session, "select_COC", choices = choices, selected = c('1,1-DCE','PCE','TCE','cis-DCE','trans-DCE','VC'))
         }
       
       }) # end update well selection
@@ -1073,9 +1137,9 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       #--- Lab Based BOX
       output$vbox2_1 <- renderValueBox({
-        req(input$gwv,
+        req(gwv(),
             d_ratio())
-        rate_constant_pre=as.numeric(d_ratio()/input$gwv)
+        rate_constant_pre=as.numeric(d_ratio()/gwv())
         setBorderColor(valueBox(
           "Without Confidence Limit",
           signif(rate_constant_pre,2)
@@ -1085,9 +1149,9 @@ PlumeZoneServer <- function(id,data_input,nav) {
       })
       
       output$vbox2_2 <- renderValueBox({
-        req(input$gwv,
+        req(gwv(),
             d_CI())
-        rate_constant_pre_CI = as.numeric(d_CI()/input$gwv)
+        rate_constant_pre_CI = as.numeric(d_CI()/gwv())
         setBorderColor(valueBox(
           "With Confidence Limit",
           signif(rate_constant_pre_CI,2)
@@ -1097,12 +1161,12 @@ PlumeZoneServer <- function(id,data_input,nav) {
       })
       
       output$vbox2_3 <- renderValueBox({
-        req(input$gwv,
+        req(gwv(),
             d_ratio(),
             Ltot(),
             Leval_well(),
             Deval_well())
-        rate_constant_post=exp(log(Leval_well()) - (as.numeric(d_ratio()/input$gwv)*(Ltot()-Deval_well())))
+        rate_constant_post=exp(log(Leval_well()) - (as.numeric(d_ratio()/gwv())*(Ltot()-Deval_well())))
         rate_constant_post = ifelse(rate_constant_post<0,0,rate_constant_post)
         setBorderColor(valueBox(
           "Without Confidence Limit",
@@ -1114,12 +1178,12 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
 
       output$vbox2_4 <- renderValueBox({
-        req(input$gwv,
+        req(gwv(),
             d_CI(),
             Ltot(),
             Leval_well(),
             Deval_well())
-        rate_constant_post_CI = exp(log(Leval_well()) - (as.numeric(d_CI()/input$gwv)*(Ltot()-Deval_well())))
+        rate_constant_post_CI = exp(log(Leval_well()) - (as.numeric(d_CI()/gwv())*(Ltot()-Deval_well())))
         rate_constant_post_CI = ifelse(rate_constant_post_CI<0,0,rate_constant_post_CI)
         setBorderColor(valueBox(
           "With Confidence Limit",
@@ -1130,13 +1194,13 @@ PlumeZoneServer <- function(id,data_input,nav) {
       })
       
       output$vbox2_5 <- renderValueBox({
-        req(input$gwv,
+        req(gwv(),
             d_ratio(),
             Ltot(),
             Leval_well(),
             input$Conc_goal)
 
-        time_woCI = ifelse(exp(log(Leval_well()) - (as.numeric(d_ratio()/input$gwv)*(Ltot()-Deval_well())))>input$Conc_goal,
+        time_woCI = ifelse(exp(log(Leval_well()) - (as.numeric(d_ratio()/gwv())*(Ltot()-Deval_well())))>input$Conc_goal,
                            "No","Yes")
         
         setBorderColor(valueBox(
@@ -1148,13 +1212,13 @@ PlumeZoneServer <- function(id,data_input,nav) {
       })
       
       output$vbox2_6 <- renderValueBox({
-        req(input$gwv,
+        req(gwv(),
             d_CI(),
             Ltot(),
             Leval_well(),
             input$Conc_goal)
         
-        time_wCI = ifelse(exp(log(Leval_well()) - (as.numeric(d_CI()/input$gwv)*(Ltot()-Deval_well())))>input$Conc_goal,
+        time_wCI = ifelse(exp(log(Leval_well()) - (as.numeric(d_CI()/gwv())*(Ltot()-Deval_well())))>input$Conc_goal,
                           "No","Yes")
         setBorderColor(valueBox(
           "With Confidence Limit",
@@ -1315,11 +1379,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
         
         req(df(),
             Ltot(),
-            input$gwv,
+            gwv(),
             d_ratio(),
             input$unit_method)
         p<-Tool5fig(df_eval(), input$Conc_goal, Lsource1(), Ltot(), d_CI(), "Lab-Based",input$eval_well,
-                    input$unit_method,input$USorSI,sen = NULL,gwv=input$gwv,Rate_bio=d_ratio(),projection_state=input$eval_con)
+                    input$unit_method,input$USorSI,sen = NULL,gwv=gwv(),Rate_bio=d_ratio(),projection_state=input$eval_con)
         
         p
       })
