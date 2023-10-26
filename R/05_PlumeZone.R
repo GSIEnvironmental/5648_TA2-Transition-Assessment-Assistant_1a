@@ -50,7 +50,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                fluidRow(align = "center",
                                                         column(12, align = "center", 
                                                                radioButtons(ns("unit_method"), label = NULL,
-                                                                            choices = c("µg/L", "µmol/L"),
+                                                                            choices = c("µg/L", "µmole/L"),
                                                                             selected = "µg/L",
                                                                             inline = T)))
                                )
