@@ -88,94 +88,8 @@ Data_Input_Server <- function(id,Plume,nav) {
       if (mw_Tb5 != 'error'){
         temp_mw_info <-Plume$Plume()
       }
-      # check whether data is uploaded or not
-      observeEvent(input$input_file,{
-        # If no file is loaded nothing happens 
-        if(!is.null(input$input_file)){
-         
-          file <- input$input_file
-          
-          # tool 1 and 2 database
-          temp_data <- read.xlsx(file$datapath, sheet = "Concentration_Time_Data", startRow = 1,
-                                 check.names = F,detectDates=T)
-          
-          temp_data<-temp_data%>%
-            mutate(Event = as.integer(Event))%>%
-            #rename(Date = `Date.(Month/Day/Year)`)%>%
-            mutate(Date = as.Date(temp_data$Date,origin="1900-01-01",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y")))
-          
-          # tool 5 database  
-          temp_data_tool5 <- read.xlsx(file$datapath, sheet = "Tool5_Concentration_Time_Data", startRow = 1,
-                                 check.names = F,detectDates=T)
-          
-          temp_data_tool5<-temp_data_tool5%>%
-            mutate(Event = as.integer(Event))%>%
-            #rename(Date = `Date.(Month/Day/Year)`)%>%
-            mutate(Date = as.Date(temp_data_tool5$Date,origin="1900-01-01",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y")))
-          
-          temp_mw_info <- read.xlsx(file$datapath, sheet = "Monitoring_Well_Information", startRow = 1,
-                                    check.names = F, sep.names = " ")
-          
-          # populate lat/long if data is missing
-          for (j in 1:nrow(temp_mw_info)){
-            if (is.na(temp_mw_info$Latitude[j])||is.na(temp_mw_info$Longitude[j])){
-              clip_mw_info <- temp_mw_info[,c("Easting","Northing")][j,1:2]
-              coordinates(clip_mw_info) <- ~ Easting  + Northing
-              proj4string(clip_mw_info) <- CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j]))
-              clip_mw_info <- spTransform(clip_mw_info, CRS("+init=epsg:4326"))
-              temp_mw_info$Latitude[j] = clip_mw_info@coords[2]
-              temp_mw_info$Longitude[j] = clip_mw_info@coords[1]
-            }
-            if (is.na(temp_mw_info$Easting[j])||is.na(temp_mw_info$Northing[j])){
-              clip_mw_info <- temp_mw_info[,c("Longitude","Latitude")][j,1:2]
-              coordinates(clip_mw_info) <- ~ Longitude  + Latitude
-              proj4string(clip_mw_info) <- CRS("+init=epsg:4326")
-              clip_mw_info <- spTransform(clip_mw_info, CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j])))
-              temp_mw_info$Northing[j] = clip_mw_info@coords[2]
-              temp_mw_info$Easting[j] = clip_mw_info@coords[1]
-            }
-            source_coord = temp_mw_info%>%filter(`Monitoring Wells`=='Source Well')
-            temp_mw_info <- temp_mw_info%>%
-              mutate(`Distance from Source (m)` = ifelse(`Monitoring Wells`%in%colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],
-                                                         sqrt((Easting-source_coord$Easting)^(2)+
-                                                                (Northing-source_coord$Northing)^(2)),NA)
-              )
-          }
-          
-          d_conc <- reactiveVal(temp_data)
-          
-          d_conc_tool5 <- reactiveVal(temp_data_tool5)
-          
-          d_loc <- reactiveVal(temp_mw_info)
-          
-          temp_data2<-temp_data%>%
-            rename(`Date (Month/Day/Year)`=Date)
-          
-          temp_data2_tool5<-temp_data_tool5%>%
-            rename(`Date (Month/Day/Year)`=Date)
-          
-          output$conc_time_data <- renderRHandsontable({
-            rhandsontable(temp_data2, rowHeaders = NULL, width = 1200, height = 600) %>%
-              hot_cols(columnSorting = TRUE) %>%
-              hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
-          })
-          
-          output$conc_time_data_tool5 <- renderRHandsontable({
-            rhandsontable(temp_data2_tool5, rowHeaders = NULL, width = 1200, height = 600) %>%
-              hot_cols(columnSorting = TRUE) %>%
-              hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
-          })
-          
-          output$mw_data <- renderRHandsontable({
-            rhandsontable(temp_mw_info, rowHeaders = NULL, width = 1200, height = 600) %>%
-              hot_cols(columnSorting = TRUE) %>%
-              hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
-          })
-          
-        }
-      })
       
-
+      
       # Reactive Variables -------------------
       d_conc <- reactiveVal(temp_data)
       
@@ -188,86 +102,91 @@ Data_Input_Server <- function(id,Plume,nav) {
       observeEvent(input$conc_time_data_tool5,{
         d_conc_tool5(hot_to_r(input$conc_time_data_tool5))
       })
-      
-
-      # Monitoring Well Information ----------
-
-      
-      
-      # for (j in 1:nrow(temp_mw_info)){
-      #   if (is.na(temp_mw_info$Latitude[j])||is.na(temp_mw_info$Longitude[j])){
-      #     clip_mw_info <- temp_mw_info[,c("Easting","Northing")][j,1:2]
-      #     coordinates(clip_mw_info) <- ~ Easting  + Northing
-      #     proj4string(clip_mw_info) <- CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j]))
-      #     clip_mw_info <- spTransform(clip_mw_info, CRS("+init=epsg:4326"))
-      #     temp_mw_info$Latitude[j] = clip_mw_info@coords[2]
-      #     temp_mw_info$Longitude[j] = clip_mw_info@coords[1]
-      #   }
-      #   
-      #   if (is.na(temp_mw_info$Easting[j])||is.na(temp_mw_info$Northing[j])){
-      #     clip_mw_info <- temp_mw_info[,c("Longitude","Latitude")][j,1:2]
-      #     coordinates(clip_mw_info) <- ~ Longitude  + Latitude
-      #     proj4string(clip_mw_info) <- CRS("+init=epsg:4326")
-      #     clip_mw_info <- spTransform(clip_mw_info, CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j])))
-      #     temp_mw_info$Northing[j] = clip_mw_info@coords[2]
-      #     temp_mw_info$Easting[j] = clip_mw_info@coords[1]
-      #   }
-      #   source_coord = temp_mw_info%>%filter(`Monitoring Wells`=='Source Well')
-      # 
-      #   temp_mw_info <- temp_mw_info%>%
-      #     mutate(`Distance from Source (m)` = ifelse(`Monitoring Wells`%in%colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],
-      #                                                sqrt((Easting-source_coord$Easting)^(2)+
-      #                                                       (Northing-source_coord$Northing)^(2)),NA)
-      #     )
-      # }
-      
 
       d_loc <- reactiveVal(temp_mw_info)
-
-      # eventReactive(id,{
-      #   mw_Tb5 = checksilenterror(Plume$Plume())
-      #   if (mw_Tb5 != 'error'){
-      #     temp_mw_info <-Plume$Plume()
-      #   }
-      #   browser()
-      #   d_loc(temp_mw_info)
-      # })
       
+      observeEvent(input$mw_data,{
+        B<-hot_to_r(input$mw_data)
+        if (sum(B$`Well Grouping`=='Source Well')==1){
+          B<-update_distance(B,d_conc_tool5())
+        }
+        d_loc(B)
+      })
+      # check whether data is uploaded or not
+      observeEvent(input$input_file,{
+        # If no file is loaded nothing happens 
+        if(!is.null(input$input_file)){
+          
+          file <- input$input_file
+          
+          # tool 1 and 2 database
+          temp_data <- read.xlsx(file$datapath, sheet = "Concentration_Time_Data", startRow = 1,
+                                 check.names = F,detectDates=T)
+          
+          temp_data<-temp_data%>%
+            mutate(Event = as.integer(Event))%>%
+            #rename(Date = `Date.(Month/Day/Year)`)%>%
+            mutate(Date = as.Date(temp_data$Date,origin="1900-01-01",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y")))
+          d_conc(temp_data)
+          
+          # tool 5 database  
+          temp_data_tool5 <- read.xlsx(file$datapath, sheet = "Tool5_Concentration_Time_Data", startRow = 1,
+                                       check.names = F,detectDates=T)
+          
+          temp_data_tool5<-temp_data_tool5%>%
+            mutate(Event = as.integer(Event))%>%
+            #rename(Date = `Date.(Month/Day/Year)`)%>%
+            mutate(Date = as.Date(temp_data_tool5$Date,origin="1900-01-01",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y")))
+          
+          d_conc_tool5(temp_data_tool5)
+          
+          temp_mw_info <- read.xlsx(file$datapath, sheet = "Monitoring_Well_Information", startRow = 1,
+                                    check.names = F, sep.names = " ")
+          temp_mw_info<-update_distance(temp_mw_info,d_conc_tool5())
+          
+          d_loc(temp_mw_info)
+    
+          
+        }
+      })
+      
+      # if any source file is updated, use this to update
       observeEvent({
-        input$mw_data
+        Plume$Plume()
         nav()
         },{
           req(nav()=='Data Input')
-        mw_Tb5 = checksilenterror(Plume$Plume())
+          mw_Tb5 = checksilenterror(Plume$Plume())
         if (mw_Tb5 != 'error'){
-          temp_mw_info <-Plume$Plume()
+          A <-Plume$Plume()
+        }else{
+          A = d_loc()
         }
-       
-          if (!is.null(input$mw_data$changes$source)){
-            temp_mw_info<-hot_to_r(input$mw_data)
-          }else{
-            temp_mw_info = temp_mw_info
-          }
-          
-        # }
-        d_loc(temp_mw_info)
+
+        d_loc(A)
       })
       
-      temp_data2<-temp_data%>%
-           rename(`Date (Month/Day/Year)`=Date)
-      
-      temp_data2_tool5<-temp_data_tool5%>%
-           rename(`Date (Month/Day/Year)`=Date)
-      
-      
-         
       output$conc_time_data <- renderRHandsontable({
+        if ('Date'%in%colnames(d_conc())){
+          temp_data2<-d_conc()%>%
+          rename(`Date (Month/Day/Year)`=Date)
+        }else{
+          temp_data2<-d_conc()
+        }
+
         rhandsontable(temp_data2, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE) %>%
           hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
-        })
+      })
       
       output$conc_time_data_tool5 <- renderRHandsontable({
+        if ('Date'%in%colnames(d_conc_tool5())){
+          temp_data2_tool5<-d_conc_tool5()%>%
+            rename(`Date (Month/Day/Year)`=Date)
+        }else{
+          temp_data2_tool5<-d_conc_tool5()
+        }
+
         rhandsontable(temp_data2_tool5, rowHeaders = NULL, width = 1200, height = 600) %>%
           hot_cols(columnSorting = TRUE) %>%
           hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
@@ -287,88 +206,33 @@ Data_Input_Server <- function(id,Plume,nav) {
           paste0("Concentration_Data", ".xlsx")
         },
         content = function(file) {
-          
-          
-          if (is.null(input$mw_data)&is.null(input$conc_time_data_tool5)){
-            conc_time_data_export <-hot_to_r(input$conc_time_data)%>%
+        
+          if ("Date (Month/Day/Year)"%in%colnames(hot_to_r(input$conc_time_data))){
+            temp_data2<-hot_to_r(input$conc_time_data)%>%
               rename(Date=`Date (Month/Day/Year)`)
-            
-            list_of_datasets<-list(
-            "Concentration_Time_Data" = conc_time_data_export,
-            "Tool5_Concentration_Time_Data" = temp_data_tool5,
-            "Monitoring_Well_Information" = temp_mw_info
-          )
-          }else if (is.null(input$mw_data)){
-            conc_time_data_export <-hot_to_r(input$conc_time_data)%>%
-              rename(Date=`Date (Month/Day/Year)`)
-            
-            conc_time_data_tool5_export<-hot_to_r(input$conc_time_data_tool5)%>%
-              rename(Date=`Date (Month/Day/Year)`)
-            
-            list_of_datasets<-list(
-              "Concentration_Time_Data" = conc_time_data_export,
-              "Tool5_Concentration_Time_Data" = conc_time_data_tool5_export,
-              "Monitoring_Well_Information" = temp_mw_info
-            )
           }else{
-            conc_time_data_export <-hot_to_r(input$conc_time_data)%>%
-              rename(Date=`Date (Month/Day/Year)`)
-            
-            conc_time_data_tool5_export<-hot_to_r(input$conc_time_data_tool5)%>%
-              rename(Date=`Date (Month/Day/Year)`)
-            
-            list_of_datasets<-list(
-              "Concentration_Time_Data" = conc_time_data_export,
-              "Tool5_Concentration_Time_Data" = conc_time_data_tool5_export,
-              "Monitoring_Well_Information" = hot_to_r(input$mw_data)
-            )
+            temp_data2<-d_conc_tool5()
           }
           
+          if ("Date (Month/Day/Year)"%in%colnames(hot_to_r(input$conc_time_data_tool5))){
+            temp_data2_tool5<-hot_to_r(input$conc_time_data_tool5)%>%
+              rename(Date=`Date (Month/Day/Year)`)
+          }else{
+            temp_data2_tool5<-d_conc_tool5()
+          }
           
+          list_of_datasets<-list(
+            "Concentration_Time_Data" = temp_data2,
+            "Tool5_Concentration_Time_Data" = temp_data2_tool5,
+            "Monitoring_Well_Information" = hot_to_r(input$mw_data)
+          )
+         
           write.xlsx(list_of_datasets, file)
           
          
         }
         
       )
-      
-      # # Save Dataframes --------------------
-      # output$save_location_data <- downloadHandler(
-      #   
-      #   filename = function() {
-      #     paste0("MW_Data", ".xlsx")
-      #   },
-      #   content = function(file) {
-      #     if(is.null(input$mw_data)){
-      #       write.xlsx(temp_mw_info, file)
-      #     }else{
-      #       write.xlsx(hot_to_r(input$mw_data), file)
-      #     }
-      #     
-      #   }
-      #   
-      # )
-      # observeEvent(input$save_data,
-      #              {if (!is.null(input$conc_time_data))
-      #              {#Convert to R object
-      #                
-      #                if (is.null(input$mw_data)){
-      #                  y<- temp_mw_info
-      #                }else{
-      #                  y <- hot_to_r(input$mw_data)
-      #                }
-      #                }
-      #                content = function(x,y){
-      #                    file.copy('Concentration_Data.xlsx',x)
-      #                    file.copy('MW_Data.xlsx',y)
-      #                  }
-      #                  
-      #                  content(x,y)
-      #                  #write.xlsx(x, file = 'Concentration_Data.xlsx')
-      #                  #write.xlsx(y, file = 'MW_Data.xlsx')
-      #                  }
-      #              )
-      # 
       
       # Return Dataframes ------------------
       

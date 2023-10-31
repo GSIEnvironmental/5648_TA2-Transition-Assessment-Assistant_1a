@@ -570,29 +570,10 @@ PlumeZoneServer <- function(id,data_input,nav) {
         d_conc_tool5(df)
       }) # end d_conc()
       
-      # # update SI or US Units -------------------
-      # observe({
-      #   req(nav() == "5. Plume Projections")
-      #   req(input$USorSI)
-      #   browser()
-      #   if (input$USorSI=='US Unit'){
-      #     output$USorSIvel<- renderUI({
-      #       HTML(paste0("<h4>ft/year</h4>",sep=''))
-      #     })
-      #     
-      #   }else{
-      #     output$USorSIvel<- renderUI({
-      #       HTML(paste0("<h4>m/year</h4>",sep=''))
-      #     })
-      #   }
-      #   
-      # }) # end update SI or US unit 
-      
       # update Units -------------------
       observe({
         req(nav() == "5. Plume Projections")
         req(input$unit_method)
-        
         output$unit<- renderUI({
           HTML(paste0("<h4>",input$unit_method,"</h4>",sep=''))
         })
@@ -719,19 +700,21 @@ PlumeZoneServer <- function(id,data_input,nav) {
       })
       
       # RV: Location Data -----------------------
-      d_loc <- reactiveVal(data_mw_clean(temp_mw_info))
+      #d_loc <- reactiveVal(data_mw_clean(temp_mw_info))
+      d_loc <- reactiveVal()
       observeEvent({
         data_input$d_loc()
         input$source_well
         input$USorSI
+        nav()
         },{
         req(input$source_well)
           
           temp_mw_info <- data_input$d_loc()
           # calculate the distance from the source
           temp_mw_info<-data_wellinfo(temp_mw_info,input$USorSI,input$source_well,input$select_mw)
-         
         d_loc(temp_mw_info)
+
       }) # end d_loc()
       
       # RV: Merge d_loc and d_conc -----------------------
@@ -741,7 +724,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         d_conc_tool5()
         d_loc()},{
           d_mer(data_merge(d_conc_tool5(), d_loc(),conc_name = 'Concentration_org'))
-          
+         
         }) # end d_mer()
       
       # Well Selection Updates -----------------------
@@ -773,8 +756,19 @@ PlumeZoneServer <- function(id,data_input,nav) {
           }else{
             updatePickerInput(session, "source_well", choices = choices, selected = 'MW-02-008')
           }
-        }else{
+        }else if ('MW-02-008'%in%choices){
           updatePickerInput(session, "source_well", choices = choices, selected = 'MW-02-008')
+        }
+        else{
+          if(!is.null(d_loc())){
+            pickwell = d_loc()%>%
+              filter(`Well Grouping`=='Source Well')
+          }else{
+            pickwell = data_input$d_loc()%>%
+              filter(`Well Grouping`=='Source Well')
+          }
+          
+          updatePickerInput(session, "source_well", choices = choices, selected = pickwell$`Monitoring Wells`)
         }
         
       }) # end update well selection
@@ -854,8 +848,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(d_conc_tool5(),
             input$select_mw,
             input$select_COC,
-            input$tabs)
-        
+            input$tabs,
+            d_mer())
         # Filter to Wells
         df_MW <- d_mer() %>%
           filter(WellID %in% input$select_mw,
@@ -890,7 +884,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(d_conc_tool5(),
             input$select_mw,
             input$select_COC,
-            input$tabs)
+            input$tabs,
+            d_mer())
         
         # Filter to Wells
         df_MW <- d_mer() %>%
@@ -1025,7 +1020,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
       sen_lm <- reactiveVal()
       
       observe({
-        req(length(df()$Concentration) > 2)
+        req(length(df()$Concentration) > 2,
+            d_conc_tool5(),
+            input$select_mw,
+            input$select_COC,
+            input$tabs)
        
         if(length(unique(df()$State))==1){
           sen_lm(list(sen_trend_distance(df(),input$select_COC,'natural')))
@@ -1353,7 +1352,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         p<-Tool5fig(df_eval(), input$Conc_goal, Lsource1(), Ltot(), input$CIvalue1, "PreRem",input$eval_well,
                     input$unit_method,input$USorSI,
                     sen = sen_lm()[[1]],gwv=NULL,Rate_bio=NULL)
-        
+
         p
       })
       
@@ -1423,7 +1422,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       return(list(
         Plume = reactive({
           req(d_loc())
-          results = d_loc()}
+          d_loc()}
           ),
         sourcewell = reactive({
           req(input$source_well)
