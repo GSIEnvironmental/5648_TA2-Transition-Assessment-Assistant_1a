@@ -7,9 +7,11 @@
 * Most of the samples should have detected values.
 * For non-detects, use either 1/2 the reporting limit (RL) or the RL. Don't use zero.
 * Don't enter duplicate values, either use the average or the first of the two duplicates.
-* Add Latitude and Longitude information for the Monitoring Wells to the table under the tab 'Monitoring Well Information'. Adding this information will allow results from Tools 1 and 2 to be mapped.
-* Click checkboxes, in the 'Monitoring Well Information' table, to denote downgradient wells.
-* You can save these data by clicking on the 'Save Data' button above the table to the right. You can re-load previously saved data by clicking on the 'Upload Saved Data' button and choosing a previously saved data file.
+* Concentration and Time Data is only the data used for Tool 5 should be tabulated in here. 
+* In the column "State", please enter either Pre-Remediation "PreRem", Post-Remediation "Post Rem". 
+* Add Latitude and Longitude information for the Monitoring Wells to the table under the tab 'Monitoring Well Information'. Adding this information will allow results from Tools 1, 2, and 5 to be mapped.
+* Please see important note to correctly assign the location informations. 
+* You can download these tables by clicking on the 'Download Input File' button above the table to the right. You can re-load previously saved data by clicking on the 'Upload Saved Data' button and choosing a previously saved data file.
 
 <h3><b>How to Edit Data:</b></h3>
 
