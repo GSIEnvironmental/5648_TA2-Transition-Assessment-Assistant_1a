@@ -30,10 +30,10 @@ Tool5fig <- function(df_eval,C_goal, Lsource1, Ltot, CI, State,eval_well,
                                      rm.na=TRUE),
                    line = list(dash = "dash",color='black'), showlegend=T, name = paste0("Cleanup Goal (",C_goal," ",unit_method,")"))%>% #  CONCENTRATION GOAL
       add_trace(x= c(Ltot,Ltot),#10%
-                y = c((min(df_eval$Concentration,min_raw,na.rm = TRUE)), 
+                y = c((min(df_eval$Concentration,min_raw,C_goal*0.1,na.rm = TRUE)), 
                       yend = max(predict(sen,data.frame(Distance = 0)),
                                  (max(df_eval$Concentration,na.rm = TRUE))+1,
-                                 C_goal,
+                                 C_goal*10,
                                  max_raw
                                  )),
                 name = 'Point of Compliance',
@@ -57,8 +57,8 @@ Tool5fig <- function(df_eval,C_goal, Lsource1, Ltot, CI, State,eval_well,
                    x = 0, xend = Ltot*1.2,
                    line = list(dash = "dash",color='black'), showlegend=T, name = paste0("Cleanup Goal (",C_goal," ",unit_method,")"))%>% #  CONCENTRATION GOAL
       add_trace(x= c(Ltot,Ltot),#10%
-                y = c((min(1,Lsource1*0.5,C_goal*0.5,min_raw)), 
-                      (max(1,Lsource1*1.5,C_goal*1.5,max_raw))) ,
+                y = c((min(1,Lsource1*0.5,C_goal*0.1,min_raw)), 
+                      (max(1,Lsource1*1.5,C_goal*10,max_raw))) ,
                 name = 'Point of Compliance',
                 type = "scatter",
                 mode = 'lines',
@@ -271,10 +271,12 @@ Tool5fig <- function(df_eval,C_goal, Lsource1, Ltot, CI, State,eval_well,
     plot_df3 <-data.frame(x=c(eval_series$Distance, 
                               Ltot,
                               Ltot+eval_series$Distance,
+                              max(plot_df2$x),
                               (log(eval_series$Concentration)-log(min_raw))*gwv/CI+eval_series$Distance),
                           y=c((eval_series$Concentration),
                               exp(log(eval_series$Concentration)-((CI/gwv*(Ltot-eval_series$Distance)))),
                               exp(log(eval_series$Concentration)-((CI/gwv*Ltot))),
+                              exp(log(eval_series$Concentration)-((CI/gwv*(abs(max(plot_df2$x)-Ltot))))),
                               min_raw
                               )
                           )
@@ -375,9 +377,9 @@ Tool5fig <- function(df_eval,C_goal, Lsource1, Ltot, CI, State,eval_well,
         yaxis = list(title = list(text = ifelse(unit_method =="µmole/L","COC Concentration (µmole/L)","COC Concentration (µg/L)"),
                                   font = list(size=18)),
                      tickfont = list(size = 18),
-                     range = c(min(log10(min(df_eval$Concentration,min_raw,na.rm = TRUE))), 
+                     range = c(min(log10(min(df_eval$Concentration,min_raw,C_goal*0.1,na.rm = TRUE))), 
                                      yend = log10(max(
-                                                      max(df_eval$Concentration,na.rm = TRUE),
+                                                      max(df_eval$Concentration,C_goal*10,na.rm = TRUE),
                                                       max_raw
                                      )
                                      )),#c(log(min(1,Lsource1*0.5,C_goal*0.5)), log(max(1,Lsource1*1.5,C_goal*1.5))),
@@ -443,11 +445,12 @@ Tool5fig <- function(df_eval,C_goal, Lsource1, Ltot, CI, State,eval_well,
         yaxis = list(title = list(text = ifelse(unit_method =="µmole/L","COC Concentration (µmole/L)","COC Concentration (µg/L)"),
                                   font = list(size=18)),
                      tickfont = list(size = 18),
-                     range=c(min(log10(min(df_eval$Concentration,min_raw,na.rm = TRUE))), 
+                     range=c(min(log10(min(df_eval$Concentration,min_raw,C_goal*0.1,na.rm = TRUE))), 
                              yend = log10(max(exp(predict(sen,data.frame(Distance = 0))),
                                exp(predict(sen,data.frame(Distance = Ltot))),
                                max(df_eval$Concentration,na.rm = TRUE),
-                               max_raw
+                               max_raw,
+                               C_goal*10
                                )
                              )),
                      linecolor = toRGB("black"),
