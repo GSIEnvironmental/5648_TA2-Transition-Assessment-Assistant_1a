@@ -276,7 +276,7 @@ Tool5fig <- function(df_eval,C_goal, Lsource1, Ltot, CI, State,eval_well,
                           y=c((eval_series$Concentration),
                               exp(log(eval_series$Concentration)-((CI/gwv*(Ltot-eval_series$Distance)))),
                               exp(log(eval_series$Concentration)-((CI/gwv*Ltot))),
-                              exp(log(eval_series$Concentration)-((CI/gwv*(abs(max(plot_df2$x)-Ltot))))),
+                              exp(log(eval_series$Concentration)-((CI/gwv*(abs(max(plot_df2$x)-eval_series$Distance))))),
                               min_raw
                               )
                           )
