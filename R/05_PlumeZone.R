@@ -706,6 +706,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         data_input$d_loc()
         input$source_well
         input$USorSI
+        input$select_mw
         nav()
         },{
         req(input$source_well)
@@ -732,6 +733,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
         req(nav() == "5. Plume Projections")
         req(d_conc_tool5())
         choices <- sort(unique(d_conc_tool5()$WellID))
+        #choices2<-c("95MW0201","95MW0212A","95MW0582C","95MW1174A","USFW356108","USFW443140","USFW474147","USFW443104","USFW501102")
+        
         if (!is.null(input$select_mw)){
           if (any(input$select_mw!='')){
             updatePickerInput(session, "select_mw", choices = choices, selected = input$select_mw)
@@ -912,6 +915,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         
         df_MW$State_name = ifelse(df_MW$State=='PostRem','Post Remediation','Pre Remediation')
         
+  
         df_eval(df_MW)
       }) # end df()
       # observe({

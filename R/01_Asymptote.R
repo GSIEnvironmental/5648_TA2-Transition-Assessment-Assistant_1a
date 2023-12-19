@@ -94,7 +94,7 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                                     actionButton(ns("help1_3"), HTML("?"), style = button_style2))), br(),
                     fluidRow(column(10,
                                     HTML("<h4><b>Step 8.</b> Select breakpoint between two different time periods.</h4>"),
-                                    HTML("<p><i>Beakpoint is indicated on plot with a dotted line. To manually select a breakpoint click data point on plot.To deselect double click the figure where no data point.</i></p>")),
+                                    HTML("<p><i>Breakpoint is indicated on plot with a dotted line. To manually select a breakpoint click data point on plot.To deselect, double click the figure where there is no data point.</i></p>")),
                              # column(2, align = "left", style = "padding:10px;",
                              #        actionButton(ns("help5"), HTML("?"), style = button_style2))
                              ),
@@ -103,7 +103,7 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                          <ol>
                          <li> The source attenuation trends can be represented by a first order decay relationship.</li>
                          <li> The range of the source attenuation rate is bounded by a 90% confidence level</li>
-                         <li> Four simple rules of thumb (heuristics) can provide evidence that for all practical purposes an asymptote in the concentration vs. time data has been reached.</li></ol>")#,
+                         <li> Five simple rules of thumb (heuristics) can provide evidence that for all practical purposes an asymptote in the concentration vs. time data has been reached.</li></ol>")#,
                     # HTML("<hr class='featurette-divider'>"),
                     # HTML("<h4><b>Authors</b></h4>
                     #      Charles Newell and Tom McHugh, GSI Environmental. Contact: temchugh@gsi-net.com")
