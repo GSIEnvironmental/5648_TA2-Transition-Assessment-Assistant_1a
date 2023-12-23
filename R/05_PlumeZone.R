@@ -556,7 +556,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
     function(input, output, session) {
       
       # RV: Concentration and Time Data -----------
-      d_conc_tool5 <- reactiveVal(data_long(temp_data_tool5,con_name = 'Concentration_org'))
+      d_conc_tool5 <- reactiveVal()#data_long(temp_data_tool5,con_name = 'Concentration_org'))
       observeEvent({data_input$d_conc_tool5()
         input$select_COC
         input$unit_method},{
@@ -725,24 +725,28 @@ PlumeZoneServer <- function(id,data_input,nav) {
         d_conc_tool5()
         d_loc()},{
           d_mer(data_merge(d_conc_tool5(), d_loc(),conc_name = 'Concentration_org'))
-         
+
         }) # end d_mer()
       
       # Well Selection Updates -----------------------
       observe({
         req(nav() == "5. Plume Projections")
         req(d_conc_tool5())
+    
         choices <- sort(unique(d_conc_tool5()$WellID))
-        #choices2<-c("95MW0201","95MW0212A","95MW0582C","95MW1174A","USFW356108","USFW443140","USFW474147","USFW443104","USFW501102")
+        choices2<-c("95MW0201","95MW0212A","95MW0582C","95MW1174A","USFW356108","USFW443104","USFW474147","USFW501102")
+        choices3<-c("30MW0585A","USFW356134","USFW357139","95MW1232A","USFW357081")
+
         
+        #put back choices2 to choices for default run
         if (!is.null(input$select_mw)){
           if (any(input$select_mw!='')){
             updatePickerInput(session, "select_mw", choices = choices, selected = input$select_mw)
           }else{
-            updatePickerInput(session, "select_mw", choices = choices, selected = choices)
+            updatePickerInput(session, "select_mw", choices = choices, selected = choices3)
           }
         }else{
-          updatePickerInput(session, "select_mw", choices = choices, selected = choices)
+          updatePickerInput(session, "select_mw", choices = choices, selected = choices3)
         }
         
       }) # end update well selection
@@ -896,7 +900,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
                  # Date >= input$date_range1[1],
                  # Date <= input$date_range1[2],
                  COC %in% input$select_COC) 
-        
+
         df_MW <- df_MW %>% group_by(WellID,State) %>%
           summarise(Concentration = sum(Concentration,na.rm=TRUE),
                     Distance = max(ifelse("Distance from Source (m)"%in%colnames(df_MW),
@@ -1029,12 +1033,16 @@ PlumeZoneServer <- function(id,data_input,nav) {
             input$select_mw,
             input$select_COC,
             input$tabs)
+        
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        #alidate(need(sum(table(df()$State)>1,na.rm=TRUE)==2, "Either pre- or post-remediation has only one data point. Please consider adding more wells for this analysis")) 
        
-        if(length(unique(df()$State))==1){
-          sen_lm(list(sen_trend_distance(df(),input$select_COC,'natural')))
-        }else{
+        #if(sum(table(df()$State)>1,na.rm=TRUE)==1){
+        #  sen_lm(sen_trend_distance(df(),input$select_COC,'natural'))
+        #}else{
           sen_lm(sen_trend_distance(df(),input$select_COC,'natural'))
-        }
+        #}
+        
       })
     
       
@@ -1045,6 +1053,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
       #--- Pre Remediation BOX
       output$vbox1_1 <- renderValueBox({
         req(sen_lm())
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        validate(need((table(df()$State=='PreRem')['TRUE']>1)==TRUE, "Pre-remediation has only one data point. Please consider adding more wells for this analysis")) 
         rate_constant_pre=as.numeric(sen_lm()[[1]][1]$coefficients[2])
 
         setBorderColor(valueBox(
@@ -1058,7 +1068,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$vbox1_2 <- renderValueBox({
         req(sen_lm())
-        
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        validate(need((table(df()$State=='PreRem')['TRUE']>1)==TRUE, "Pre-remediation has only one data point. Please consider adding more wells for this analysis")) 
         CIvalue1 = ifelse(input$CIvalue1=='80%',0.8,
                           ifelse(input$CIvalue1=='90%',0.9,
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
@@ -1073,7 +1084,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
       output$vbox1_3 <- renderValueBox({
         req(sen_lm(),
             Leval_well())
-        
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        validate(need((table(df()$State=='PreRem')['TRUE']>1)==TRUE, "Pre-remediation has only one data point. Please consider adding more wells for this analysis")) 
         rate_constant_post=exp(as.numeric(log(Leval_well()))+
                                  as.numeric(sen_lm()[[1]]$coefficients[2])*Ltot() - as.numeric(sen_lm()[[1]]$coefficients[2])*Deval_well())
         
@@ -1089,6 +1101,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
       output$vbox1_4 <- renderValueBox({
         req(sen_lm(),
             Leval_well())
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        validate(need((table(df()$State=='PreRem')['TRUE']>1)==TRUE, "Pre-remediation has only one data point. Please consider adding more wells for this analysis")) 
         CIvalue1 = ifelse(input$CIvalue1=='80%',0.8,
                           ifelse(input$CIvalue1=='90%',0.9,
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
@@ -1106,7 +1120,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
       output$vbox1_5 <- renderValueBox({
         req(sen_lm(),
             Lsource1())
-        
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        validate(need((table(df()$State=='PreRem')['TRUE']>1)==TRUE, "Pre-remediation has only one data point. Please consider adding more wells for this analysis")) 
         time_woCI = ifelse(exp(as.numeric(log(Leval_well()))+
                                  as.numeric(sen_lm()[[1]]$coefficients[2])*Ltot()- as.numeric(sen_lm()[[1]]$coefficients[2])*Deval_well())>input$Conc_goal,
                            "No","Yes")
@@ -1122,7 +1137,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
       output$vbox1_6 <- renderValueBox({
         req(sen_lm(),
             Leval_well())
-        
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        validate(need((table(df()$State=='PreRem')['TRUE']>1)==TRUE, "Pre-remediation has only one data point. Please consider adding more wells for this analysis")) 
         CIvalue1 = ifelse(input$CIvalue1=='80%',0.8,
                           ifelse(input$CIvalue1=='90%',0.9,
                                  ifelse(input$CIvalue1=='95%',0.95,0.99)))
@@ -1235,6 +1251,10 @@ PlumeZoneServer <- function(id,data_input,nav) {
       #--- Post Remediation BOX
       output$vbox3_1 <- renderValueBox({
         req(sen_lm())
+        
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        validate(need((table(df()$State=='PostRem')['TRUE']>1)==TRUE, "Post-remediation has only one data point. Please consider adding more wells for this analysis")) 
+        
         rate_constant_pre=as.numeric(sen_lm()[[2]]$coefficients[2])
         
         setBorderColor(valueBox(
@@ -1247,6 +1267,9 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$vbox3_2 <- renderValueBox({
         req(sen_lm())
+        
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        validate(need((table(df()$State=='PostRem')['TRUE']>1)==TRUE, "Post-remediation has only one data point. Please consider adding more wells for this analysis")) 
         
         CIvalue1 = ifelse(input$CIvalue1=='80%',0.8,
                           ifelse(input$CIvalue1=='90%',0.9,
@@ -1264,6 +1287,11 @@ PlumeZoneServer <- function(id,data_input,nav) {
       output$vbox3_3 <- renderValueBox({
         req(sen_lm(),
             Leval_well())
+        
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        validate(need((table(df()$State=='PostRem')['TRUE']>1)==TRUE, "Post-remediation has only one data point. Please consider adding more wells for this analysis")) 
+        
+        
         rate_constant_post=exp(as.numeric(log(Leval_well()))+
                                  as.numeric(sen_lm()[[2]]$coefficients[2])*Ltot()- as.numeric(sen_lm()[[2]]$coefficients[2])*Deval_well())
         rate_constant_post = ifelse(rate_constant_post<0,0,rate_constant_post)
@@ -1278,6 +1306,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
       output$vbox3_4 <- renderValueBox({
         req(sen_lm(),
             Leval_well())
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        validate(need((table(df()$State=='PostRem')['TRUE']>1)==TRUE, "Post-remediation has only one data point. Please consider adding more wells for this analysis")) 
         
         CIvalue1 = ifelse(input$CIvalue1=='80%',0.8,
                           ifelse(input$CIvalue1=='90%',0.9,
@@ -1296,6 +1326,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
       output$vbox3_5 <- renderValueBox({
         req(sen_lm(),
             Leval_well())
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        validate(need((table(df()$State=='PostRem')['TRUE']>1)==TRUE, "Post-remediation has only one data point. Please consider adding more wells for this analysis")) 
         
         time_woCI = ifelse(exp(as.numeric(log(Leval_well()))+
                                  as.numeric(sen_lm()[[2]]$coefficients[2])*Ltot()-as.numeric(sen_lm()[[2]]$coefficients[2])*Deval_well())>input$Conc_goal,
@@ -1312,6 +1344,8 @@ PlumeZoneServer <- function(id,data_input,nav) {
       output$vbox3_6 <- renderValueBox({
         req(sen_lm(),
             Leval_well())
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        validate(need((table(df()$State=='PostRem')['TRUE']>1)==TRUE, "Post-remediation has only one data point. Please consider adding more wells for this analysis")) 
         
         CIvalue3 = ifelse(input$CIvalue3=='80%',0.8,
                           ifelse(input$CIvalue3=='90%',0.9,
@@ -1345,14 +1379,17 @@ PlumeZoneServer <- function(id,data_input,nav) {
       # Plots ------------------
       
       output$ts_plot1_1 <- renderPlotly({
+     
           validate(need(d_conc_tool5(), "Please enter data into the Data Input tab (Step 1)."))
+          #validate(need(sum(colSums(d_conc_tool5()==0,na.rm=TRUE))==0, "Please remove 0 from the table"))
+          validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+          validate(need((table(df()$State=='PreRem')['TRUE']>1)==TRUE, "Pre-remediation has only one data point. Please consider adding more wells for this analysis")) 
           validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
-
+          
           req(df(),
               sen_lm(),
               Ltot(),
               input$unit_method)
- 
         p<-Tool5fig(df_eval(), input$Conc_goal, Lsource1(), Ltot(), input$CIvalue1, "PreRem",input$eval_well,
                     input$unit_method,input$USorSI,
                     sen = sen_lm()[[1]],gwv=NULL,Rate_bio=NULL)
@@ -1362,14 +1399,16 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$ts_plot1_2 <- renderPlotly({
         validate(need(d_conc_tool5(), "Please enter data into the Data Input tab (Step 1)."))
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        validate(need((table(df()$State=='PreRem')['TRUE']>1)==TRUE, "Pre-remediation has only one data point. Please consider adding more wells for this analysis")) 
         validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
-        
+
         req(df(),
             sen_lm(),
             Ltot(),
             input$unit_method,
             input$eval_con)
-     
+       
         p<-Tool5fig(df_eval(), input$Conc_goal, Lsource1(), Ltot(), input$CIvalue1, "Projected",input$eval_well,
                     input$unit_method,input$USorSI,sen = sen_lm()[[1]],gwv=NULL,Rate_bio=NULL,projection_state=input$eval_con)
         
@@ -1378,8 +1417,10 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$ts_plot2_2 <- renderPlotly({
         validate(need(d_conc_tool5(), "Please enter data into the Data Input tab (Step 1)."))
+        #validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        #validate(need(sum(table(df()$State)>0,na.rm=TRUE)==2, "Either pre- or post-remediation has only one data point. Please consider adding more wells for this analysis")) 
         validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
-        
+
         req(df(),
             Ltot(),
             gwv(),
@@ -1393,8 +1434,10 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$ts_plot3_1 <- renderPlotly({
         validate(need(d_conc_tool5(), "Please enter data into the Data Input tab (Step 1)."))
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        validate(need((table(df()$State=='PostRem')['TRUE']>1)==TRUE, "Post-remediation has only one data point. Please consider adding more wells for this analysis")) 
         validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
-        
+
         req(df(),
             sen_lm(),
             Ltot(),
@@ -1408,8 +1451,10 @@ PlumeZoneServer <- function(id,data_input,nav) {
       
       output$ts_plot3_2 <- renderPlotly({
         validate(need(d_conc_tool5(), "Please enter data into the Data Input tab (Step 1)."))
+        validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
+        validate(need((table(df()$State=='PostRem')['TRUE']>1)==TRUE, "Post-remediation has only one data point. Please consider adding more wells for this analysis")) 
         validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
-        
+
         req(df(),
             sen_lm(),
             Ltot(),

@@ -22,9 +22,9 @@ sen_trend <- function(df_series){
 # Notes: Need at least 2 samples to run (more are recommended)
 sen_trend_distance <- function(df_series,COC,natural = NULL){
   # Convert Date to numeric
-
   count =1
-  for (i in unique(na.omit(df_series$State))){
+
+  for (i in c("PreRem","PostRem")){
     if ("COC"%in%colnames(df_series)){
       df_seriesA <-df_series%>%filter(COC%in%COC&State==i)
     }else{
@@ -38,19 +38,27 @@ sen_trend_distance <- function(df_series,COC,natural = NULL){
       Concentration <- log10(df_seriesA$Concentration)
     }
     
-    
     # Median based Linear Model
+    if(nrow(df_seriesA)>1)
+    {
+      result <- lm(Concentration ~ Distance)}
+      
+      if (count ==1&nrow(df_seriesA)>1){
+        sen_lm <-result
+        count =2
+      }else if (count ==1&nrow(df_seriesA)<=1){
+        sen_lm<-'none'
+        count =2
+      }
+      else{
+        sen_lm<-list(sen_lm,result)
+      }
     
-    result <- mblm(Concentration ~ Distance)
+
     
-    if (count ==1){
-      sen_lm <-result
-      count =2
-    }else{
-      sen_lm<-list(sen_lm,result)
-    }
+    
   }
-  
+
   return(sen_lm)
 } # end sen_trend_distance
 

@@ -174,12 +174,13 @@ Data_Input_Server <- function(id,Plume,nav) {
           temp_data2<-d_conc()
         }
 
-        rhandsontable(temp_data2, rowHeaders = NULL, width = 1200, height = 600) %>%
+        rhandsontable(temp_data2, rowHeaders = NULL, width = 1400, height = 600) %>%
           hot_cols(columnSorting = TRUE) %>%
           hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
       })
       
       output$conc_time_data_tool5 <- renderRHandsontable({
+        #validate(need(sum(colSums(d_conc_tool5()==0,na.rm=TRUE))==0, "Please remove 0 from the table"))
         if ('Date'%in%colnames(d_conc_tool5())){
           temp_data2_tool5<-d_conc_tool5()%>%
             rename(`Date (Month/Day/Year)`=Date)
@@ -187,14 +188,14 @@ Data_Input_Server <- function(id,Plume,nav) {
           temp_data2_tool5<-d_conc_tool5()
         }
 
-        rhandsontable(temp_data2_tool5, rowHeaders = NULL, width = 1200, height = 600) %>%
+        rhandsontable(temp_data2_tool5, rowHeaders = NULL, width = 1400, height = 600) %>%
           hot_cols(columnSorting = TRUE) %>%
           hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
       })
       
       output$mw_data <- renderRHandsontable({
-        rhandsontable(d_loc(), rowHeaders = NULL, width = 1200, height = 600) %>%
-          hot_cols(columnSorting = TRUE) %>%
+        rhandsontable(d_loc(), rowHeaders = NULL, width = 1400, height = 500) %>%
+          hot_cols(columnSorting = TRUE,colWidths='150') %>%
           hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
       })
       

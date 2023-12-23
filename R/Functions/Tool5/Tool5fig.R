@@ -12,10 +12,10 @@ Tool5fig <- function(df_eval,C_goal, Lsource1, Ltot, CI, State,eval_well,
                      unit_method,USorSI,
                      sen = NULL,gwv=NULL,Rate_bio=NULL,projection_state=NULL){
 
-  max_raw = max(10^(ceiling(log10(df_eval$Concentration))))
-  min_raw = min(10^(floor(log10(df_eval$Concentration))))
-  max_dist = max(10^(ceiling(log10(df_eval$Distance))))
-  min_dist = min(10^(floor(log10(df_eval$Distance))))
+  max_raw = max(10^(ceiling(log10(df_eval$Concentration))),na.rm=TRUE)
+  min_raw = min(10^(floor(log10(df_eval$Concentration))),na.rm=TRUE)
+  max_dist = max(10^(ceiling(log10(df_eval$Distance))),na.rm=TRUE)
+  min_dist = min(10^(floor(log10(df_eval$Distance))),na.rm=TRUE)
   if (State!='Lab-Based'){
 
 

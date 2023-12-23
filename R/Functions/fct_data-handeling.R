@@ -59,6 +59,7 @@ data_merge <- function(d, d_mw,conc_name="Concentration"){
 
 # handling the well information
 data_wellinfo<-function(temp_mw_info,USorSI=NULL,sourcewell=NULL,welllist=NULL){
+
   if("Distance from Source (ft)"%in%colnames(temp_mw_info)){
     temp_mw_info <- temp_mw_info%>%
       rename(`Distance from Source (m)` = "Distance from Source (ft)")%>%
@@ -98,14 +99,16 @@ data_wellinfo<-function(temp_mw_info,USorSI=NULL,sourcewell=NULL,welllist=NULL){
   
   if (is.null(welllist)){
     temp_mw_info <- temp_mw_info%>%
-      mutate(`Distance from Source (m)` = ifelse(`Monitoring Wells`%in%c(colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],"Point of Compliance"),
-                                                 sqrt((Easting-source_coord$Easting)^(2)+
-                                                        (Northing-source_coord$Northing)^(2)),NA))
+      mutate(`Distance from Source (m)` = sqrt((Easting-source_coord$Easting)^(2)+(Northing-source_coord$Northing)^(2)))
+                                          #ifelse(`Monitoring Wells`%in%c(colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],"Point of Compliance"),
+                                          #       sqrt((Easting-source_coord$Easting)^(2)+
+                                          #              (Northing-source_coord$Northing)^(2)),NA))
   }else{
     temp_mw_info <- temp_mw_info%>%
-      mutate(`Distance from Source (m)` = ifelse(`Monitoring Wells`%in%c(welllist,"Point of Compliance"),
-                                                 sqrt((Easting-source_coord$Easting)^(2)+
-                                                        (Northing-source_coord$Northing)^(2)),NA))
+      mutate(`Distance from Source (m)` =  sqrt((Easting-source_coord$Easting)^(2)+(Northing-source_coord$Northing)^(2)))
+                                            #ifelse(`Monitoring Wells`%in%c(welllist,"Point of Compliance"),
+                                            #     sqrt((Easting-source_coord$Easting)^(2)+
+                                            #            (Northing-source_coord$Northing)^(2)),NA))
   }
 
   # convert from ft to meter
@@ -158,14 +161,16 @@ update_distance <- function(temp_mw_info,temp_data_tool5){
   
   ifelse(grepl('us-ft',projcheck),
          temp_mw_info <- temp_mw_info%>%
-           mutate(`Distance from Source (ft)` = ifelse(`Monitoring Wells`%in%c(colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],'Point of Compliance'),
-                                                       sqrt((Easting-source_coord$Easting)^(2)+
-                                                              (Northing-source_coord$Northing)^(2)),NA)
+           mutate(`Distance from Source (ft)` =  sqrt((Easting-source_coord$Easting)^(2)+(Northing-source_coord$Northing)^(2))
+                    #ifelse(`Monitoring Wells`%in%c(colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],'Point of Compliance'),
+                    #                                   sqrt((Easting-source_coord$Easting)^(2)+
+                    #                                          (Northing-source_coord$Northing)^(2)),NA)
            ),
          temp_mw_info <- temp_mw_info%>%
-           mutate(`Distance from Source (m)` = ifelse(`Monitoring Wells`%in%c(colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],'Point of Compliance'),
-                                                      sqrt((Easting-source_coord$Easting)^(2)+
-                                                             (Northing-source_coord$Northing)^(2)),NA)
+           mutate(`Distance from Source (m)` =  sqrt((Easting-source_coord$Easting)^(2)+(Northing-source_coord$Northing)^(2))
+                                              #ifelse(`Monitoring Wells`%in%c(colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],'Point of Compliance'),
+                                              #        sqrt((Easting-source_coord$Easting)^(2)+
+                                              #               (Northing-source_coord$Northing)^(2)),NA)
            ) 
   )
   return(temp_mw_info)
