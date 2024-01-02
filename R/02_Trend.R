@@ -417,7 +417,7 @@ TrendServer <- function(id, data_input, nav) {
         req(d_loc(),
             d_conc(),
             input$select_mw_group)
-        browser()
+
         if (input$select_mw_group=="All Monitoring Wells"){
           COC_unique<-d_loc()
           COC_unique<-d_conc()%>%filter(WellID%in%COC_unique$`Monitoring Wells`)

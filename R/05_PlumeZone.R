@@ -1059,7 +1059,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
 
         setBorderColor(valueBox(
           "Without Confidence Limit",
-          abs(signif(rate_constant_pre,2))),
+          -1*(signif(rate_constant_pre,2))),
           'black'
           )
         
@@ -1078,7 +1078,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
 
         setBorderColor(valueBox(
           "With Confidence Limit",
-          abs(signif(rate_constant_pre_CI,2))
+          -1*(signif(rate_constant_pre_CI,2))
         ),'black'      )      })
     
       output$vbox1_3 <- renderValueBox({
@@ -1161,7 +1161,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         rate_constant_pre=as.numeric(d_ratio()/gwv())
         setBorderColor(valueBox(
           "Without Confidence Limit",
-          abs(signif(rate_constant_pre,2))
+          -1*(signif(rate_constant_pre,2))
         ),
         'black'
         )
@@ -1173,7 +1173,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         rate_constant_pre_CI = as.numeric(d_CI()/gwv())
         setBorderColor(valueBox(
           "With Confidence Limit",
-          abs(signif(rate_constant_pre_CI,2))
+          -1*(signif(rate_constant_pre_CI,2))
         ),
         'black'
         )
@@ -1259,7 +1259,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         
         setBorderColor(valueBox(
           "Without Confidence Limit",
-          abs(signif(rate_constant_pre,2))
+          -1*(signif(rate_constant_pre,2))
         ),
         'black'
         )
@@ -1278,7 +1278,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         rate_constant_pre_CI = confint(sen_lm()[[2]],level=CIvalue1*2-1)[[4]]
         setBorderColor(valueBox(
           "With Confidence Limit",
-          abs(signif(rate_constant_pre_CI,2))
+          -1*(signif(rate_constant_pre_CI,2))
         ),
         'black'
         )
