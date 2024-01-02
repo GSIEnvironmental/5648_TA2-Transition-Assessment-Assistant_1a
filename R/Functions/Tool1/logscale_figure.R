@@ -8,7 +8,7 @@
 # check the sliders
 logscale_figure <- function(df_series, name,sen = NULL, bp = NULL,fit,CI,unit){
   
-
+  
   # create y axis as log
   tval <- sort(as.vector(sapply(seq(1,9), 
                                 function(x) 
@@ -49,13 +49,13 @@ logscale_figure <- function(df_series, name,sen = NULL, bp = NULL,fit,CI,unit){
                            (sen[["Period 1"]]$model$Date-sen[["Period 1"]]$model$Date[1])*
                           est_period1["UCL"]),
                 line = list(color = 'rgb(31,150,180)', widthh=0.5, dash="dot"),
-                name = paste0(as.character(CI*100),"% CI",sep=''))%>%
-      add_lines(x = as.Date(sen[["Period 1"]]$model$Date, '1970-01-01'), 
-                y = 10^(fitted(sen[["Period 1"]])[1]+
-                          (sen[["Period 1"]]$model$Date-sen[["Period 1"]]$model$Date[1])*
-                          est_period1["LCL"]),
-                line = list(color = 'rgb(31,150,180)', widthh=0.5, dash="dot"),
-                name = paste0(as.character(100-CI*100),"% CI",sep=''))
+                name = paste0(as.character(CI*100),"% CI",sep=''))#%>%
+      # add_lines(x = as.Date(sen[["Period 1"]]$model$Date, '1970-01-01'), 
+      #           y = 10^(fitted(sen[["Period 1"]])[1]+
+      #                     (sen[["Period 1"]]$model$Date-sen[["Period 1"]]$model$Date[1])*
+      #                     est_period1["LCL"]),
+      #           line = list(color = 'rgb(31,150,180)', widthh=0.5, dash="dot"),
+      #           name = paste0(as.character(100-CI*100),"% CI",sep=''))
     
     p <- p %>%
       add_lines(x = as.Date(sen[["Period 2"]]$model$Date, '1970-01-01'), y = 10^(fitted(sen[["Period 2"]])),
@@ -66,13 +66,13 @@ logscale_figure <- function(df_series, name,sen = NULL, bp = NULL,fit,CI,unit){
                           (sen[["Period 2"]]$model$Date-sen[["Period 2"]]$model$Date[1])*
                           est_period2["UCL"]),
                 line = list(color = 'rgb(31,150,180)', widthh=0.5, dash="dot"),
-                name = paste0(as.character(CI*100),"% CI",sep=''))%>%
-      add_lines(x = as.Date(sen[["Period 2"]]$model$Date, '1970-01-01'), 
-                y = 10^(fitted(sen[["Period 2"]])[1]+
-                          (sen[["Period 2"]]$model$Date-sen[["Period 2"]]$model$Date[1])*
-                          est_period2["LCL"]),
-                line = list(color = 'rgb(31,150,180)', widthh=0.5, dash="dot"),
-                name = paste0(as.character(100-CI*100),"% CI",sep=''))
+                name = paste0(as.character(CI*100),"% CI",sep=''))#%>%
+      # add_lines(x = as.Date(sen[["Period 2"]]$model$Date, '1970-01-01'), 
+      #           y = 10^(fitted(sen[["Period 2"]])[1]+
+      #                     (sen[["Period 2"]]$model$Date-sen[["Period 2"]]$model$Date[1])*
+      #                     est_period2["LCL"]),
+      #           line = list(color = 'rgb(31,150,180)', widthh=0.5, dash="dot"),
+      #           name = paste0(as.character(100-CI*100),"% CI",sep=''))
   }else{
     est = calculate_CI(fit$`Entire Record`,0.95)
     p <- p %>%
@@ -84,13 +84,13 @@ logscale_figure <- function(df_series, name,sen = NULL, bp = NULL,fit,CI,unit){
                           (sen[["Entire Record"]]$model$Date-sen[["Entire Record"]]$model$Date[1])*
                           est["UCL"]),
                 line = list(color = 'rgb(31,150,180)', widthh=0.5, dash="dot"),
-                name = paste0(as.character(CI*100),"% CI",sep=''))%>%
-      add_lines(x = as.Date(sen[["Entire Record"]]$model$Date, '1970-01-01'), 
-                y = 10^(fitted(sen[["Entire Record"]])[1]+
-                          (sen[["Entire Record"]]$model$Date-sen[["Entire Record"]]$model$Date[1])*
-                          est["LCL"]),
-                line = list(color = 'rgb(31,150,180)', widthh=0.5, dash="dot"),
-                name = paste0(as.character(100-CI*100),"% CI",sep=''))
+                name = paste0(as.character(CI*100),"% CI",sep=''))#%>%
+      # add_lines(x = as.Date(sen[["Entire Record"]]$model$Date, '1970-01-01'), 
+      #           y = 10^(fitted(sen[["Entire Record"]])[1]+
+      #                     (sen[["Entire Record"]]$model$Date-sen[["Entire Record"]]$model$Date[1])*
+      #                     est["LCL"]),
+      #           line = list(color = 'rgb(31,150,180)', widthh=0.5, dash="dot"),
+      #           name = paste0(as.character(100-CI*100),"% CI",sep=''))
   }
 
   # format the figure

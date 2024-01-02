@@ -197,8 +197,7 @@ Asymptote_Analysis <- function(df_series, sen,CIlevel,alt){
   CI <- as.data.frame(t(confint.mblm(sen[["Period 2"]], 'Date', level=CIlevel)))
 
   Asymptotic_2 <- ifelse((CI[1, "Date"] <= 0 & 
-                            CI[2, "Date"] >= 0 & 
-                            pvalue_fit2 < 0.05), "YES", "NO")
+                            CI[2, "Date"] >= 0), "YES", "NO")
   
   # 3. Is the rate of the first period you selected more than two times the second rate?
   Asymptotic_3 <- ifelse(Ratio_fit1_fit2 > 200, "YES", "NO")

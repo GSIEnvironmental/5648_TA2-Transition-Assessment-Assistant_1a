@@ -7,7 +7,6 @@
 # regression model for each averaged/geomean database from regression_fitness
 # check the sliders
 logscale_figure <- function(df_series,regression_fitness,date_slider1,date_slider2){
-  
   # reassign the name of each data frame for all period, first period, and second period
   for (var in 1:length(names(df_series))){
     nam<-names(df_series)[var]
@@ -79,7 +78,6 @@ logscale_figure <- function(df_series,regression_fitness,date_slider1,date_slide
       )%>%add_lines( x= ~fit2$model$Date, y = 10^(fitted(fit2)))
     
   }
-  
   # format the figure
   p<-p%>%
     layout(

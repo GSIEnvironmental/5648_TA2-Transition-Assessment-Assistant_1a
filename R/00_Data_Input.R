@@ -106,8 +106,9 @@ Data_Input_Server <- function(id,Plume,nav) {
       d_loc <- reactiveVal(temp_mw_info)
       
       observeEvent(input$mw_data,{
+
         B<-hot_to_r(input$mw_data)
-        if (sum(B$`Well Grouping`=='Source Well')==1){
+        if (sum(B$`Well Grouping`=='Source Well',na.rm = TRUE)==1){
           B<-update_distance(B,d_conc_tool5())
         }
         d_loc(B)
@@ -196,7 +197,7 @@ Data_Input_Server <- function(id,Plume,nav) {
       output$mw_data <- renderRHandsontable({
         rhandsontable(d_loc(), rowHeaders = NULL, width = 1400, height = 500) %>%
           hot_cols(columnSorting = TRUE,colWidths='150') %>%
-          hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
+          hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
       })
       
 

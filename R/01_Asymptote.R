@@ -385,22 +385,22 @@ AsymptoteServer <- function(id, data_input, nav) {
                                             (pearson_model<0.2& pearson_model>=0&pvalue_model>=0.05)|(pearson_model<=0& pearson_model>-0.2&pvalue_model>=0.05) ~ 'Very Low Correlation Statistically Not Significant'
                                             )
                  )%>%
-          select(type, rate_model, year_0.1, year_model, year_0.9, pearson_model, pvalue,interpretation)
+          select(type, rate_model, year_model, year_0.9)
+          #select(type, rate_model, year_0.1, year_model, year_0.9, pearson_model, pvalue,interpretation)
     
         gt(cd, rowname_col = "type") %>%
           tab_spanner(label = "Estimated Time-to-Clean",
                       columns = starts_with("year"), gather = T) %>%
           cols_label(rate_model = HTML("First Order Source Attenuation Rates<br>(per year)"),
-                     year_0.1 = "Lower Bound Year",
+                     #year_0.1 = "Lower Bound Year",
                      year_model = "Year",
-                     year_0.9 = "Upper Bound Year",
-                     pearson_model = HTML("Pearson's<br>Correlation<br>Coefficient (r)"),
-                     pvalue = 'p-value',
-                     interpretation = HTML('Correlation<br>Strength')
+                     year_0.9 = "Upper Bound Year"
+                     #pearson_model = HTML("Pearson's<br>Correlation<br>Coefficient (r)"),
+                     #pvalue = 'p-value',
+                     #interpretation = HTML('Correlation<br>Strength')
                      ) %>%
           fmt_number(columns = rate_model, n_sigfig = 3) %>%
           tab_source_note(source_note = "Lower and upper bound years based on 95% confidence interval.")%>%
-          tab_source_note(source_note = "Cells says increasing is where it had a positive first order attenuation rate.") %>%
           tab_style(style = style_body(),
                     locations = cells_body()) %>%
           tab_style(style = style_col_labels(),
@@ -442,11 +442,11 @@ AsymptoteServer <- function(id, data_input, nav) {
         
         results <- asy_results()
         
-        cd <- data.frame(LOE = c("1. Are the two slopes for the two periods significantly different?",
-                                 "2. Is the rate for period 2 not significantly different than 0?",
-                                 "3. Is the rate of the first period more than two times the second rate?",
+        cd <- data.frame(LOE = c("1. Are the two rates of attenuation for the two periods significantly different?",
+                                 "2. Is attenuation rate in period 2 significantly close to 0?",
+                                 "3. Is the attenuation rate of the first period more than two times the second rate?",
                                  "4. Is the the absolute difference of last points on each regression line is greater than 10?",
-                                 "5. Is the period 2 rate less than 0.0693 per year (10 year half-life)?"),
+                                 "5. Is the period 2 attenuation rate less than 0.0693 per year (10 year half-life)?"),
                          Condition = 1:5)
         
         cd <- left_join(cd, results, by = "Condition") %>% select(-Condition) %>%

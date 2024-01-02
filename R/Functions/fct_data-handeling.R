@@ -135,43 +135,50 @@ update_distance <- function(temp_mw_info,temp_data_tool5){
   # populate lat/long if data is missing
 
   for (j in 1:nrow(temp_mw_info)){
-    if (is.na(temp_mw_info$Latitude[j])||is.na(temp_mw_info$Longitude[j])){
-      clip_mw_info <- temp_mw_info[,c("Easting","Northing")][j,1:2]
-      coordinates(clip_mw_info) <- ~ Easting  + Northing
-      proj4string(clip_mw_info) <- CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j]))
-      clip_mw_info <- spTransform(clip_mw_info, CRS("+init=epsg:4326"))
-      temp_mw_info$Latitude[j] = clip_mw_info@coords[2]
-      temp_mw_info$Longitude[j] = clip_mw_info@coords[1]
+    if(is.na(temp_mw_info$Latitude[j])&is.na(temp_mw_info$Northing[j])||
+       is.na(temp_mw_info$Longitude[j])&is.na(temp_mw_info$Easting[j])){
+      temp_mw_info = temp_mw_info
+    }else{
+      if (is.na(temp_mw_info$Latitude[j])||is.na(temp_mw_info$Longitude[j])){
+        clip_mw_info <- temp_mw_info[,c("Easting","Northing")][j,1:2]
+        coordinates(clip_mw_info) <- ~ Easting  + Northing
+        proj4string(clip_mw_info) <- CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j]))
+        clip_mw_info <- spTransform(clip_mw_info, CRS("+init=epsg:4326"))
+        temp_mw_info$Latitude[j] = clip_mw_info@coords[2]
+        temp_mw_info$Longitude[j] = clip_mw_info@coords[1]
+      }
+      if (is.na(temp_mw_info$Easting[j])||is.na(temp_mw_info$Northing[j])){
+        clip_mw_info <- temp_mw_info[,c("Longitude","Latitude")][j,1:2]
+        coordinates(clip_mw_info) <- ~ Longitude  + Latitude
+        proj4string(clip_mw_info) <- CRS("+init=epsg:4326")
+        clip_mw_info <- spTransform(clip_mw_info, CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j])))
+        temp_mw_info$Northing[j] = clip_mw_info@coords[2]
+        temp_mw_info$Easting[j] = clip_mw_info@coords[1]
+      }
+      source_coord = temp_mw_info%>%filter(`Well Grouping`=='Source Well')
+      
+      projcheck = proj4string(CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j])))
+      
+      temp_mw_info <- temp_mw_info %>% select(-contains("Distance"))
+      
+      ifelse(grepl('us-ft',projcheck),
+             temp_mw_info <- temp_mw_info%>%
+               mutate(`Distance from Source (ft)` =  sqrt((Easting-source_coord$Easting)^(2)+(Northing-source_coord$Northing)^(2))
+                      #ifelse(`Monitoring Wells`%in%c(colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],'Point of Compliance'),
+                      #                                   sqrt((Easting-source_coord$Easting)^(2)+
+                      #                                          (Northing-source_coord$Northing)^(2)),NA)
+               ),
+             temp_mw_info <- temp_mw_info%>%
+               mutate(`Distance from Source (m)` =  sqrt((Easting-source_coord$Easting)^(2)+(Northing-source_coord$Northing)^(2))
+                      #ifelse(`Monitoring Wells`%in%c(colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],'Point of Compliance'),
+                      #        sqrt((Easting-source_coord$Easting)^(2)+
+                      #               (Northing-source_coord$Northing)^(2)),NA)
+               ) 
+      )
     }
-    if (is.na(temp_mw_info$Easting[j])||is.na(temp_mw_info$Northing[j])){
-      clip_mw_info <- temp_mw_info[,c("Longitude","Latitude")][j,1:2]
-      coordinates(clip_mw_info) <- ~ Longitude  + Latitude
-      proj4string(clip_mw_info) <- CRS("+init=epsg:4326")
-      clip_mw_info <- spTransform(clip_mw_info, CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j])))
-      temp_mw_info$Northing[j] = clip_mw_info@coords[2]
-      temp_mw_info$Easting[j] = clip_mw_info@coords[1]
-    }
-  }
+    
 
-  source_coord = temp_mw_info%>%filter(`Well Grouping`=='Source Well')
-  
-  projcheck = proj4string(CRS(paste0("+init=epsg:",temp_mw_info$EPSG[j])))
-  
-  temp_mw_info <- temp_mw_info %>% select(-contains("Distance"))
-  
-  ifelse(grepl('us-ft',projcheck),
-         temp_mw_info <- temp_mw_info%>%
-           mutate(`Distance from Source (ft)` =  sqrt((Easting-source_coord$Easting)^(2)+(Northing-source_coord$Northing)^(2))
-                    #ifelse(`Monitoring Wells`%in%c(colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],'Point of Compliance'),
-                    #                                   sqrt((Easting-source_coord$Easting)^(2)+
-                    #                                          (Northing-source_coord$Northing)^(2)),NA)
-           ),
-         temp_mw_info <- temp_mw_info%>%
-           mutate(`Distance from Source (m)` =  sqrt((Easting-source_coord$Easting)^(2)+(Northing-source_coord$Northing)^(2))
-                                              #ifelse(`Monitoring Wells`%in%c(colnames(temp_data_tool5)[6:ncol(temp_data_tool5)],'Point of Compliance'),
-                                              #        sqrt((Easting-source_coord$Easting)^(2)+
-                                              #               (Northing-source_coord$Northing)^(2)),NA)
-           ) 
-  )
+    }
+    
   return(temp_mw_info)
 }
