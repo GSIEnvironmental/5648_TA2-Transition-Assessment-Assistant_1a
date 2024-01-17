@@ -128,6 +128,10 @@ Data_Input_Server <- function(id,Plume,nav) {
             mutate(Event = as.integer(Event))%>%
             #rename(Date = `Date.(Month/Day/Year)`)%>%
             mutate(Date = as.Date(temp_data$Date,origin="1900-01-01",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y")))
+          
+          # replace 0 value to NaN
+          temp_data[temp_data==0]=NA
+          
           d_conc(temp_data)
           
           # tool 5 database  
@@ -138,6 +142,9 @@ Data_Input_Server <- function(id,Plume,nav) {
             mutate(Event = as.integer(Event))%>%
             #rename(Date = `Date.(Month/Day/Year)`)%>%
             mutate(Date = as.Date(temp_data_tool5$Date,origin="1900-01-01",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y")))
+          
+          # replace 0 value to NaN
+          temp_data_tool5[temp_data_tool5==0]=NA
           
           d_conc_tool5(temp_data_tool5)
           

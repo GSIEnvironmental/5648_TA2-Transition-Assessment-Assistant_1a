@@ -10,13 +10,15 @@
 * Concentration and Time Data is only the data used for Tool 5 should be tabulated in here. 
 * In the column "State", please enter either Pre-Remediation "PreRem", Post-Remediation "Post Rem". 
 * Add Latitude and Longitude information for the Monitoring Wells to the table under the tab 'Monitoring Well Information'. Adding this information will allow results from Tools 1, 2, and 5 to be mapped.
-* Please see important note to correctly assign the location informations. 
+* In 'Monitoring Well Information' tab, please see important note to correctly assign the location information. 
 * You can download these tables by clicking on the 'Download Input File' button above the table to the right. You can re-load previously saved data by clicking on the 'Upload Saved Data' button and choosing a previously saved data file.
+
 
 <h3><b>How to Edit Data:</b></h3>
 
 * Data can be copied and pasted directly into table by selecting cell(s) and using the keyboard shortcut to paste (Windows: Ctrl + V).
 * Double click cells to edit text.
-* Additional rows and columns can be added or removed by right clicking on cell(s).
+* Additional rows can be added or removed by right clicking on cell(s).
 * Clicking the bottom left corner of selected cell(s) allows the user to drag that information to additional cell(s).
 * Cells highlighted red indicate the value within that cell is not in the correct format (ex. characters are present in column that can only include numerical data). 
+* If monitoring well name needs to be updated, use downloaded file from "Download Input File" button, revise the file with new monitoring well name, then upload the file by using "Upload Saved Data". Same applies if you need to add new columns. 

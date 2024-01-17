@@ -754,8 +754,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       # Source Well Selection Updates -----------------------
       observe({
         req(nav() == "5. Plume Projections")
-        req(d_conc_tool5(),
-            input$select_mw)
+        req(d_conc_tool5())
         choices <- sort(unique(d_conc_tool5()$WellID))
         if (!is.null(input$souce_well)){
           if (any(input$souce_well!='')){
@@ -783,8 +782,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       # Evaluation Well Selection Updates -----------------------
       observe({
         req(nav() == "5. Plume Projections")
-        req(d_conc_tool5(),
-            input$select_mw)
+        req(d_conc_tool5())
         choices <- sort(unique(d_conc_tool5()$WellID))
         if (!is.null(input$eval_well)){
           if (any(input$eval_well!='')){
@@ -955,7 +953,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
             input$eval_well)
  
         df<- d_loc()
-        df<-df%>%filter(`Monitoring Wells`=="Point of Compliance")
+        df<-df%>%filter(`Well Grouping`=="Point of Compliance")
         distance <-ifelse("Distance from Source (m)"%in%colnames(df),
                           df$`Distance from Source (m)`,
                           df$`Distance from Source (ft)`)
@@ -1385,7 +1383,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
           validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
           validate(need((table(df()$State=='PreRem')['TRUE']>1)==TRUE, "Pre-remediation has only one data point. Please consider adding more wells for this analysis")) 
           validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
-          
+
           req(df(),
               sen_lm(),
               Ltot(),

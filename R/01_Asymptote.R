@@ -401,7 +401,7 @@ AsymptoteServer <- function(id, data_input, nav) {
                      ) %>%
           fmt_number(columns = rate_model, n_sigfig = 3) %>%
           tab_source_note(source_note = "Lower and upper bound years based on 95% confidence interval.")%>%
-          tab_source_note(source_note = "Cells says increasing is where it had increasing trend in concentration over time.")%>%
+          tab_source_note(source_note = "Cell says 'increasing' when the apparent concentration trend is increasing over time.")%>%
           tab_style(style = style_body(),
                     locations = cells_body()) %>%
           tab_style(style = style_col_labels(),
