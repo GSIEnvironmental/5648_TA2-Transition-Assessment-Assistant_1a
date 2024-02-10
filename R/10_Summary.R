@@ -32,8 +32,8 @@ SummaryUI <- function(id, label = "010_Summary"){
              tabPanel(HTML("10b Remediation Transition Assessment Index"),
                       fluidRow(style='border-bottom: 5px solid black; text-align:justify;text-justify: inter-word;',
                                HTML("<H1>Tool 10b. Remediation Transition Assessment Index (RTAI)</H1>"),
-                               HTML("<h4>a.	This portion of Tool 10 integrates information from several other tools 
-                                    in this app into a “Remediation Transition Assessment Index (RTAI)”.  This simple 
+                               HTML("<h4>This portion of Tool 10 integrates information from several other tools 
+                                    in this app into a Remediation Transition Assessment Index 'RTAI'.  This simple 
                                     metric reflects the relative persistence of contamination at a site due to matrix 
                                     diffusion and other site-specific considerations.  It summarizes the results from 
                                     each of the tools that have been completed by the user, and then assigns a RTAI value 

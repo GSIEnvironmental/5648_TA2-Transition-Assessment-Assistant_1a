@@ -446,7 +446,7 @@ AsymptoteServer <- function(id, data_input, nav) {
         cd <- data.frame(LOE = c("1. Are the two rates of attenuation for the two periods significantly different?",
                                  "2. Is attenuation rate in period 2 significantly close to 0?",
                                  "3. Is the attenuation rate of the first period more than two times the second rate?",
-                                 "4. Is the the absolute difference of last points on each regression line is greater than 10?",
+                                 "4. Is the the absolute difference of last points on each regression line is less than 10?",
                                  "5. Is the period 2 attenuation rate less than 0.0693 per year (10 year half-life)?"),
                          Condition = 1:5)
         
@@ -586,7 +586,7 @@ AsymptoteServer <- function(id, data_input, nav) {
       output$mw_data <- renderRHandsontable({
         validate(
           need(data_input$d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
-        
+
         loc_name<-data_input$d_loc()%>%
           filter(`Monitoring Wells`%in%input$select_mw|`Well Grouping`%in%input$select_mw)
         

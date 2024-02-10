@@ -70,7 +70,7 @@ checkbox_doc<-function(){
     "Is source remediation predicted to achieve the goal concentration in the source area within a reasonable timeframe (Tool 3)?",
     "What amount of source attenuation would be needed such the source remediation would be needed to reach the goal concentration within a reasonable timeframe (Tool 3 – enter new value for starting concentration)?",
     "When would this source concentration be reached based on the current source attenuation rates (Tool 1)?",
-    "Have you evaluated enhanced attenuation processes for the source area that are potentially feasible for the site (Tool 7)",
+    "Have you evaluated enhanced attenuation processes for the source area that are potentially feasible for the site (Tool 7)?",
     "Have you identified options for reducing contaminant loading (Tool 7b)?",
     "Have you identified options for increasing attenuation capacity (Tool 7b)?",
     "Are the site cleanup objectives based on achieving a goal concentration at a downgradient point of compliance?",
@@ -86,5 +86,5 @@ checkbox_doc<-function(){
 }
 
 checkbox_indent<-function(){
-  c(0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,2,2,0,1,1,1,2,1,1,1)
+  c(0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,2,2,0,1,1,1,2,1,2,2)
 }

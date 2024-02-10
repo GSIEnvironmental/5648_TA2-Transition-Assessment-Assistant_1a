@@ -33,15 +33,17 @@ TrendUI <- function(id, label = "01_Trend"){
                                     #        actionButton(ns("help1"), HTML("?"), style = button_style2))
                                     ), br(),
                            fluidRow(column(10,
-                                           HTML("<h4><b>Step 2.</b> Choose COC.</h4>"),
+                                           HTML("<h4><b>Step 2.</b> Select Well Groupings to be included in analysis.</h4>"),
                                            fluidRow(align = "center",
-                                                    column(12, align = "right", 
-                                                           pickerInput(ns("select_COC"), label = NULL,
-                                                                       choices = c(),
-                                                                       multiple = T,
-                                                                       options = list(`live-search`=TRUE,
-                                                                                      `none-selected-text` = "Select COCs")))))
-                           ),br(),
+                                                    pickerInput(ns("select_mw_group"), label = NULL,
+                                                                choices = c("All Monitoring Wells", "Recent Sample Above Concentration Goal"),
+                                                                selected = "P&T Wells",
+                                                                multiple = F,
+                                                                options = list(`live-search`=TRUE,
+                                                                               `none-selected-text` = "Select Well Groups")))),
+                                    # column(2, align = "left", style = "padding:10px;",
+                                    #        actionButton(ns("help2"), HTML("?"), style = button_style2))
+                           ), br(),
                            fluidRow(column(10,
                                            HTML("<h4><b>Step 3.</b> Select data type to analyze.</h4>"),
                                            fluidRow(align = "center",
@@ -93,17 +95,15 @@ TrendUI <- function(id, label = "01_Trend"){
                                              actionButton(ns("help2_6"), HTML("?"), style = button_style2)))
                              ), # end conditional Panel
                            fluidRow(column(10,
-                                           HTML("<h4><b>Step 4.</b> Select Well Groupings to be included in analysis.</h4>"),
+                                           HTML("<h4><b>Step 4.</b> Choose COC.</h4>"),
                                            fluidRow(align = "center",
-                                                    pickerInput(ns("select_mw_group"), label = NULL,
-                                                                choices = c("All Monitoring Wells", "Recent Sample Above Concentration Goal"),
-                                                                selected = "P&T Wells",
-                                                                multiple = F,
-                                                                options = list(`live-search`=TRUE,
-                                                                               `none-selected-text` = "Select Well Groups")))),
-                                    # column(2, align = "left", style = "padding:10px;",
-                                    #        actionButton(ns("help2"), HTML("?"), style = button_style2))
-                                    ), br(),
+                                                    column(12, align = "right", 
+                                                           pickerInput(ns("select_COC"), label = NULL,
+                                                                       choices = c(),
+                                                                       multiple = T,
+                                                                       options = list(`live-search`=TRUE,
+                                                                                      `none-selected-text` = "Select COCs")))))
+                           ),br(),
                            fluidRow(column(10,
                                            HTML("<h4><b>Step 5.</b> Select method for combining data.</h4>"),
                                            fluidRow(align = "center",
@@ -240,7 +240,7 @@ TrendServer <- function(id, data_input, nav) {
             input$group_method,
             input$select_COC)
         
-        validate(need(!is.na(input$select_COC),"Please choose  (Step 2)."))
+        validate(need(!is.na(input$select_COC),"Please choose  (Step 4)."))
 
         if (input$group_method == 'Mean'){
           df_MW <- d_conc() %>% filter(COC%in%input$select_COC)%>%group_by(WellID, Date) %>%
@@ -436,8 +436,8 @@ TrendServer <- function(id, data_input, nav) {
       output$results_table_1 <- render_gt({
         validate(
           need(d_conc(), "Please enter data into Data Input tab (Step 1)."),
-          need(input$select_COC, "Please select COC (Step 2)."),
-          need(input$select_mw_group, "Please select well groupings (Step 4)."))
+          need(input$select_mw_group, "Please select well groupings (Step 2)."),
+          need(input$select_COC, "Please select COC (Step 4)."))
 
 
         if(input$type == "Concentration"){
@@ -634,7 +634,7 @@ TrendServer <- function(id, data_input, nav) {
         validate(
           need(d_conc(), "Please enter data into Data Input tab (Step 1)."),
           need(ifelse(input$select_plot_group == "Grouped Wells",
-                      !is.null(input$select_mw_group), T), "Please select well groupings (Step 4)."))
+                      !is.null(input$select_mw_group), T), "Please select well groupings (Step 2)."))
 
         if(input$type == "Concentration"){
 
@@ -674,7 +674,7 @@ TrendServer <- function(id, data_input, nav) {
           need(d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."),
           need(input$select_map, "Please select group to veiw (above)."),
           need(ifelse(sum("Recent Sample Above Concentration Goal" %in% input$select_map) > 0, !is.na(input$conc_goal), T),
-               "Please enter concentration goal (Step 4)."))
+               "Please enter concentration goal (Step 6)."))
         validate(
           need(d_loc()$Latitude & d_loc()$Longitude,
           "Please enter Latitude and Longitude information into the Monitoring Well Information in the Data Input tab (Step 1)."))

@@ -112,20 +112,20 @@ hline <- function(y = 0, color = "black") {
 
 # Data Input ---------------------
 
-temp_data <- read.xlsx("./data/Concentration_Data11_203_2023_EW3.xlsx", sheet = "Concentration_Time_Data", startRow = 1,
+temp_data <- read.xlsx("./data/Concentration_Data_Plattsburgh_example.xlsx", sheet = "Concentration_Time_Data", startRow = 1,
                        check.names = F) %>%
   mutate(Event = as.integer(Event),
          Date = as.Date(Date, origin="1899-12-30",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y")))
 # replace 0 with NaN
 temp_data[temp_data==0]=NA
 
-temp_data_tool5 <- read.xlsx("./data/Concentration_Data11_203_2023_EW3.xlsx", sheet = "Tool5_Concentration_Time_Data", startRow = 1,
+temp_data_tool5 <- read.xlsx("./data/Concentration_Data_Plattsburgh_example.xlsx", sheet = "Tool5_Concentration_Time_Data", startRow = 1,
                        check.names = F) %>%
   mutate(Event = as.integer(Event),
          Date = as.Date(Date, origin="1899-12-30",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y")))
 # replace 0 with NaN
 temp_data_tool5[temp_data_tool5==0]=NA
-temp_mw_info <- read.xlsx("./data/Concentration_Data11_203_2023_EW3.xlsx", sheet = "Monitoring_Well_Information", startRow = 1,
+temp_mw_info <- read.xlsx("./data/Concentration_Data_Plattsburgh_example.xlsx", sheet = "Monitoring_Well_Information", startRow = 1,
                        check.names = F, sep.names = " ")
 ##before data_template.xlsx
 temp_boring <- read_excel("./data/5648_Dummy_Borling.xlsx")

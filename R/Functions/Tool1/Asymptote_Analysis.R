@@ -210,7 +210,7 @@ Asymptote_Analysis <- function(df_series, sen,CIlevel,alt){
   df_2_tail <- df_summary %>% filter(period == "Period 2") %>% pull(Concentration)
   df_1_tail <- df_summary %>% filter(period == "Period 1") %>% pull(Concentration)
 
-  Asymptotic_4 <- ifelse(abs(df_2_tail - df_1_tail) > 10, 'YES', 'NO')
+  Asymptotic_4 <- ifelse(abs(df_2_tail - df_1_tail) > 10, 'NO', 'YES')
   
   # 5. Is the Period 2 rate from less than 0.0693 per year (10 year half-life)?
   Asymptotic_5 <- ifelse(abs(sen[["Period 2"]]$coefficients[2]) * 365 < 0.0693 &

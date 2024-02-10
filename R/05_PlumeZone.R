@@ -1159,7 +1159,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         rate_constant_pre=as.numeric(d_ratio()/gwv())
         setBorderColor(valueBox(
           "Without Confidence Limit",
-          -1*(signif(rate_constant_pre,2))
+          signif(rate_constant_pre,2)
         ),
         'black'
         )
@@ -1171,7 +1171,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         rate_constant_pre_CI = as.numeric(d_CI()/gwv())
         setBorderColor(valueBox(
           "With Confidence Limit",
-          -1*(signif(rate_constant_pre_CI,2))
+          signif(rate_constant_pre_CI,2)
         ),
         'black'
         )
