@@ -9,10 +9,13 @@
 
 
 data_long <- function(d,con_name = "Concentration"){
+
     if("Date (Month/Day/Year)"%in%colnames(d)){
       cd <- d %>% rename(Date = `Date (Month/Day/Year)`)
+      browser()
     }else{
       cd <- d
+      browser()
     }
     if ("State"%in%colnames(d)){
       cd <- cd %>%

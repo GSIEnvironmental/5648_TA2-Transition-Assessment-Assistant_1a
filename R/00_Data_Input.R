@@ -95,6 +95,7 @@ Data_Input_Server <- function(id,Plume,nav) {
       
       observeEvent(input$conc_time_data,{
         d_conc(hot_to_r(input$conc_time_data))
+        browser()
       })
       
       d_conc_tool5 <- reactiveVal(temp_data_tool5)
@@ -133,7 +134,7 @@ Data_Input_Server <- function(id,Plume,nav) {
           temp_data[temp_data==0]=NA
           
           d_conc(temp_data)
-          
+          browser()
           # tool 5 database  
           temp_data_tool5 <- read.xlsx(file$datapath, sheet = "Tool5_Concentration_Time_Data", startRow = 1,
                                        check.names = F,detectDates=T)
@@ -178,10 +179,12 @@ Data_Input_Server <- function(id,Plume,nav) {
         if ('Date'%in%colnames(d_conc())){
           temp_data2<-d_conc()%>%
           rename(`Date (Month/Day/Year)`=Date)
+          browser()
         }else{
           temp_data2<-d_conc()
+          browser()
         }
-
+         browser()
         rhandsontable(temp_data2, rowHeaders = NULL, width = 1400, height = 600) %>%
           hot_cols(columnSorting = TRUE) %>%
           hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
@@ -192,6 +195,7 @@ Data_Input_Server <- function(id,Plume,nav) {
         if ('Date'%in%colnames(d_conc_tool5())){
           temp_data2_tool5<-d_conc_tool5()%>%
             rename(`Date (Month/Day/Year)`=Date)
+          browser()
         }else{
           temp_data2_tool5<-d_conc_tool5()
         }
@@ -219,6 +223,7 @@ Data_Input_Server <- function(id,Plume,nav) {
           if ("Date (Month/Day/Year)"%in%colnames(hot_to_r(input$conc_time_data))){
             temp_data2<-hot_to_r(input$conc_time_data)%>%
               rename(Date=`Date (Month/Day/Year)`)
+            browser()
           }else{
             temp_data2<-d_conc_tool5()
           }
@@ -226,6 +231,7 @@ Data_Input_Server <- function(id,Plume,nav) {
           if ("Date (Month/Day/Year)"%in%colnames(hot_to_r(input$conc_time_data_tool5))){
             temp_data2_tool5<-hot_to_r(input$conc_time_data_tool5)%>%
               rename(Date=`Date (Month/Day/Year)`)
+            browser()
           }else{
             temp_data2_tool5<-d_conc_tool5()
           }
