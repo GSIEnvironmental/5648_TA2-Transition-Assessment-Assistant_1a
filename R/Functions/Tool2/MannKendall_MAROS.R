@@ -1,5 +1,5 @@
 #################################################################
-library(trend)
+#library(trend)
 library(ggsci)
 
 simp <- pal_simpsons("springfield")(12)
