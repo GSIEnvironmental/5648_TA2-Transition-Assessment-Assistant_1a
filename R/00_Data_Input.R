@@ -94,14 +94,19 @@ Data_Input_Server <- function(id,Plume,nav) {
       d_conc <- reactiveVal(temp_data)
       
       observeEvent(input$conc_time_data,{
-        d_conc(hot_to_r(input$conc_time_data))
-        browser()
+        A = hot_to_r(input$conc_time_data)
+        A$`Date (Month/Day/Year)`= as.Date(A$`Date (Month/Day/Year)`,format='%Y-%m-%d')
+        d_conc(A)
+        #d_conc(hot_to_r(input$conc_time_data))
       })
       
       d_conc_tool5 <- reactiveVal(temp_data_tool5)
       
       observeEvent(input$conc_time_data_tool5,{
-        d_conc_tool5(hot_to_r(input$conc_time_data_tool5))
+        A = hot_to_r(input$conc_time_data_tool5)
+        A$`Date (Month/Day/Year)`= as.Date(A$`Date (Month/Day/Year)`,format='%Y-%m-%d')
+        d_conc_tool5(A)
+        #d_conc_tool5(hot_to_r(input$conc_time_data_tool5))
       })
 
       d_loc <- reactiveVal(temp_mw_info)
@@ -134,7 +139,7 @@ Data_Input_Server <- function(id,Plume,nav) {
           temp_data[temp_data==0]=NA
           
           d_conc(temp_data)
-          browser()
+          
           # tool 5 database  
           temp_data_tool5 <- read.xlsx(file$datapath, sheet = "Tool5_Concentration_Time_Data", startRow = 1,
                                        check.names = F,detectDates=T)
@@ -176,18 +181,19 @@ Data_Input_Server <- function(id,Plume,nav) {
       })
       
       output$conc_time_data <- renderRHandsontable({
+
         if ('Date'%in%colnames(d_conc())){
           temp_data2<-d_conc()%>%
           rename(`Date (Month/Day/Year)`=Date)
-          browser()
         }else{
           temp_data2<-d_conc()
-          browser()
         }
-         browser()
+        # to avoid issue with rhansontable
+        temp_data2$`Date (Month/Day/Year)` = as.character(temp_data2$`Date (Month/Day/Year)`)
         rhandsontable(temp_data2, rowHeaders = NULL, width = 1400, height = 600) %>%
+          hot_col("Date (Month/Day/Year)", dateFormat = "YYYY-MM-DD", type = "date")%>%
           hot_cols(columnSorting = TRUE) %>%
-          hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
+          hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
       })
       
       output$conc_time_data_tool5 <- renderRHandsontable({
@@ -195,20 +201,21 @@ Data_Input_Server <- function(id,Plume,nav) {
         if ('Date'%in%colnames(d_conc_tool5())){
           temp_data2_tool5<-d_conc_tool5()%>%
             rename(`Date (Month/Day/Year)`=Date)
-          browser()
         }else{
           temp_data2_tool5<-d_conc_tool5()
         }
-
+        # to avoid issue with rhansontable
+        temp_data2_tool5$`Date (Month/Day/Year)` = as.character(temp_data2_tool5$`Date (Month/Day/Year)`)
         rhandsontable(temp_data2_tool5, rowHeaders = NULL, width = 1400, height = 600) %>%
+          hot_col("Date (Month/Day/Year)", dateFormat = "YYYY-MM-DD", type = "date")%>%
           hot_cols(columnSorting = TRUE) %>%
-          hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
+          hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
       })
       
       output$mw_data <- renderRHandsontable({
         rhandsontable(d_loc(), rowHeaders = NULL, width = 1400, height = 500) %>%
           hot_cols(columnSorting = TRUE,colWidths='150') %>%
-          hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
+          hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
       })
       
 
@@ -219,11 +226,10 @@ Data_Input_Server <- function(id,Plume,nav) {
           paste0("Concentration_Data", ".xlsx")
         },
         content = function(file) {
-        
+
           if ("Date (Month/Day/Year)"%in%colnames(hot_to_r(input$conc_time_data))){
             temp_data2<-hot_to_r(input$conc_time_data)%>%
               rename(Date=`Date (Month/Day/Year)`)
-            browser()
           }else{
             temp_data2<-d_conc_tool5()
           }
@@ -231,7 +237,6 @@ Data_Input_Server <- function(id,Plume,nav) {
           if ("Date (Month/Day/Year)"%in%colnames(hot_to_r(input$conc_time_data_tool5))){
             temp_data2_tool5<-hot_to_r(input$conc_time_data_tool5)%>%
               rename(Date=`Date (Month/Day/Year)`)
-            browser()
           }else{
             temp_data2_tool5<-d_conc_tool5()
           }

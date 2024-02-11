@@ -735,7 +735,9 @@ PlumeZoneServer <- function(id,data_input,nav) {
     
         choices <- sort(unique(d_conc_tool5()$WellID))
         choices2<-c("95MW0201","95MW0212A","95MW0582C","95MW1174A","USFW356108","USFW443104","USFW474147","USFW501102")
-        choices3<-c("30MW0585A","USFW356134","USFW357139","95MW1232A","USFW357081")
+        choices3<-c("34PLTW12","63PLTW20","MW-02-008","MW-02-020","MW-02-023",
+                    "MW-02-042","MW-02-043","MW-02-048","MW-02-083","MW-11-001",
+                    "MW-11-005","MW-2612-10","MW-2612-11")
 
         
         #put back choices2 to choices for default run
