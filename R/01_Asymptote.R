@@ -12,8 +12,8 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                            HTML("<h3><b>What Does this Tool Do?</b></h3>
                            <h4><ol>
                            <li> It calculates source attenuation rates from a monitoring well’s concentration vs. time data.</li> 
-                           <li> Provides a range of time to clean estimates based on a cleanup goal you enter.</li>
-                           <li> Helps you determine if asymptotic conditions are present at this location.</li>
+                           <li> It provides a range of time to clean estimates based on a cleanup goal you enter.</li>
+                           <li> It helps you determine if asymptotic conditions are present at this location.</li>
                                 </ol></h4>")),
                     column(5,
                            HTML("<h3><b>How Does it Work?</b></h3>
@@ -102,7 +102,7 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                     HTML("<h4><b>Key Assumptions</b></h4>
                          <ol>
                          <li> The source attenuation trends can be represented by a first order decay relationship.</li>
-                         <li> The range of the source attenuation rate is bounded by a 90% confidence level</li>
+                         <li> The upper bound of the source attenuation rate is given by the confidence interval selected in Step 7.</li>
                          <li> Five simple rules of thumb (heuristics) can provide evidence that for all practical purposes an asymptote in the concentration vs. time data has been reached.</li></ol>")#,
                     # HTML("<hr class='featurette-divider'>"),
                     # HTML("<h4><b>Authors</b></h4>
@@ -446,7 +446,7 @@ AsymptoteServer <- function(id, data_input, nav) {
         cd <- data.frame(LOE = c("1. Are the two rates of attenuation for the two periods significantly different?",
                                  "2. Is attenuation rate in period 2 significantly close to 0?",
                                  "3. Is the attenuation rate of the first period more than two times the second rate?",
-                                 "4. Is the the absolute difference of last points on each regression line is less than 10?",
+                                 "4. Is the the absolute difference between the last points on each regression line less than 10?",
                                  "5. Is the period 2 attenuation rate less than 0.0693 per year (10 year half-life)?"),
                          Condition = 1:5)
         

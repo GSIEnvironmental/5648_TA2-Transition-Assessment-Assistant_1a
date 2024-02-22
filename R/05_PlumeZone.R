@@ -75,7 +75,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                                     options = list(`live-search`=TRUE,
                                                                                    `none-selected-text` = "Select Wells"))
                                                         ),
-                                               HTML("<h4><i>Select the evaluation well's remediation condition. If data exists in only one condition, it will be automatically chosen, regardless of your selection here.</i></h4>"),
+                                               HTML("<h4><i>Select the evaluation well's remediation condition. If data exists for only one condition, it will be automatically chosen, regardless of your selection here.</i></h4>"),
                                                fluidRow(align = "center",
                                                         pickerInput(ns("eval_con"), label = NULL,
                                                                     choices = c("PreRemediation","Post Remediation"),
@@ -83,6 +83,7 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                                     options = list(`live-search`=TRUE,
                                                                                    `none-selected-text` = "Select Wells"))
                                                )
+                                               
                                                
                                                # fluidRow(align = "center",
                                                #          column(6, align = "right", 
@@ -92,10 +93,12 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                                                #          column(6, align = "left", 
                                                #                 HTML("<h4>m</h4>")),br()
                                                #          )
-                                               )
+                                               ),
+                                        column(2, align = "left", style = "padding:10px;",
+                                               actionButton(ns("help5thTool9"), HTML("?"), style = button_style2))
                                         ), br(),
                                fluidRow(column(10,
-                                               HTML("<h4><b>Step 5.</b> Select Wells to be included in the center line.</h4>"),
+                                               HTML("<h4><b>Step 5.</b> Select wells to be included in the center line.</h4>"),
                                                fluidRow(align = "center",
                                                         pickerInput(ns("select_mw"), label = NULL,
                                                                     choices = c(""),
@@ -1367,7 +1370,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
       #----- help function 
       #----- help function 
       lapply(
-        X = 1:8,
+        X = 1:9,
         FUN = function(i){
           observeEvent(input[[paste0("help5thTool", i)]], {
             flname = HelpDoclist_Tool5()[i*3]
@@ -1384,7 +1387,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
           #validate(need(sum(colSums(d_conc_tool5()==0,na.rm=TRUE))==0, "Please remove 0 from the table"))
           validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
           validate(need((table(df()$State=='PreRem')['TRUE']>1)==TRUE, "Pre-remediation has only one data point. Please consider adding more wells for this analysis")) 
-          validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
+          validate(need(df(), "Please select COCs (Step 7) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
 
           req(df(),
               sen_lm(),
@@ -1401,7 +1404,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         validate(need(d_conc_tool5(), "Please enter data into the Data Input tab (Step 1)."))
         validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
         validate(need((table(df()$State=='PreRem')['TRUE']>1)==TRUE, "Pre-remediation has only one data point. Please consider adding more wells for this analysis")) 
-        validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
+        validate(need(df(), "Please select COCs (Step 7) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
 
         req(df(),
             sen_lm(),
@@ -1419,7 +1422,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         validate(need(d_conc_tool5(), "Please enter data into the Data Input tab (Step 1)."))
         #validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
         #validate(need(sum(table(df()$State)>0,na.rm=TRUE)==2, "Either pre- or post-remediation has only one data point. Please consider adding more wells for this analysis")) 
-        validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
+        validate(need(df(), "Please select COCs (Step 7) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
 
         req(df(),
             Ltot(),
@@ -1436,7 +1439,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         validate(need(d_conc_tool5(), "Please enter data into the Data Input tab (Step 1)."))
         validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
         validate(need((table(df()$State=='PostRem')['TRUE']>1)==TRUE, "Post-remediation has only one data point. Please consider adding more wells for this analysis")) 
-        validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
+        validate(need(df(), "Please select COCs (Step 7) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
 
         req(df(),
             sen_lm(),
@@ -1453,7 +1456,7 @@ PlumeZoneServer <- function(id,data_input,nav) {
         validate(need(d_conc_tool5(), "Please enter data into the Data Input tab (Step 1)."))
         validate(need(sum(df()$Concentration>0,na.rm=TRUE)==length(df()$Concentration), "Please remove 0 from the table")) 
         validate(need((table(df()$State=='PostRem')['TRUE']>1)==TRUE, "Post-remediation has only one data point. Please consider adding more wells for this analysis")) 
-        validate(need(df(), "Please select COCs (Step 6) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
+        validate(need(df(), "Please select COCs (Step 7) and select one of the Rate Constant tabs to see projection of concentration vs. distance."))
 
         req(df(),
             sen_lm(),

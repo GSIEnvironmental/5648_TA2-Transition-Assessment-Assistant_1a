@@ -15,8 +15,8 @@ TrendUI <- function(id, label = "01_Trend"){
                            <li> Source wells</li> 
                            <li> Mid-plume wells</li>
                            <li> Downgradient wells (or any other grouping of wells)</li>
-                           The tool then uses a non-parameteric trend test (Mann-Kendall Test) to determine if increasing or decreasing trends are present.
-                           </ol></h4>")),
+                           </ol>
+                           The tool then uses a non-parameteric trend test (Mann-Kendall Test) to determine if increasing or decreasing trends are present.</h4>")),
                     column(5,
                            HTML("<h3><b>How Does it Work?</b></h3>
                            <h4><ol>

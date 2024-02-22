@@ -1,20 +1,20 @@
 
-<h1 class="fit-head" style="font-weight: bold;" >About the TA<sup>2</sup>: THE SERDP <i>TRANSITION ASSESSMENT ASSISTANT</i></h1>
+<h1 class="fit-head" style="font-weight: bold;" >About the TA<sup>2</sup>: THE SERDP <i>TRANSITION ASSESSMENT TEACHING ASSISTANT</i></h1>
 
 <h3><b> Authors </b></h3> 
 
 <h4>
 <ul>
-  <li>Content:  Charles Newell, David Adamson, John Wilson, Shahla Farhat</li>
-  <li>R Shiny Tool:  Hiroko Hort, Brian Strasert</li>
-  <li>GSI R Shiny Platform:  Kenia Whitehead, Brandon Sackmann, Hannah Podzorski</li>
+  <li>Content:  Charles Newell, David Adamson, John Wilson, Shahla Farhat, Hiroko Hort, Lauren McDougall, and Emily Stockwell</li>
+  <li>R Shiny Tool:  Hiroko Hort, and Brian Strasert</li>
+  <li>GSI R Shiny Platform:  Kenia Whitehead, Brandon Sackmann, Hannah Podzorski, and Noah Goodkind</li>
 </ul>
 </h4>
 
 
 <h3><b>Cite this way:</b></h3>
 
-<h4>Authors, 2022. TA<sup>2</sup> :  THE SERDP TRANSITION ASSESSMENT ASSISTANT. Strategic Environmental Research and Development Program (SERDP).  SERDP Project ER20-1429</h4>
+Adamson, D.T., Newell, C.J., Hort, H.M, & Wilson, J.T. (2024). TA<sup>2</sup> :  THE SERDP TRANSITION ASSESSMENT TEACHING ASSISTANT. Strategic Environmental Research and Development Program (SERDP).  SERDP Project ER20-1429</h4>
 
 <h3><b>Funded by:</b></h3>
 

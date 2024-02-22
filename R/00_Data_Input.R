@@ -37,7 +37,7 @@ Data_Input_UI <- function(id, label = "Data_Input"){
                                                   ".xlsx"), width = "100%"))),
                     tabsetPanel(
                       # Tables -----------------
-                      tabPanel(HTML("1. Concentration and Time Data"), br(),
+                      tabPanel(HTML("1. Concentration and Time Data for Tool 1 and 2"), br(),
                                rHandsontableOutput(ns("conc_time_data"))
                                ), # end concentration and time table
                       tabPanel(HTML("2. Concentration and Time Data for Tool 5"), br(),

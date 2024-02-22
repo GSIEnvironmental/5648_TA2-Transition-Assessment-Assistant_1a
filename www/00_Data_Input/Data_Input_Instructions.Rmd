@@ -7,7 +7,7 @@
 * Most of the samples should have detected values.
 * For non-detects, use either 1/2 the reporting limit (RL) or the RL. Don't use zero.
 * Don't enter duplicate values, either use the average or the first of the two duplicates.
-* Concentration and Time Data is only the data used for Tool 5 should be tabulated in here. 
+* Data used for Tool 5 should be tabulated under the 'Concentration and Time Data for Tool 5' tab. 
 * In the column "State", please enter either Pre-Remediation "PreRem", Post-Remediation "Post Rem". 
 * Add Latitude and Longitude information for the Monitoring Wells to the table under the tab 'Monitoring Well Information'. Adding this information will allow results from Tools 1, 2, and 5 to be mapped.
 * In 'Monitoring Well Information' tab, please see important note to correctly assign the location information. 
@@ -21,4 +21,4 @@
 * Additional rows can be added or removed by right clicking on cell(s).
 * Clicking the bottom left corner of selected cell(s) allows the user to drag that information to additional cell(s).
 * Cells highlighted red indicate the value within that cell is not in the correct format (ex. characters are present in column that can only include numerical data). 
-* If monitoring well name needs to be updated, use downloaded file from "Download Input File" button, revise the file with new monitoring well name, then upload the file by using "Upload Saved Data". Same applies if you need to add new columns. 
+* If the monitoring well name needs to be updated, use downloaded file from "Download Input File" button, revise the file with new monitoring well name, then upload the file by using "Upload Saved Data". The same procedure should be followed if you need to add new columns. 
