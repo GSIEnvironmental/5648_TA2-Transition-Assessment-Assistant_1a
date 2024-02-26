@@ -105,7 +105,13 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                                src = "./03_CleanupGoals/BordenToolKit_Pic_2-1.png" 
                                                width = "100%"  
                                                height = "100%">')),
-                                        br(),br(),br()
+                                        br(),
+                                        fluidRow(column(11,align = "left", 
+                                                 HTML("<h3><b><i>References</i></b></h3>"),
+                                                 HTML("<h4>Borden, R. C., & Cha, K. Y. (2021). Evaluating the impact of back diffusion on groundwater cleanup time. Journal of Contaminant Hydrology, 243, 103889.</h4>"),
+                                                 HTML("<h4>McGuire, T. M., Adamson, D. T., Burcham, M. S., Bedient, P. B., & Newell, C. J. (2016). Evaluation of long‐term performance and sustained treatment at enhanced anaerobic bioremediation sites. Groundwater Monitoring & Remediation, 36(2), 32-44.</h4>"))
+                                         ),
+                                        br(),br()
                                         )# end parameter inputs
                       ), # end first tabpanel
                       ## 2. Select Scenario & Hydrologic Setting ---------------
@@ -403,7 +409,7 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                              actionButton(ns("help27"), HTML("?"), style = button_style2))),
                              fluidRow(align = "center", htmlOutput(ns("selected_TT2")),
                                       conditionalPanel(
-                                        condition = "input.HalfLifeYN==1",ns=ns,
+                                        condition = "input.HalfLifeYN!=3",ns=ns,
                                         plotlyOutput(ns("dygraph_plot1"), height = 500))), 
                              br(),
                              # Save Results
@@ -414,8 +420,8 @@ CleanupGoals_tabUI <- function(id, label = "03_CleanupGoals_tab"){
                                       downloadButton(ns("model_results"), HTML("Export Model Results and Input Tables"), style=button_style),
                                       actionButton(ns("go"), HTML("Export Screen Shot"), style=button_style),
                                       br(), br()),
-                             HTML("<h4><i>* Because this simple Tool assumes that at 100% of the source mass is removed or isolated, 
-                             and because statistics show in-situ remediation is thought to be able to remove about 90% of the source mass, 
+                             HTML("<h4><i>*  This Tool assumes that at 100% of the source mass is removed or isolated. 
+                             Because in-situ remediation projects are expected to be able to remove about 90% of the source mass (McGuire et al. 2016), 
                              these remediation timeframe estimates will likely be too short compared to actual timeframes for conventional 
                              in-situ remediation projects.</h4></i><br><br>"),
                     )
@@ -625,7 +631,7 @@ CleanupGoals_tabServer <- function(id,nav) {
             input$Rho_HK,
             input$Rho_LK)
         
-
+        
         df<-MC_function_LHC(input)
         validate(
           need(
@@ -982,7 +988,7 @@ CleanupGoals_tabServer <- function(id,nav) {
         #   paste("<H3>","MC Number of Realizations:", "<b>", round(len_MC,0),"</b></font>"," out of 1,000",
         #         "<BR>","MC Results will be Biased. No Results.","</H3>")
         # }else{
-          paste("<H3>","MC Number of Realizations:", "<b>", round(len_MC,0),"</b></font>"," out of 1,000","</H3>")
+          paste("<H3>","Monte Carlo Number of Realizations:", "<b>", round(len_MC,0),"</b></font>"," out of 1,000","</H3>")
         # }
         
       })

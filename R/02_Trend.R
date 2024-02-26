@@ -37,7 +37,7 @@ TrendUI <- function(id, label = "01_Trend"){
                                            fluidRow(align = "center",
                                                     pickerInput(ns("select_mw_group"), label = NULL,
                                                                 choices = c("All Monitoring Wells", "Recent Sample Above Concentration Goal"),
-                                                                selected = "P&T Wells",
+                                                                selected = "All Monitoring Wells",
                                                                 multiple = F,
                                                                 options = list(`live-search`=TRUE,
                                                                                `none-selected-text` = "Select Well Groups")))),
@@ -62,35 +62,35 @@ TrendUI <- function(id, label = "01_Trend"){
                                              HTML("<h5>Plume Top (ft bgs)</h5>")),
                                       column(4, align = "left", style = "padding:10px;",
                                              numericInput(ns("plume_top"), label = NULL,
-                                                          value = NA, width = '100px')),
+                                                          value = 5, width = '100px')),
                                       column(2, align = "left", style = "padding:10px;",
                                              actionButton(ns("help2_2"), HTML("?"), style = button_style2))),
                              fluidRow(column(6, align = "right", 
                                              HTML("<h5>Plume Buttom (ft bgs)</h5>")),
                                       column(4, align = "left", style = "padding:10px;",
                                              numericInput(ns("plume_bottom"), label = NULL,
-                                                          value = NA, width = '100px')),
+                                                          value = 10, width = '100px')),
                                       column(2, align = "left", style = "padding:10px;",
                                              actionButton(ns("help2_3"), HTML("?"), style = button_style2))),
                              fluidRow(column(6, align = "right",
                                              HTML("<h5>Total Porosity of Transmissive Media</h5>")),
                                       column(4, align = "left", style = "padding:10px;",
                                              numericInput(ns("trans_porosity"), label = NULL,
-                                                          value = NA, width = '100px')),
+                                                          value = 0.3, width = '100px')),
                                       column(2, align = "left", style = "padding:10px;",
                                              actionButton(ns("help2_4"), HTML("?"), style = button_style2))),
                              fluidRow(column(6, align = "right",
                                              HTML("<h5>Total Porosity of Low-K Zone</h5>")),
                                       column(4, align = "left", style = "padding:10px;",
                                              numericInput(ns("lowk_porosity"), label = NULL,
-                                                          value = NA, width = '100px')),
+                                                          value = 0.35, width = '100px')),
                                       column(2, align = "left", style = "padding:10px;",
                                              actionButton(ns("help2_5"), HTML("?"), style = button_style2))),
                              fluidRow(column(6, align = "right",
                                              HTML("<h5>Fraction of Plume Thickness with Transmissive Geologic Media</h5>")),
                                       column(4, align = "left", style = "padding:10px;",
                                              numericInput(ns("fraction_trans"), label = NULL,
-                                                          value = NA, width = '100px')),
+                                                          value = 0.5, width = '100px')),
                                       column(2, align = "left", style = "padding:10px;",
                                              actionButton(ns("help2_6"), HTML("?"), style = button_style2)))
                              ), # end conditional Panel
@@ -364,7 +364,7 @@ TrendServer <- function(id, data_input, nav) {
 
         cd <- df_mass_group()[["overall_tbl"]] %>%
           select(Group, Date, Value = total_mass_kg)
-
+ 
         MK_mass_group(MannKendall_MAROS(d = cd,MK_table))
       })
 
@@ -385,7 +385,7 @@ TrendServer <- function(id, data_input, nav) {
 
         updatePickerInput(session, "select_mw_group",
                           choices = choices,
-                          selected = "P&T Wells")
+                          selected = input$select_mw_group)
       }) # end update well grouping selection
 
 

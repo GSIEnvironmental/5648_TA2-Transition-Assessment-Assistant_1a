@@ -12,7 +12,7 @@ sp_interpolation<-function(df_MW_compiled,
                            porosityLK = 0.1,
                            thicknessHK = 8,
                            thicknessLK = 2,unit){
-  
+
   inter_list <- list()
   
   overall_tbl_full <- c()
@@ -41,7 +41,7 @@ sp_interpolation<-function(df_MW_compiled,
       
       convert_unit = case_when(tolower(unit)=='g/l'~10^-3,
                                tolower(unit)=='mg/l'~10^-6,
-                               tolower(unit)=='ug/l'~10^-9,
+                               tolower(unit)=='μg/l'~10^-9,
                                tolower(unit)=='ng/l'~10^-12
                             )
       
@@ -80,7 +80,7 @@ sp_interpolation<-function(df_MW_compiled,
   }
   
   inter_list[["overall_tbl"]] <- overall_tbl_full
-  
+
   return(inter_list)
   
   }

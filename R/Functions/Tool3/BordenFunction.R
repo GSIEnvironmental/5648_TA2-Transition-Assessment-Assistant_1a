@@ -5,7 +5,7 @@ BG_BordenFunction<-function(df){
     nam<-names(df)[var]
     assign(nam, unname(unlist(df[var])))
   }
-  
+
   # print (df)
   X_m = X #meter
   Kave = K/100*60*60*24      # convert from cm/s to m/day when reading from MC_LHC_Sampling function
@@ -60,6 +60,7 @@ TimeCleanupCalculation<-function(df,Parameters,BGorLG,TM,Beta,TD,HalfLife,Tt){
     nam<-names(df)[var]
     assign(nam, unname(unlist(df[var])))
   }
+
   #coefficient filter by either BG or LG
   coeff <-Parameters%>%filter(Style==BGorLG)
   
@@ -86,7 +87,7 @@ TimeCleanupCalculation<-function(df,Parameters,BGorLG,TM,Beta,TD,HalfLife,Tt){
 
   
   # half life implementation
-  if (HalfLife>0){
+  if (length(HalfLife)>1){
     CTR1 =  exp(coeff$lnT1[4]+coeff$lnT1[5]*log(0.693/HalfLife*TD))
     CTR2 =  exp(coeff$lnT2[4]+coeff$lnT2[5]*log(0.693/HalfLife*TD))
     CTR3 =  exp(coeff$lnT3[4]+coeff$lnT3[5]*log(0.693/HalfLife*TD))

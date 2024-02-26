@@ -187,7 +187,7 @@ figure_list <-c("01_X.png","02_i.png","03_COC.png",
                 "28_MC.png","29_Seepage.png")
 
 figure_list_1<-c("Help Box Tool1_Page_1.png","Help Box Tool1_Page_2.png","Help Box Tool1_Page_3.png")
-figure_list_2<-c("Help Box Tool2_Page_1.png")
+figure_list_2<-c("Help Box Tool2_Page_1.png","Help Box Tool2_Page_2.png","Help Box Tool2_Page_3.png","Help Box Tool2_Page_4.png","Help Box Tool2_Page_5.png","Help Box Tool2_Page_6.png")
 figure_list_4<-c("Help Box Tool4_Page_1.png","Help Box Tool4_Page_2.png")
 figure_list_5<-c("Help Box Tool5_Page_1.png","Help Box Tool5_Page_2.png","Help Box Tool5_Page_3.png","Help Box Tool5_Page_4.png")
 
