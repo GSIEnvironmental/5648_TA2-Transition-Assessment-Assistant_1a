@@ -1,6 +1,6 @@
 <h3><b>Data Input Instructions:</b></h3>
 
-* Add Latitude and Longitude information for the Monitoring Wells. Adding this information will allow results from Tools 1, and 2 to be mapped.
+* Add Latitude and Longitude information for the Monitoring Wells. Adding this information will allow results from Tool 2 to be mapped.
 * Please see important note to correctly assign the location information. 
 * You can download these tables by clicking on the 'Download Input File' button above the table to the right. You can re-load previously saved data by clicking on the 'Upload Saved Data' button and choosing a previously saved data file.
 * Please specify the category of wells in the "Well Grouping" column if you wish to analyze them grouped together. Otherwise, provide a single name for each well.
