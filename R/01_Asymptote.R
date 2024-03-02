@@ -40,7 +40,7 @@ AsymptoteUI <- function(id, label = "01_Asymptote"){
                                              pickerInput(ns("select_mw"), label = NULL,
                                                          choices = c(""),
                                                          multiple = T,
-                                                         selected = "PW-1",
+                                                         selected = "",
                                                          options = list(`live-search`=TRUE,
                                                                         `none-selected-text` = "Select Wells")))),
                              # column(2, align = "left", style = "padding:10px;",
@@ -156,19 +156,19 @@ AsymptoteServer <- function(id, data_input, nav) {
       }) # end d_conc()
 
       # RV: Location Data -----------------------
-      d_loc <- reactiveVal(data_mw_clean(temp_mw_info))
+      d_loc_T1 <- reactiveVal(data_mw_clean(temp_mw_info_tool1))
 
-      observeEvent(data_input$d_loc(),{
-        d_loc(data_input$d_loc())
-      }) # end d_loc()
+      observeEvent(data_input$d_loc_T1(),{
+        d_loc_T1(data_input$d_loc_T1())
+      }) # end d_loc_T1()
       
-      # RV: Merge d_loc and d_conc -----------------------
+      # RV: Merge d_loc_T1 and d_conc -----------------------
       d_mer <- reactiveVal()
       
       observeEvent({
-        d_loc()
+        d_loc_T1()
         d_conc()},{
-          d_mer(data_merge(d_conc(), d_loc()))
+          d_mer(data_merge(d_conc(), d_loc_T1()))
         }) # end d_mer()
       
       # RV: Series Avg Data ---------------
@@ -178,14 +178,15 @@ AsymptoteServer <- function(id, data_input, nav) {
         req(d_conc(),
             input$select_mw,
             input$group_method,
-            input$date_range)
+            input$date_range,
+            input$select_COC)
         
         ave_switch <- input$group_method
         
         # Filter to Wells/Grouping
         if(input$select_group_type == "individual"){
           df_MW <- d_mer() %>%
-            filter(WellID %in% input$select_mw,
+            filter(WellID %in% input$select_mw|`Well Grouping` %in% input$select_mw,
                    Date >= input$date_range[1],
                    Date <= input$date_range[2],
                    COC%in%input$select_COC)
@@ -193,7 +194,7 @@ AsymptoteServer <- function(id, data_input, nav) {
         
         if(input$select_group_type == "groups"){
           df_MW <- d_mer() %>%
-            filter(`Well Grouping` %in% input$select_mw,
+            filter(`Well Grouping` %in% input$select_mw|WellID%in%input$select_mw,
                    Date >= input$date_range[1],
                    Date <= input$date_range[2],
                    COC%in%input$select_COC) 
@@ -309,11 +310,11 @@ AsymptoteServer <- function(id, data_input, nav) {
         }
         
         if(input$select_group_type == "groups"){
-          choices <- sort(unique(d_loc()$`Well Grouping`))
+          choices <- sort(unique(d_loc_T1()$`Well Grouping`))
         }
                       
         updatePickerInput(session, "select_mw", choices = choices,
-                          selected = 'PW-1')
+                          selected = "")
       }) # end update well selection
       
       # Date Range Updates -------------------
@@ -333,9 +334,10 @@ AsymptoteServer <- function(id, data_input, nav) {
       observe({
         req(nav() == "1. Asymptote")
         req(d_conc())
-        
+
         if (input$select_group_type=='groups'){
-          COC_unique<-d_conc()%>%filter(State%in%input$select_mw)
+          listwell = d_loc_T1()%>%filter(`Well Grouping` %in% input$select_mw|`Monitoring Wells` %in% input$select_mw)
+          COC_unique<-d_conc()%>%filter(WellID%in%listwell$`Monitoring Wells`)
         }else{
           COC_unique<-d_conc()%>%filter(WellID%in%input$select_mw)
         }
@@ -349,13 +351,15 @@ AsymptoteServer <- function(id, data_input, nav) {
       # Plot 1 ------------------
       output$ts_plot1 <- renderPlotly({
         validate(need(d_conc(), "Please enter data into the Data Input tab (Step 1)."))
-        validate(need(df(), "Please select wells or well grouping to analyze (Step 2)."))
+        validate(need(input$select_mw, "Please select wells or well grouping to analyze (Step 2)."))
+        validate(need(input$select_COC, "Please select COC (Step 3)."))
         
         req(df(),
             sen_lm(),
             input$CI_input)
         
         unit = unique(d_conc()$Units)
+
         logscale_figure(df(), name = input$group_method, sen = sen_lm(), bp = bp()$x,fit = sen_lm(),CI = input$CI_input,unit = unit)
       })
       
@@ -541,7 +545,7 @@ AsymptoteServer <- function(id, data_input, nav) {
           
             list_of_datasets<-list(
               "Ave Concentration" = as.data.frame(df()),
-              "Location" = data_input$d_loc()%>%filter(`Monitoring Wells`%in%input$select_mw),
+              "Location" = data_input$d_loc_T1()%>%filter(`Monitoring Wells`%in%input$select_mw),
               "parameters" = parameter_tbl,
               "Overall Results" = result,
               "Asymptote Analysis" = as.data.frame(asy_results())
@@ -572,7 +576,7 @@ AsymptoteServer <- function(id, data_input, nav) {
         validate(
           need(data_input$d_conc(), "Please enter data into Data Input tab (Step 1)."))
   
-        loc_name<-data_input$d_loc()%>%
+        loc_name<-data_input$d_loc_T1()%>%
           filter(`Monitoring Wells`%in%input$select_mw|`Well Grouping`%in%input$select_mw)
         
         tbl_name <- data_input$d_conc()%>%
@@ -585,9 +589,9 @@ AsymptoteServer <- function(id, data_input, nav) {
       
       output$mw_data <- renderRHandsontable({
         validate(
-          need(data_input$d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
+          need(data_input$d_loc_T1(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
 
-        loc_name<-data_input$d_loc()%>%
+        loc_name<-data_input$d_loc_T1()%>%
           filter(`Monitoring Wells`%in%input$select_mw|`Well Grouping`%in%input$select_mw)
         
         rhandsontable(loc_name, readOnly = T, rowHeaders = NULL, width = 1000, height = 600) %>%

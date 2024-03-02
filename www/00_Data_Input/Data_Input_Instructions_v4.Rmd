@@ -1,12 +1,9 @@
 <h3><b>Data Input Instructions:</b></h3>
 
-* Use (Month/Day/Year) format for dates (ex. 01/01/2022).
-* You need at least four independent sampling events to get trends.
-* Do not enter any Flags or < or > signs, must be numerical data.
-* The tool can only process up to 30 wells.
-* Most of the samples should have detected values.
-* For non-detects, use either 1/2 the reporting limit (RL) or the RL. Don't use zero.
-* Don't enter duplicate values, either use the average or the first of the two duplicates.
+* Add Latitude and Longitude information for the Monitoring Wells. Adding this information will allow results from Tool5 to calculate distance from source well.
+* Please see important note to correctly assign the location information. 
+* You can download these tables by clicking on the 'Download Input File' button above the table to the right. You can re-load previously saved data by clicking on the 'Upload Saved Data' button and choosing a previously saved data file.
+* Please specify the category of wells in the "Well Grouping" column by either 'Source Well', 'Plume Boundary', or 'Point of Compliance'. Please follow the exact wording/caption in here in order to run the Tool 5. 
 
 
 <h3><b>How to Edit Data:</b></h3>

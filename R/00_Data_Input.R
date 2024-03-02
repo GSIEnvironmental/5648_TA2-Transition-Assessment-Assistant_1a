@@ -7,13 +7,16 @@ Data_Input_UI <- function(id, label = "Data_Input"){
   tabPanel("Data Input",
            # Page Title ------
            fluidRow(style='border-bottom: 5px solid black',
-             HTML("<h1><b>Input Data</h1></b>"),
+             HTML("<h1><b>Data Input</h1></b>"),
              column(8,
                     HTML("<h3><i>Enter concentration and time data in the table below to be used in Tools 1, 2, and 5.</i></h3><br>"))
            ), # end Page Title
            fluidRow(br(), 
              column(3, 
-                    includeMarkdown("./www/00_Data_Input/Data_Input_Instructions.Rmd")),
+                    uiOutput(ns("text"))
+                    #textOutput(ns("text"))
+                    #includeMarkdown("./www/00_Data_Input/Data_Input_Instructions.Rmd")
+                    ),
              column(9,
                     fluidRow(# Buttons ---------------------
                       column(6, align = "right",
@@ -35,40 +38,56 @@ Data_Input_UI <- function(id, label = "Data_Input"){
                                        accept = c("text/xlsx",
                                                   "text/comma-separated-values,text/plain",
                                                   ".xlsx"), width = "100%"))),
-                    tabsetPanel(
+                    tabsetPanel(id=ns('tabs'),
                       # Tables -----------------
-                      tabPanel(HTML("1. Concentration and Time Data for Tool 1 and 2"), br(),
+                      tabPanel(id='tab1',HTML("1. Concentration and Time Data for Tool 1 and 2"), br(),
                                rHandsontableOutput(ns("conc_time_data"))
                                ), # end concentration and time table
-                      tabPanel(HTML("2. Concentration and Time Data for Tool 5"), br(),
+                      tabPanel(id='tab2',HTML("2. Concentration and Time Data for Tool 5"), br(),
                                rHandsontableOutput(ns("conc_time_data_tool5"))
                                ), # end concentration and time table
-                      tabPanel(HTML("3. Monitoring Well Information"), br(),
+                      tabPanel(id='tab3',HTML("3. Monitoring Well Information for Tool 1 and 2"), br(),
                                HTML("<b style='color: red;'>Important Note</b><br>
                                     If you possess either latitude/longitude coordinates 
-                                    or northing/easting coordinates, you are obligated to
+                                    or northing/easting coordinates (not), you are obligated to
                                     provide EPSG information from this website 
                                     <a href='https://epsg.io/'>https://epsg.io/</a>.<br>
-                                    However, 
-                                    if you prefer to calculate latitude/longitude from 
-                                    northing/easting coordinates independently, you can 
-                                    utilize one of the following steps. 
+                                    The tool will automatically calculate the missing coordinates from the EPSG information when the data file is uploaded. 
+                                    Here are other sources to estimate coordinates for monitoring locations if they are not otherwise available.  
                                     <ul>
                                       <li>Use surveying data from an official survey of the wells.</li>
-                                      <li>Obtain a site map, georeferenced the map in an GIS system, 
-                                      and obtain the lat/long data.</li>
-                                      <li>Estimate monitoring locations in a Google Earth map, add 
-                                      Placemarks and get lat/long in decimal degrees</li>
-                                      <li>If you have data in degrees/min/sec, convert to decimal 
-                                      degrees at  web sites like this: <br> 
+                                      <li>Obtain a site map, georeferenced the map in a GIS system, and obtain the lat/long data.</li>
+                                      <li>Estimate monitoring locations in a Google Earth map, add Placemarks, and get lat/long in decimal degrees.</li>
+                                      <li>If you have data in degrees/min/sec, convert to decimal degrees at websites like this: <br> 
                                       <a href='https://www.latlong.net/degrees-minutes-seconds-to-decimal-degrees'>
                                       https://www.latlong.net/degrees-minutes-seconds-to-decimal-degrees</a></li>
                                     </ul>
                                     It is 
-                                    crucial to ensure that the wells utilized in tool 5 
+                                    crucial to ensure that the wells  
+                                    have consistent coordinate systems for northing/easting."),
+                               rHandsontableOutput(ns("mw_dataT1"))
+                      ), # end concentration and time table
+                      tabPanel(id='tab4',HTML("4. Monitoring Well Information for Tool 5"), br(),
+                               HTML("<b style='color: red;'>Important Note</b><br>
+                                    If you possess either latitude/longitude coordinates 
+                                    or northing/easting coordinates (not), you are obligated to
+                                    provide EPSG information from this website 
+                                    <a href='https://epsg.io/'>https://epsg.io/</a>.<br>
+                                    The tool will automatically calculate the missing coordinates from the EPSG information when the data file is uploaded. 
+                                    Here are other sources to estimate coordinates for monitoring locations if they are not otherwise available.  
+                                    <ul>
+                                      <li>Use surveying data from an official survey of the wells.</li>
+                                      <li>Obtain a site map, georeferenced the map in a GIS system, and obtain the lat/long data.</li>
+                                      <li>Estimate monitoring locations in a Google Earth map, add Placemarks, and get lat/long in decimal degrees.</li>
+                                      <li>If you have data in degrees/min/sec, convert to decimal degrees at websites like this: <br> 
+                                      <a href='https://www.latlong.net/degrees-minutes-seconds-to-decimal-degrees'>
+                                      https://www.latlong.net/degrees-minutes-seconds-to-decimal-degrees</a></li>
+                                    </ul>
+                                    It is 
+                                    crucial to ensure that the wells 
                                     have consistent coordinate systems for northing/easting."),
                                rHandsontableOutput(ns("mw_data"))
-                      ) # end concentration and time table
+                      )
                     ), br()
                     )
            ) # end fluid row 
@@ -82,6 +101,22 @@ Data_Input_Server <- function(id,Plume,nav) {
     
     function(input, output, session) {
       
+      output$text <- renderUI({
+        selected_tab <- input$tabs
+      if(selected_tab == "1. Concentration and Time Data for Tool 1 and 2") {
+        description <- includeMarkdown("./www/00_Data_Input/Data_Input_Instructions.Rmd")
+      } else if(selected_tab == "2. Concentration and Time Data for Tool 5") {
+        description <- includeMarkdown("./www/00_Data_Input/Data_Input_Instructions_v2.Rmd")
+      } else if(selected_tab == "3. Monitoring Well Information for Tool 1 and 2") {
+        description <- includeMarkdown("./www/00_Data_Input/Data_Input_Instructions_v3.Rmd")
+      } else {
+        description <- includeMarkdown("./www/00_Data_Input/Data_Input_Instructions_v4.Rmd")
+      }
+        HTML(paste("<p>", description, "</p>"))
+      })
+      
+      #output$text <- renderText({paste0("You are viewing tab \"", input$tabs, "\"")})
+      
       # Reactive Variables -------------------
       # Concentration/Time Dataframe
       mw_Tb5 = checksilenterror(Plume$Plume())
@@ -92,11 +127,12 @@ Data_Input_Server <- function(id,Plume,nav) {
       
       # Reactive Variables -------------------
       d_conc <- reactiveVal(temp_data)
-      
+
       observeEvent(input$conc_time_data,{
         A = hot_to_r(input$conc_time_data)
         A$`Date (Month/Day/Year)`= as.Date(A$`Date (Month/Day/Year)`,format='%Y-%m-%d')
         d_conc(A)
+
         #d_conc(hot_to_r(input$conc_time_data))
       })
       
@@ -109,16 +145,28 @@ Data_Input_Server <- function(id,Plume,nav) {
         #d_conc_tool5(hot_to_r(input$conc_time_data_tool5))
       })
 
-      d_loc <- reactiveVal(temp_mw_info)
+      # this is for tool 1 and 2
+      d_loc_T1 <- reactiveVal(temp_mw_info_tool1)
       
-      observeEvent(input$mw_data,{
+      observeEvent(input$mw_dataT1,{
 
+        C<-hot_to_r(input$mw_dataT1)
+        C<-update_distance_T1(C)
+        d_loc_T1(C)
+      })
+      
+      # this is for tool 5
+      d_loc <- reactiveVal(temp_mw_info)
+    
+      observeEvent(input$mw_data,{
+        
         B<-hot_to_r(input$mw_data)
         if (sum(B$`Well Grouping`=='Source Well',na.rm = TRUE)==1){
           B<-update_distance(B,d_conc_tool5())
         }
         d_loc(B)
       })
+      
       # check whether data is uploaded or not
       observeEvent(input$input_file,{
         # If no file is loaded nothing happens 
@@ -127,7 +175,7 @@ Data_Input_Server <- function(id,Plume,nav) {
           file <- input$input_file
           
           # tool 1 and 2 database
-          temp_data <- read.xlsx(file$datapath, sheet = "Concentration_Time_Data", startRow = 1,
+          temp_data <- read.xlsx(file$datapath, sheet = "Tool1_Concentration_Time_Data", startRow = 1,
                                  check.names = F,detectDates=T)
           
           temp_data<-temp_data%>%
@@ -154,10 +202,17 @@ Data_Input_Server <- function(id,Plume,nav) {
           
           d_conc_tool5(temp_data_tool5)
           
-          temp_mw_info <- read.xlsx(file$datapath, sheet = "Monitoring_Well_Information", startRow = 1,
+          
+          # calculate EPSG values
+          temp_mw_info_tool1 <- read.xlsx(file$datapath, sheet = "Tool1_MW", startRow = 1,
+                                    check.names = F, sep.names = " ")
+          temp_mw_infoT1<-update_distance_T1(temp_mw_info_tool1)
+          d_loc_T1(temp_mw_info_tool1)
+          
+          # calculate EPSG values
+          temp_mw_info <- read.xlsx(file$datapath, sheet = "Tool5_MW", startRow = 1,
                                     check.names = F, sep.names = " ")
           temp_mw_info<-update_distance(temp_mw_info,d_conc_tool5())
-          
           d_loc(temp_mw_info)
     
           
@@ -218,6 +273,11 @@ Data_Input_Server <- function(id,Plume,nav) {
           hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
       })
       
+      output$mw_dataT1 <- renderRHandsontable({
+        rhandsontable(d_loc_T1(), rowHeaders = NULL, width = 1400, height = 500) %>%
+          hot_cols(columnSorting = TRUE,colWidths='150') %>%
+          hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
+      })
 
       # Save Dataframes --------------------
       output$save_data <- downloadHandler(
@@ -242,9 +302,10 @@ Data_Input_Server <- function(id,Plume,nav) {
           }
           
           list_of_datasets<-list(
-            "Concentration_Time_Data" = temp_data2,
+            "Tool1_Concentration_Time_Data" = temp_data2,
             "Tool5_Concentration_Time_Data" = temp_data2_tool5,
-            "Monitoring_Well_Information" = hot_to_r(input$mw_data)
+            "Tool1_MW" = hot_to_r(input$mw_dataT1),
+            "Tool5_MW" = hot_to_r(input$mw_data)
           )
          
           write.xlsx(list_of_datasets, file)
@@ -263,6 +324,9 @@ Data_Input_Server <- function(id,Plume,nav) {
         d_conc_tool5 = reactive({
           req(d_conc_tool5())
           data_long(d_conc_tool5(),con_name = "Concentration_org")}),
+        d_loc_T1 = reactive({
+          req(d_loc_T1())
+          data_mw_clean(d_loc_T1())}),
         d_loc = reactive({
           req(d_loc())
           data_mw_clean(d_loc())})))

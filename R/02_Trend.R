@@ -36,7 +36,7 @@ TrendUI <- function(id, label = "01_Trend"){
                                            HTML("<h4><b>Step 2.</b> Select Well Groupings to be included in analysis.</h4>"),
                                            fluidRow(align = "center",
                                                     pickerInput(ns("select_mw_group"), label = NULL,
-                                                                choices = c("All Monitoring Wells", "Recent Sample Above Concentration Goal"),
+                                                                choices = c("All Monitoring Wells"),
                                                                 selected = "All Monitoring Wells",
                                                                 multiple = F,
                                                                 options = list(`live-search`=TRUE,
@@ -174,7 +174,7 @@ TrendUI <- function(id, label = "01_Trend"){
                                                HTML("<h4>Select Date to Display:")),
                                         column(3, align = "left", style = "padding:10px;",
                                                pickerInput(ns("select_map"), label = NULL,
-                                                           choices = c("All Monitoring Wells"),
+                                                           choices = "",
                                                            multiple = F,
                                                            options = list(`live-search`=TRUE,
                                                                           `none-selected-text` = "Select Date"))),
@@ -215,11 +215,11 @@ TrendServer <- function(id, data_input, nav) {
       }) # end d_conc()
       
       # RV: Location Data -----------------------
-      d_loc <- reactiveVal(data_mw_clean(temp_mw_info))
+      d_loc_T1 <- reactiveVal(data_mw_clean(temp_mw_info_tool1))
       
-      observeEvent(data_input$d_loc(),{
-        d_loc(data_input$d_loc())
-      }) # end d_loc()
+      observeEvent(data_input$d_loc_T1(),{
+        d_loc_T1(data_input$d_loc_T1())
+      }) # end d_loc_T1()
       
       
       # update Units -------------------
@@ -283,10 +283,10 @@ TrendServer <- function(id, data_input, nav) {
         }
 
         # Manually Assigned Groups
-        if (sum(unique(d_loc()$`Well Grouping`) %in% input$select_mw_group) > 0){
-          req(d_loc(),
-              length(unique(d_loc()$`Well Grouping`)) > 0)
-          x <- data_merge(df(), d_loc()) %>%
+        if (sum(unique(d_loc_T1()$`Well Grouping`) %in% input$select_mw_group) > 0){
+          req(d_loc_T1(),
+              length(unique(d_loc_T1()$`Well Grouping`)) > 0)
+          x <- data_merge(df(), d_loc_T1()) %>%
             filter(`Well Grouping` %in% input$select_mw_group) %>%
             select(WellID, Date, Concentration, Group = `Well Grouping`)
 
@@ -332,7 +332,7 @@ TrendServer <- function(id, data_input, nav) {
 
       observe({
         req(df_group(),
-            d_loc(),
+            d_loc_T1(),
             input$type == "Mass",
             input$select_mw_group,
             input$trans_porosity,
@@ -342,7 +342,7 @@ TrendServer <- function(id, data_input, nav) {
             input$fraction_trans)
 
         cd <- df_group() %>%
-          left_join(d_loc() %>% select(-`Well Grouping`), by = c("WellID" = "Monitoring Wells")) %>%
+          left_join(d_loc_T1() %>% select(-`Well Grouping`), by = c("WellID" = "Monitoring Wells")) %>%
           filter(!is.na(Latitude) & !is.na(Longitude) & Group %in% input$select_mw_group)
 
         porosityHK <- input$trans_porosity
@@ -352,6 +352,7 @@ TrendServer <- function(id, data_input, nav) {
         
         unit = unique(d_conc()$Units)
         df_mass_group(sp_interpolation(d = cd, porosityHK, porosityLK, thicknessHK, thicknessLK,unit))
+       
       })
 
       # RV: MK Mass by Group ----------------------
@@ -364,7 +365,7 @@ TrendServer <- function(id, data_input, nav) {
 
         cd <- df_mass_group()[["overall_tbl"]] %>%
           select(Group, Date, Value = total_mass_kg)
- 
+
         MK_mass_group(MannKendall_MAROS(d = cd,MK_table))
       })
 
@@ -374,13 +375,13 @@ TrendServer <- function(id, data_input, nav) {
             input$type)
 
         if(input$type == "Concentration"){
-          choices <- c("All Monitoring Wells", "Recent Sample Above Concentration Goal",
-                       sort(unique(d_loc()$`Well Grouping`)))
+          choices <- c("All Monitoring Wells", 
+                       sort(unique(d_loc_T1()$`Well Grouping`)))
         }
 
         if(input$type == "Mass"){
           choices <- c("All Monitoring Wells",
-                       sort(unique(d_loc()$`Well Grouping`)))
+                       sort(unique(d_loc_T1()$`Well Grouping`)))
         }
 
         updatePickerInput(session, "select_mw_group",
@@ -392,17 +393,16 @@ TrendServer <- function(id, data_input, nav) {
       # Select Updates: Map Grouping --------------
       observe({
         req(nav() == "2. Expansion")
-        req(d_loc())
+        req(d_loc_T1())
         
         if(input$type == "Concentration"){
           choices <- c("All Monitoring Wells", 
-                       "Recent Sample Above Concentration Goal", 
-                       sort(unique(d_loc()$`Well Grouping`)))
+                       sort(unique(d_loc_T1()$`Well Grouping`)))
         }
         
         if(input$type == "Mass"){
           req(df_mass_group())
-          choices <- names(df_mass_group()[["All Monitoring Wells"]])
+          choices <- names(df_mass_group()[[input$select_mw_group]])
         }
 
         updatePickerInput(session, "select_map",
@@ -414,15 +414,15 @@ TrendServer <- function(id, data_input, nav) {
       # COC Selection Updates -----------------------
       observe({
         req(nav() == "2. Expansion")
-        req(d_loc(),
+        req(d_loc_T1(),
             d_conc(),
             input$select_mw_group)
 
         if (input$select_mw_group=="All Monitoring Wells"){
-          COC_unique<-d_loc()
+          COC_unique<-d_loc_T1()
           COC_unique<-d_conc()%>%filter(WellID%in%COC_unique$`Monitoring Wells`)
         }else{
-          COC_unique<-d_loc()%>%filter(`Well Grouping`%in%input$select_mw_group)
+          COC_unique<-d_loc_T1()%>%filter(`Well Grouping`%in%input$select_mw_group)
           COC_unique<-d_conc()%>%filter(WellID%in%COC_unique$`Monitoring Wells`)
         }
         
@@ -478,12 +478,12 @@ TrendServer <- function(id, data_input, nav) {
 
         if(input$type == "Mass"){
           validate(
-            need(d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
+            need(d_loc_T1(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
           validate(
-            need(d_loc()$Latitude & d_loc()$Longitude,
+            need(d_loc_T1()$Latitude & d_loc_T1()$Longitude,
                  "Please enter Latitude and Longitude information into the Monitoring Well Information in the Data Input tab (Step 1)."))
           validate(
-            need(dim(d_loc() %>% filter(!is.na(as.numeric(Latitude)) & !is.na(as.numeric(Longitude))))[1],
+            need(dim(d_loc_T1() %>% filter(!is.na(as.numeric(Latitude)) & !is.na(as.numeric(Longitude))))[1],
                  "Please enter Latitude and Longitude information into the Monitoring Well Information in the Data Input tab (Step 1)."))
 
           req(df_mass_group())
@@ -501,7 +501,7 @@ TrendServer <- function(id, data_input, nav) {
                        lowK_mass_kg = "Low-k Units",
                        total_mass_kg = "Total Mass") %>%
             fmt_number(columns = c(highK_mass_kg, lowK_mass_kg, total_mass_kg),
-                       decimals = 0) %>%
+                       n_sigfig = 3) %>%
             tab_header(title = md("**ESTIMATE OF PLUME MASS**")) %>%
             tab_style(style = style_body(),
                       locations = cells_body()) %>%
@@ -671,17 +671,17 @@ TrendServer <- function(id, data_input, nav) {
       output$map <- renderLeaflet({
         validate(
           need(d_conc(), "Please enter data into Data Input tab (Step 1)."),
-          need(d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."),
+          need(d_loc_T1(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."),
           need(input$select_map, "Please select group to veiw (above)."),
           need(ifelse(sum("Recent Sample Above Concentration Goal" %in% input$select_map) > 0, !is.na(input$conc_goal), T),
                "Please enter concentration goal (Step 6)."))
         validate(
-          need(d_loc()$Latitude & d_loc()$Longitude,
+          need(d_loc_T1()$Latitude & d_loc_T1()$Longitude,
           "Please enter Latitude and Longitude information into the Monitoring Well Information in the Data Input tab (Step 1)."))
         validate(
-          need(dim(d_loc() %>% filter(!is.na(as.numeric(Latitude)) & !is.na(as.numeric(Longitude))))[1],
+          need(dim(d_loc_T1() %>% filter(!is.na(as.numeric(Latitude)) & !is.na(as.numeric(Longitude))))[1],
                "Please enter Latitude and Longitude information into the Monitoring Well Information in the Data Input tab (Step 1)."))
-        #browser()
+
         site_map %>%
           addLayersControl(baseGroups = c('Grey Base','Satellite (ESRI)','Satellite (Google)'),
                            overlayGroups = c("Well Labels"),
@@ -702,9 +702,9 @@ TrendServer <- function(id, data_input, nav) {
           
         req(
           MK_conc_well(),
-          d_loc())
+          d_loc_T1())
           
-          cd <- left_join(MK_conc_well(), d_loc(), by = c("Group" = "Monitoring Wells")) %>%
+          cd <- left_join(MK_conc_well(), d_loc_T1(), by = c("Group" = "Monitoring Wells")) %>%
             filter(!is.na(Latitude), !is.na(Longitude))
           req(dim(cd)[1] > 0)
           
@@ -723,7 +723,7 @@ TrendServer <- function(id, data_input, nav) {
           }
           
           # Manually Assigned Groups
-          if (sum(unique(d_loc()$`Well Grouping`) %in% input$select_map) > 0){
+          if (sum(unique(d_loc_T1()$`Well Grouping`) %in% input$select_map) > 0){
             cd <- cd %>%
               filter(`Well Grouping` %in% input$select_map)
           }
@@ -757,15 +757,15 @@ TrendServer <- function(id, data_input, nav) {
             removeControl(layerId = "Legend") %>%
             clearGroup(group = "image")
           
-          cd <- df_mass_group()[["All Monitoring Wells"]][[input$select_map]][["df"]]
-          nnmsk <- df_mass_group()[["All Monitoring Wells"]][[input$select_map]][["shape"]]
+          cd <- df_mass_group()[[input$select_mw_group]][[input$select_map]][["df"]]
+          nnmsk <- df_mass_group()[[input$select_mw_group]][[input$select_map]][["shape"]]
 
           
           pal <- colorNumeric(palette = "viridis", nnmsk$total_mass,
                               na.color = "transparent")
 
           nnmsk$colors <- pal(nnmsk$total_mass)
-          
+
           proxy %>%
             fitBounds(min(cd$Longitude), min(cd$Latitude), max(cd$Longitude), max(cd$Latitude)) %>%
             addCircleMarkers(data = cd, lng = ~Longitude, lat = ~Latitude, label = ~WellID,
@@ -860,10 +860,10 @@ TrendServer <- function(id, data_input, nav) {
                   select(Group, expanding)
           
           if(input$select_mw_group!="All Monitoring Wells"){
-            location_tbl = data_input$d_loc()%>%filter(`Well Grouping`==input$select_mw_group,
+            location_tbl = data_input$d_loc_T1()%>%filter(`Well Grouping`==input$select_mw_group,
                                                        COC%in%input$select_COC)
           }else{
-            location_tbl = data_input$d_loc()
+            location_tbl = data_input$d_loc_T1()
           }
           
           if (input$type == 'Concentration'){
@@ -940,7 +940,7 @@ TrendServer <- function(id, data_input, nav) {
 
       output$mw_data <- renderRHandsontable({
         validate(
-          need(data_input$d_loc(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
+          need(data_input$d_loc_T1(), "Please enter data Monitoring Well Information into Data Input tab (Step 1)."))
 
         x <- df() %>% group_by(WellID) %>%
           mutate(Group = ifelse(Concentration[which.max(Date)] > input$conc_goal,
@@ -949,11 +949,11 @@ TrendServer <- function(id, data_input, nav) {
           filter(Group=="Wells with Recent Samples Above Concentration Goal")
         
         if (input$select_mw_group%in%c("Recent Sample Above Concentration Goal")){
-          loc_name<-data_input$d_loc()%>%
+          loc_name<-data_input$d_loc_T1()%>%
             filter(`Monitoring Wells`%in%unique(x$WellID))
         }
         else{
-          loc_name<-data_input$d_loc()%>%
+          loc_name<-data_input$d_loc_T1()%>%
           filter(`Monitoring Wells`%in%unique(df_group()$WellID))
         }
         
