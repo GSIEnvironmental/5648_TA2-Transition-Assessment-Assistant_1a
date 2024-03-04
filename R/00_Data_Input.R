@@ -49,11 +49,11 @@ Data_Input_UI <- function(id, label = "Data_Input"){
                       tabPanel(id='tab3',HTML("3. Monitoring Well Information for Tool 1 and 2"), br(),
                                HTML("<b style='color: red;'>Important Note</b><br>
                                     If you possess either latitude/longitude coordinates 
-                                    or northing/easting coordinates (not), you are obligated to
+                                    or northing/easting coordinates (but not both), you are obligated to
                                     provide EPSG information from this website 
                                     <a href='https://epsg.io/'>https://epsg.io/</a>.<br>
                                     The tool will automatically calculate the missing coordinates from the EPSG information when the data file is uploaded. 
-                                    Here are other sources to estimate coordinates for monitoring locations if they are not otherwise available.  
+                                    Here are other sources to estimate coordinates for monitoring locations if they are not otherwise available;  
                                     <ul>
                                       <li>Use surveying data from an official survey of the wells.</li>
                                       <li>Obtain a site map, georeferenced the map in a GIS system, and obtain the lat/long data.</li>
@@ -70,11 +70,11 @@ Data_Input_UI <- function(id, label = "Data_Input"){
                       tabPanel(id='tab4',HTML("4. Monitoring Well Information for Tool 5"), br(),
                                HTML("<b style='color: red;'>Important Note</b><br>
                                     If you possess either latitude/longitude coordinates 
-                                    or northing/easting coordinates (not), you are obligated to
+                                    or northing/easting coordinates (but not both), you are obligated to
                                     provide EPSG information from this website 
                                     <a href='https://epsg.io/'>https://epsg.io/</a>.<br>
                                     The tool will automatically calculate the missing coordinates from the EPSG information when the data file is uploaded. 
-                                    Here are other sources to estimate coordinates for monitoring locations if they are not otherwise available.  
+                                    Here are other sources to estimate coordinates for monitoring locations if they are not otherwise available;  
                                     <ul>
                                       <li>Use surveying data from an official survey of the wells.</li>
                                       <li>Obtain a site map, georeferenced the map in a GIS system, and obtain the lat/long data.</li>
