@@ -713,7 +713,9 @@ CleanupGoals_tabServer <- function(id,nav) {
       
 
       ## Figure ----------------------------------------------
-      plotlyfigureoutput <- reactive({
+      plotlyfigureoutput <- reactiveVal()
+      #plotlyfigureoutput <- reactive({
+      observeEvent({input$gobutton},{
 
         ValidateRangeFunctionSilent(error(),results(),input)
         #validate(need(nrow(results()) >= 700, "Seepage Velocity Outside the Range of Borden Model"))
@@ -851,7 +853,7 @@ CleanupGoals_tabServer <- function(id,nav) {
                          zeroline=F),
             showlegend = T
           )
-        
+          plotlyfigureoutput(p)
       })
       
       output$dygraph_plot1 <- renderPlotly({

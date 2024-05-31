@@ -364,11 +364,11 @@ PlumeZoneUI <- function(id, label = "05_PlumeZone"){
                              br(),
                              conditionalPanel(condition = "input.tabs==`main`", ns=ns,
                                               HTML("<h3 style = 'color: #4a746c;'><b><i>1. Pre-Remediation Period (actual)</i></b></h4>"),
-                                              HTML("<h3 style = 'color: #FF0000;'><b>Please select COCs (Step 6) and 
+                                              HTML("<h3 style = 'color: #FF0000;'><b>Please select COCs (Step 7) and 
                                                    select one of the Rate Constant tabs to see projection of concentration vs. distance.</b></h3>"),
                                               br(),br(),br(),br(),br(),br(),br(),br(),
                                               HTML("<h3 style = 'color: #4a746c;'><b><i>2. Post-Remediation Period (projected)</i></b></h4>"),
-                                              HTML("<h3 style = 'color: #FF0000;'><b>Please select COCs (Step 6) and 
+                                              HTML("<h3 style = 'color: #FF0000;'><b>Please select COCs (Step 7) and 
                                                    select one of the Rate Constant tabs to see projection of concentration vs. distance.</b></h3>"),
                                               br(),br(),br(),br(),br(),br(),br(),br()
                                               ),
