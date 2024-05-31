@@ -130,7 +130,7 @@ Data_Input_Server <- function(id,Plume,nav) {
 
       observeEvent(input$conc_time_data,{
         A = hot_to_r(input$conc_time_data)
-        A$`Date (Month/Day/Year)`= as.Date(A$`Date (Month/Day/Year)`,format='%Y-%m-%d')
+        A$`Date (Year-Month-Day)`= as.Date(A$`Date (Year-Month-Day)`,format='%Y-%m-%d')
         d_conc(A)
 
         #d_conc(hot_to_r(input$conc_time_data))
@@ -140,7 +140,7 @@ Data_Input_Server <- function(id,Plume,nav) {
       
       observeEvent(input$conc_time_data_tool5,{
         A = hot_to_r(input$conc_time_data_tool5)
-        A$`Date (Month/Day/Year)`= as.Date(A$`Date (Month/Day/Year)`,format='%Y-%m-%d')
+        A$`Date (Year-Month-Day)`= as.Date(A$`Date (Year-Month-Day)`,format='%Y-%m-%d')
         d_conc_tool5(A)
         #d_conc_tool5(hot_to_r(input$conc_time_data_tool5))
       })
@@ -180,7 +180,7 @@ Data_Input_Server <- function(id,Plume,nav) {
           
           temp_data<-temp_data%>%
             mutate(Event = as.integer(Event))%>%
-            #rename(Date = `Date.(Month/Day/Year)`)%>%
+            #rename(Date = `Date.(Year-Month-Day)`)%>%
             mutate(Date = as.Date(temp_data$Date,origin="1900-01-01",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y")))
           
           # replace 0 value to NaN
@@ -194,7 +194,7 @@ Data_Input_Server <- function(id,Plume,nav) {
           
           temp_data_tool5<-temp_data_tool5%>%
             mutate(Event = as.integer(Event))%>%
-            #rename(Date = `Date.(Month/Day/Year)`)%>%
+            #rename(Date = `Date.(Year-Month-Day)`)%>%
             mutate(Date = as.Date(temp_data_tool5$Date,origin="1900-01-01",tryFormats = c("%Y-%m-%d", "%Y/%m/%d","%m/%d/%Y","%m-%d-%Y")))
           
           # replace 0 value to NaN
@@ -239,14 +239,14 @@ Data_Input_Server <- function(id,Plume,nav) {
 
         if ('Date'%in%colnames(d_conc())){
           temp_data2<-d_conc()%>%
-          rename(`Date (Month/Day/Year)`=Date)
+          rename(`Date (Year-Month-Day)`=Date)
         }else{
           temp_data2<-d_conc()
         }
         # to avoid issue with rhansontable
-        temp_data2$`Date (Month/Day/Year)` = as.character(temp_data2$`Date (Month/Day/Year)`)
+        temp_data2$`Date (Year-Month-Day)` = as.character(temp_data2$`Date (Year-Month-Day)`)
         rhandsontable(temp_data2, rowHeaders = NULL, width = 1400, height = 600) %>%
-          hot_col("Date (Month/Day/Year)", dateFormat = "YYYY-MM-DD", type = "date")%>%
+          hot_col("Date (Year-Month-Day)", dateFormat = "YYYY-MM-DD", type = "date")%>%
           hot_cols(columnSorting = TRUE) %>%
           hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
       })
@@ -255,14 +255,14 @@ Data_Input_Server <- function(id,Plume,nav) {
         #validate(need(sum(colSums(d_conc_tool5()==0,na.rm=TRUE))==0, "Please remove 0 from the table"))
         if ('Date'%in%colnames(d_conc_tool5())){
           temp_data2_tool5<-d_conc_tool5()%>%
-            rename(`Date (Month/Day/Year)`=Date)
+            rename(`Date (Year-Month-Day)`=Date)
         }else{
           temp_data2_tool5<-d_conc_tool5()
         }
         # to avoid issue with rhansontable
-        temp_data2_tool5$`Date (Month/Day/Year)` = as.character(temp_data2_tool5$`Date (Month/Day/Year)`)
+        temp_data2_tool5$`Date (Year-Month-Day)` = as.character(temp_data2_tool5$`Date (Year-Month-Day)`)
         rhandsontable(temp_data2_tool5, rowHeaders = NULL, width = 1400, height = 600) %>%
-          hot_col("Date (Month/Day/Year)", dateFormat = "YYYY-MM-DD", type = "date")%>%
+          hot_col("Date (Year-Month-Day)", dateFormat = "YYYY-MM-DD", type = "date")%>%
           hot_cols(columnSorting = TRUE) %>%
           hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
       })
@@ -287,25 +287,38 @@ Data_Input_Server <- function(id,Plume,nav) {
         },
         content = function(file) {
 
-          if ("Date (Month/Day/Year)"%in%colnames(hot_to_r(input$conc_time_data))){
+          if ("Date (Year-Month-Day)"%in%colnames(hot_to_r(input$conc_time_data))){
             temp_data2<-hot_to_r(input$conc_time_data)%>%
-              rename(Date=`Date (Month/Day/Year)`)
+              rename(Date=`Date (Year-Month-Day)`)
           }else{
             temp_data2<-d_conc_tool5()
           }
           
-          if ("Date (Month/Day/Year)"%in%colnames(hot_to_r(input$conc_time_data_tool5))){
+          if ("Date (Year-Month-Day)"%in%colnames(hot_to_r(input$conc_time_data_tool5))){
             temp_data2_tool5<-hot_to_r(input$conc_time_data_tool5)%>%
-              rename(Date=`Date (Month/Day/Year)`)
+              rename(Date=`Date (Year-Month-Day)`)
           }else{
             temp_data2_tool5<-d_conc_tool5()
+          }
+          
+          
+          if (is.null(input$mw_dataT1)){
+            Tool1_MW = d_loc_T1()
+          }else{
+            Tool1_MW = hot_to_r(input$mw_dataT1)
+          }
+          
+          if (is.null(input$mw_data)){
+            Tool5_MW = d_loc()
+          }else{
+            Tool5_MW = hot_to_r(input$mw_data)
           }
           
           list_of_datasets<-list(
             "Tool1_Concentration_Time_Data" = temp_data2,
             "Tool5_Concentration_Time_Data" = temp_data2_tool5,
-            "Tool1_MW" = hot_to_r(input$mw_dataT1),
-            "Tool5_MW" = hot_to_r(input$mw_data)
+            "Tool1_MW" = Tool1_MW,
+            "Tool5_MW" = Tool5_MW
           )
          
           write.xlsx(list_of_datasets, file)

@@ -9,8 +9,8 @@
 
 
 data_long <- function(d,con_name = "Concentration"){
-    if("Date (Month/Day/Year)"%in%colnames(d)){
-      cd <- d %>% rename(Date = `Date (Month/Day/Year)`)
+    if("Date (Year-Month-Day)"%in%colnames(d)){
+      cd <- d %>% rename(Date = `Date (Year-Month-Day)`)
     }else{
       cd <- d
     }

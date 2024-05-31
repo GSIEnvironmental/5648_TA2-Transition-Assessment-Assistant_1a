@@ -922,12 +922,12 @@ TrendServer <- function(id, data_input, nav) {
         
         if (input$select_mw_group%in%c("Recent Sample Above Concentration Goal")){
           tbl_name <- data_input$d_conc()%>%
-            rename(`Date (Month/Day/Year)`=Date)%>%
+            rename(`Date (Year-Month-Day)`=Date)%>%
             filter(WellID%in%x$WellID,
                    COC%in%input$select_COC)
         }else{
           tbl_name <- data_input$d_conc()%>%
-            rename(`Date (Month/Day/Year)`=Date)%>%
+            rename(`Date (Year-Month-Day)`=Date)%>%
             filter(WellID%in%unique(df_group()$WellID),
                    COC%in%input$select_COC)
         }
