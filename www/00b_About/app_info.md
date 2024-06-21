@@ -14,7 +14,18 @@
 
 <h3><b>Cite this way:</b></h3>
 
-Adamson, D.T., Newell, C.J., Hort, H.M, & Wilson, J.T. (2024). TA<sup>2</sup> :  THE SERDP TRANSITION ASSESSMENT TEACHING ASSISTANT. Strategic Environmental Research and Development Program (SERDP).  SERDP Project ER20-1429</h4>
+<h4>Adamson, D.T., Newell, C.J., Hort, H.M, & Wilson, J.T. (2024). TA<sup>2</sup> :  THE SERDP TRANSITION ASSESSMENT TEACHING ASSISTANT. Strategic Environmental Research and Development Program (SERDP).  SERDP Project ER20-1429</h4>
+
+<h3><b>Technical Support:</b></h3>
+
+<h4><p>
+Dave Adamson: 
+<a href="mailto:dtadamson@gsienv.com">dtadamson@gsienv.com</a>
+</p>
+<p>
+Hiroko Hort: 
+<a href="mailto:hmhort@gsienv.com">hmhort@gsienv.com</a>
+</p></h4>
 
 <h3><b>Funded by:</b></h3>
 
