@@ -866,11 +866,17 @@ PlumeZoneServer <- function(id,data_input,nav) {
                  # Date >= input$date_range1[1],
                  # Date <= input$date_range1[2],
                  COC %in% input$select_COC) 
-
-        df_MW <- df_MW %>% group_by(WellID,State) %>%
-            summarise(Concentration = sum(Concentration,na.rm=TRUE),
-                      Distance = max(ifelse("Distance from Source (m)"%in%colnames(df_MW),
-                                                `Distance from Source (m)`,`Distance from Source (ft)`),na.rm=TRUE))
+        
+ 
+        df_MW <- df_MW %>% group_by(WellID,State,COC) %>%
+          summarise(Concentration = mean(Concentration,na.rm=TRUE),
+                    Distance = max(ifelse("Distance from Source (m)"%in%colnames(df_MW),
+                                          `Distance from Source (m)`,`Distance from Source (ft)`)
+                                   ,na.rm=TRUE))%>%
+          group_by(WellID,State) %>%
+          summarise(Concentration = sum(Concentration,na.rm=TRUE),
+                    Distance = max(Distance))
+       
         
           
         # assign color
@@ -904,11 +910,14 @@ PlumeZoneServer <- function(id,data_input,nav) {
                  # Date <= input$date_range1[2],
                  COC %in% input$select_COC) 
 
-        df_MW <- df_MW %>% group_by(WellID,State) %>%
-          summarise(Concentration = sum(Concentration,na.rm=TRUE),
+        df_MW <- df_MW %>% group_by(WellID,State,COC) %>%
+          summarise(Concentration = mean(Concentration,na.rm=TRUE),
                     Distance = max(ifelse("Distance from Source (m)"%in%colnames(df_MW),
                                           `Distance from Source (m)`,`Distance from Source (ft)`)
-                      ,na.rm=TRUE))
+                      ,na.rm=TRUE))%>%
+          group_by(WellID,State) %>%
+          summarise(Concentration = sum(Concentration,na.rm=TRUE),
+                    Distance = max(Distance))
         
         
         # assign color
