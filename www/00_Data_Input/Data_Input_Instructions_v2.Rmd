@@ -8,6 +8,10 @@
 * For non-detects, use either 1/2 the reporting limit (RL) or the RL. Don't use zero.
 * Don't enter duplicate values, either use the average or the first of the two duplicates.
 * In the column "State", please enter either Pre-Remediation "PreRem", Post-Remediation "Post Rem". 
+* If you enter data from multiple Pre-Remediation events for a well, the tool will plot the average concentration for the Pre-Remediation events from that well.
+* If you enter data from multiple Post-Remediation events for a well, the tool will plot the average concentration for the Post-Remediation events from that well.
+* If you don’t want to plot the average concentration, then only enter the data from the event you want to evaluate.
+
 
 
 <h3><b>How to Edit Data:</b></h3>
