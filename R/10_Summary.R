@@ -26,6 +26,7 @@ SummaryUI <- function(id, label = "010_Summary"){
                                 </ol></h4>"))
                                ),
                       br(),
+                      
                       fluidRow(includeHTML('./www/10_Summary/Tool10a_v1.html'))
                                
              ), 

@@ -124,7 +124,12 @@ TrendUI <- function(id, label = "01_Trend"){
                                              column(6, align = "left", 
                                                     htmlOutput(ns("unit"))))),
                                     column(2, align = "left", style = "padding:10px;",
-                                           actionButton(ns("help2_1"), HTML("?"), style = button_style2)))#,
+                                           actionButton(ns("help2_1"), HTML("?"), style = button_style2))),
+                           fluidRow(column(10,
+                                           HTML("<h3><b><i>References</i></b></h3>"),
+                                            HTML("<h4>Connor, J. A., Farhat, S. K., & Vanderford, M. (2014). GSI Mann-Kendall toolkit for quantitative analysis of plume concentration trends. Groundwater, 52(6), 819-820.</h4>"),
+                             
+                           ))#,
                            # HTML("<hr class='featurette-divider'>"),
                            # HTML("<h4><b>Data Handling</b></h4>"),
                            # HTML("<hr class='featurette-divider'>"),
