@@ -35,8 +35,13 @@ https://www.serdp-estcp.org/Program-Areas/Environmental-Restoration/Contaminated
 </h4>
 
 <br>
-
-
+<h3>
+<b>Version:</b>
+</h3>
+<h4>
+v1.0.0: original program presented at ESTCP final presentation
+</h4>
+<br>
 <h4><a href="https://serdp-estcp.org/"><img src="./00b_About/Long_SERDP_Logo.png" alt="SERDP ESTCP Logo" width="477" height="68"/></a>
 &nbsp;
 &nbsp;
