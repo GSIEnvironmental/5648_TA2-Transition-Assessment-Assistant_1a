@@ -28,7 +28,7 @@ MannKendall_MAROS<-function(d,p_tb){
                  "S.Slope" =  z$estimates[["Sen's slope"]],
                  "enough_data" = T)
       
-    }else if (length(na.omit(x %>% pull(Value))) <= 40){
+    }else if ((length(na.omit(x %>% pull(Value))) <= 40)&(length(na.omit(x %>% pull(Value)))>=4)){
       y <- mk.test(x %>% pull(Value))
       z <- sens.slope(x %>% pull(Value), conf.level = 0.95) # sen's slope calculation
       get_tb<-p_tb%>%filter(...1==abs(y$estimates[["S"]]))

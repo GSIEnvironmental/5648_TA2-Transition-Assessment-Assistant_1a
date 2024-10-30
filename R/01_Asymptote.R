@@ -580,7 +580,7 @@ AsymptoteServer <- function(id, data_input, nav) {
           filter(`Monitoring Wells`%in%input$select_mw|`Well Grouping`%in%input$select_mw)
         
         tbl_name <- data_input$d_conc()%>%
-          rename(`Date (Month/Day/Year)`=Date)%>%
+          rename(`Date (Year-Month-Day)`=Date)%>%
           filter(WellID%in%loc_name$`Monitoring Wells`&COC%in%input$select_COC)
        
         rhandsontable(tbl_name, readOnly = T, rowHeaders = NULL, width = 1200, height = 600) %>%

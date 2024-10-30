@@ -13,7 +13,7 @@
 
 ForecastResults<-function(df,Conc_goal=NULL,Conc_site){
   
-  
+ 
   # export summary table
   summary_df = as.data.frame(describe(df))
   

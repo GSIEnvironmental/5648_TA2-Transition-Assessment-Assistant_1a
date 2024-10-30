@@ -432,7 +432,7 @@ figcaption {
   MT3DMS / RT3D <br>
   3-D Model with Dual Domain<br>
   </span></b><span style='color:black;mso-color-alt:windowtext'><a
-  href="http://www.ees.nmt.edu/outside/courses/hyd547/supplemental/MODFLOW_Tutorial/MT3DMS-AdvancedTransport.pdf" target="_blank"><b><span
+  href="https://www.aquaveo.com/software/gms-learning-tutorials" target="_blank"><b><span
   style='color:yellow'>(GMS Tutorial)</span></b></a></span><b><span
   style='color:yellow'> </span></b><span style='color:white;mso-themecolor:
   background1'><o:p></o:p></span></p>

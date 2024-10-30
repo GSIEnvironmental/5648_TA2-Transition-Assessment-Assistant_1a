@@ -1,6 +1,6 @@
 <h3><b>Data Input Instructions:</b></h3>
 
-* Use (Month/Day/Year) format for dates (ex. 01/01/2022).
+* Use (Year-Month-Day) format for dates (ex. 2022-01-01).
 * You need at least four independent sampling events to get trends.
 * Do not enter any Flags or < or > signs, must be numerical data.
 * The tool can only process up to 30 wells.
